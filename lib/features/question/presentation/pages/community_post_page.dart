@@ -1,10 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:codersgym/features/question/domain/model/community_solution_post_detail.dart';
 import 'package:codersgym/features/question/presentation/blocs/community_post_detail/community_post_detail_cubit.dart';
-import 'package:codersgym/features/question/presentation/widgets/editorial_html.dart';
-import 'package:codersgym/features/question/presentation/widgets/question_community_solution.dart';
 import 'package:codersgym/injection.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_highlight/themes/monokai-sublime.dart';

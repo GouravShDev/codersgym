@@ -9,11 +9,11 @@ sealed class AuthEvent extends Equatable {
 class AuthCheckStatus extends AuthEvent {}
 
 class AuthLoginWithLeetcode extends AuthEvent {
-  final String sessionId;
+  final Map<String, dynamic> credentials;
 
-  const AuthLoginWithLeetcode({required this.sessionId});
+  const AuthLoginWithLeetcode({required this.credentials});
   @override
-  List<Object?> get props => [sessionId];
+  List<Object?> get props => [credentials];
 }
 
 class AuthLoginWithLeetcodeUserName extends AuthEvent {

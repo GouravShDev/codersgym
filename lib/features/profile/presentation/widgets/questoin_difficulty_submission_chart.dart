@@ -1,3 +1,5 @@
+import 'package:codersgym/app.dart';
+import 'package:codersgym/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -74,7 +76,7 @@ class QuestionDifficultySubmissionChart extends StatelessWidget {
                     curve: Curves.easeInOut,
                     circularStrokeCap: CircularStrokeCap.round,
                     backgroundColor: Theme.of(context).focusColor,
-                    progressColor: Color(0xffF53836),
+                    progressColor: Theme.of(context).colorScheme.error,
                   ),
                   // Medium Progress (middle layer)
                   CircularPercentIndicator(
@@ -88,7 +90,7 @@ class QuestionDifficultySubmissionChart extends StatelessWidget {
                     curve: Curves.easeInOut,
                     circularStrokeCap: CircularStrokeCap.round,
                     backgroundColor: Theme.of(context).dialogBackgroundColor,
-                    progressColor: Color(0xffFEB600),
+                    progressColor: Theme.of(context).colorScheme.warningColor,
                   ),
                   // Easy Progress (innermost layer)
                   CircularPercentIndicator(
@@ -101,7 +103,8 @@ class QuestionDifficultySubmissionChart extends StatelessWidget {
                     curve: Curves.easeInOut,
                     circularStrokeCap: CircularStrokeCap.round,
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    progressColor: Color(0xff1ABBBB),
+                    progressColor:
+                        Theme.of(context).colorScheme.successColorAccent,
                   ),
                   // Center Text Display
                   Column(

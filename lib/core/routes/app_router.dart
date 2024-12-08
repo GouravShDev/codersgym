@@ -1,6 +1,5 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:codersgym/core/routes/app_router.gr.dart';
-import 'package:codersgym/features/settings/presentation/pages/setting_page.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Page,Route')
 class AppRouter extends RootStackRouter {
@@ -16,5 +15,6 @@ class AppRouter extends RootStackRouter {
         AutoRoute(page: LeetcodeWebRoute.page),
         AutoRoute(page: NotificationRoute.page),
         AutoRoute(page: CommunityPostRoute.page),
+        AutoRoute(page: CodeEditorRoute.page),
       ];
 }
