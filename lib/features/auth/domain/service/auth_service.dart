@@ -1,6 +1,8 @@
 abstract interface class AuthService {
   Future<AuthenticationStatus> checkAuthentication();
-  Future<AuthenticationStatus> loginWithLeetcodeAccount(String leetcodeSession);
+  Future<AuthenticationStatus> loginWithLeetcodeAccount(
+    Map<String, dynamic> credentials,
+  );
   Future<AuthenticationStatus> loginWithLeetcodeUserName(
     String leetcodeUsername,
   );
@@ -10,11 +12,11 @@ abstract interface class AuthService {
 sealed class AuthenticationStatus {}
 
 class LeetcodeAccountAuthenticated extends AuthenticationStatus {
-  final String leetcodeSession;
+  final Map<String, dynamic> credentials;
   final String userName;
 
   LeetcodeAccountAuthenticated({
-    required this.leetcodeSession,
+    required this.credentials,
     required this.userName,
   });
 }

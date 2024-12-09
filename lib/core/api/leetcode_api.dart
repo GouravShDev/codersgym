@@ -1,6 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 
 import 'package:codersgym/core/network/network_service.dart';
+import 'package:codersgym/core/utils/storage/cookie_encoder.dart';
 import 'package:codersgym/core/utils/storage/storage_manager.dart';
 import 'package:codersgym/features/auth/data/service/auth_service.dart';
 import 'package:codersgym/injection.dart';
@@ -129,15 +132,17 @@ class LeetcodeApi {
   Future<Map<String, dynamic>?> _executeGraphQLQuery(
       LeetCodeRequests request) async {
     try {
-      final sessionToken =
-          await _storageManager.getString(_storageManager.leetcodeSession);
+      final leetcodeCreds =
+          await _storageManager.getObjectMap(_storageManager.leetcodeSession);
+
       final queryOptions = QueryOptions(
         document: gql(request.query),
         variables: request.variables.toJson(),
         context: Context.fromList([
           HttpLinkHeaders(headers: {
-            if (sessionToken != null)
-              'Cookie': 'LEETCODE_SESSION=$sessionToken;',
+            'Cookie': CookieEncoder.encode(
+              leetcodeCreds ?? {},
+            ),
           })
         ]),
       );
@@ -182,6 +187,88 @@ class LeetcodeApi {
         rethrow;
       }
       throw ApiNoNetworkException("There was some network error", e);
+    }
+  }
+
+  Future<Map<String, dynamic>?> runCode({
+    required String questionTitleSlug,
+    required String questionId,
+    required String programmingLanguage,
+    required String code,
+    required String testCases,
+    required bool submitCode,
+  }) async {
+    try {
+      final leetcodeCreds =
+          await _storageManager.getObjectMap(_storageManager.leetcodeSession);
+
+      final url =
+          '/problems/$questionTitleSlug/${submitCode ? 'submit' : 'interpret_solution'}/';
+      final res = await _networkService.execute(
+        NetworkRequest(
+          path: url,
+          data: NetworkRequestBody.json(
+            {
+              "lang": programmingLanguage,
+              "question_id": questionId,
+              "typed_code": code,
+              "data_input": testCases,
+            },
+          ),
+          type: NetworkRequestType.post,
+          headers: {
+            'Cookie': CookieEncoder.encode(
+              leetcodeCreds ?? {},
+            ),
+            'origin': "https://leetcode.com",
+            'referer': "https://leetcode.com/problems/$questionTitleSlug/",
+            'x-csrftoken': leetcodeCreds?['csrftoken'],
+          },
+        ),
+        (data) => data,
+      );
+      return res.when(
+        ok: (data) => data,
+        error: (error) {
+          throw ApiServerException(error.message ?? '', error.code);
+        },
+      );
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>?> checkSubmission({
+    required String submissionId,
+  }) async {
+    try {
+      final leetcodeCreds =
+          await _storageManager.getObjectMap(_storageManager.leetcodeSession);
+
+      final res = await _networkService.execute(
+        NetworkRequest(
+          path: '/submissions/detail/$submissionId/check/',
+          data: NetworkRequestBody.empty(),
+          type: NetworkRequestType.get,
+          headers: {
+            'Cookie': CookieEncoder.encode(
+              leetcodeCreds ?? {},
+            ),
+            'origin': "https://leetcode.com",
+            'referer': "https://leetcode.com",
+            'x-csrftoken': leetcodeCreds?['csrftoken'],
+          },
+        ),
+        (data) => data,
+      );
+      return res.when(
+        ok: (data) => data,
+        error: (error) {
+          throw ApiServerException(error.message ?? '', error.code);
+        },
+      );
+    } catch (e) {
+      rethrow;
     }
   }
 }

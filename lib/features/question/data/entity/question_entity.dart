@@ -4,6 +4,7 @@ class QuestionNodeEntity {
   String? title;
   String? titleSlug;
   String? difficulty;
+  String? questionId;
   double? acRate;
   bool? paidOnly;
   String? frontendQuestionId;
@@ -15,7 +16,8 @@ class QuestionNodeEntity {
   Null? freqBar;
   bool? isFavor;
   String? status;
-
+  List<CodeSnippetEntity>? codeSnippets;
+  List<String>? exampleTestcaseList;
   QuestionNodeEntity({
     this.title,
     this.titleSlug,
@@ -29,6 +31,8 @@ class QuestionNodeEntity {
     this.content,
     this.hints,
     this.status,
+    this.codeSnippets,
+    this.exampleTestcaseList,
   });
 
   QuestionNodeEntity.fromJson(Map<String, dynamic> json) {
@@ -41,6 +45,7 @@ class QuestionNodeEntity {
     hasVideoSolution = json['hasVideoSolution'];
     hasSolution = json['hasSolution'];
     content = json['content'];
+    questionId = json['questionId'];
     if (json['hints'] != null) {
       hints = (json['hints'] as List)
           .map(
@@ -55,6 +60,13 @@ class QuestionNodeEntity {
         topicTags!.add(TopicTagsNodeEntity.fromJson(v));
       });
     }
+    codeSnippets = json["codeSnippets"] == null
+        ? []
+        : List<CodeSnippetEntity>.from(
+            json["codeSnippets"]!.map((x) => CodeSnippetEntity.fromJson(x)));
+    exampleTestcaseList = json['exampleTestcaseList'] != null
+        ? List.from(json['exampleTestcaseList'])
+        : null;
   }
 
   Map<String, dynamic> toJson() {
@@ -100,6 +112,7 @@ extension QuestionNodeEntityExt on QuestionNodeEntity {
   Question toQuestion() {
     return Question(
       title: title,
+      questionId: questionId,
       titleSlug: titleSlug,
       difficulty: difficulty,
       acRate: acRate,
@@ -111,7 +124,48 @@ extension QuestionNodeEntityExt on QuestionNodeEntity {
       topicTags: topicTags?.map((tag) => tag.toTopicTags()).toList(),
       status: _parseQuestionStatus(status),
       hints: hints,
+      codeSnippets: codeSnippets
+          ?.map((snippet) => snippet.toCodeSnippet())
+          .toList(), // Mapping codeSnippets
+      exampleTestCases: exampleTestcaseList?.map(
+        (e) {
+          final cases = e.split('\n');
+          return TestCase(inputs: cases);
+        },
+      ).toList(),
     );
+  }
+}
+
+class CodeSnippetEntity {
+  final String? code;
+  final String? lang;
+  final String? langSlug;
+
+  CodeSnippetEntity({
+    this.code,
+    this.lang,
+    this.langSlug,
+  });
+
+  factory CodeSnippetEntity.fromJson(Map<String, dynamic> json) =>
+      CodeSnippetEntity(
+        code: json["code"],
+        lang: json["lang"],
+        langSlug: json["langSlug"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "code": code,
+        "lang": lang,
+        "langSlug": langSlug,
+      };
+}
+
+extension CodeSnippetEntityExt on CodeSnippetEntity {
+  CodeSnippet toCodeSnippet() {
+    return CodeSnippet(
+        code: code, lang: lang, langSlug: langSlug); // Creating CodeSnippet
   }
 }
 

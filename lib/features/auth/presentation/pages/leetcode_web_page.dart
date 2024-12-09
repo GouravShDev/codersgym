@@ -18,12 +18,13 @@ class LeetcodeWebPage extends StatelessWidget {
       redirectUrl: LeetcodeConstants.leetcodePostLoginUrl,
       onUrlRedirection: () async {
         final cookieManager = CookieManager.instance();
-        final loginCookie = await cookieManager.getCookie(
-          url: WebUri(LeetcodeConstants.leetcodeUrl),
-          name: "LEETCODE_SESSION",
-        );
+        final leetcodeCookies = await cookieManager.getCookies(
+            url: WebUri(LeetcodeConstants.leetcodeUrl));
+        final cookiesMap = {
+          for (var element in leetcodeCookies) element.name: element.value
+        };
         if (context.mounted) {
-          AutoRouter.of(context).maybePop(loginCookie?.value);
+          AutoRouter.of(context).maybePop(cookiesMap);
         }
       },
     );

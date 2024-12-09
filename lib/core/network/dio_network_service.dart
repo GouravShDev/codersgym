@@ -20,7 +20,7 @@ class DioNetworkService extends NetworkService {
 
   Dio _getDefaultDioClient() {
     _headers.addAll(configuration.headers ?? {});
-    _headers['content-type'] = 'text/html; charset=utf-8';
+    _headers['content-type'] = 'application/json; charset=utf-8';
     _headers['User-Agent'] =
         'Mozilla/5.0 (Linux; Android 8.0; Pixel 2 Build/OPD3.170816.012) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Mobile Safari/537.36';
     final dio = Dio()
@@ -67,9 +67,9 @@ Future<NetworkResponse<Model>> executeRequest<Model>(
 ) async {
   try {
     final dynamic body = request.request.data.when(
-      json: (data) => data,
-      text: (data) => data,
-      binaryData: (data) => data,
+      json: (data) => data.data,
+      text: (data) => data.data,
+      binaryData: (data) => data.data,
       formData: (data) => FormData.fromMap(data.data),
       empty: (_) => null,
     );
@@ -110,12 +110,13 @@ Future<NetworkResponse<Model>> executeRequest<Model>(
     );
   } on DioException catch (error) {
     final errorBody = error.response?.data;
-    log(error.response?.data);
+    log(error.response?.data ?? '');
     if (errorBody is String) {
       return NetworkResponse.error(
         NetworkUnknownError(
-            code: NetworkErrorCode.UNCATEGORIZED,
-            message: "Something went wrong"),
+          code: NetworkErrorCode.UNCATEGORIZED,
+          message: "Something went wrong",
+        ),
       );
     }
     if (error.response?.data == null) {

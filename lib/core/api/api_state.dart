@@ -23,6 +23,21 @@ sealed class ApiState<S, E extends Exception> extends Equatable {
       ApiError<S, E> error => onError(error.error),
     };
   }
+    T mayBeWhen<T>({
+    T Function()? onInitial,
+    T Function()? onLoading,
+    T Function(S value)? onLoaded,
+    T Function(E exception)? onError,
+    required T Function() orElse,
+  }) {
+    return switch (this) {
+      ApiInitial() when onInitial != null => onInitial(),
+      ApiLoading() when onLoading != null => onLoading(),
+      ApiLoaded<S, E> loaded when onLoaded != null => onLoaded(loaded.data),
+      ApiError<S, E> error when onError != null => onError(error.error),
+      _ => orElse(),
+    };
+  }
 }
 
 class ApiInitial<S, E extends Exception> extends ApiState<S, E> {
