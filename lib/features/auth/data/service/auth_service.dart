@@ -11,16 +11,16 @@ class AuthServiceImp implements AuthService {
   AuthServiceImp(this._storageManager, this._leetcodeApi);
   @override
   Future<AuthenticationStatus> checkAuthentication() async {
-    final leetcodeSession =
-        await _storageManager.getString(_storageManager.leetcodeSession);
+    final credentials =
+        await _storageManager.getObjectMap(_storageManager.leetcodeSession);
     final leetcodeUserName =
         await _storageManager.getString(_storageManager.leetcodeUserName);
     if (leetcodeUserName == null) {
       return UnAuthenticatedStatus();
     }
-    if (leetcodeSession != null) {
+    if (credentials != null) {
       return LeetcodeAccountAuthenticated(
-        leetcodeSession: leetcodeSession,
+        credentials: credentials,
         userName: leetcodeUserName,
       );
     }
@@ -29,10 +29,11 @@ class AuthServiceImp implements AuthService {
 
   @override
   Future<AuthenticationStatus> loginWithLeetcodeAccount(
-      String leetcodeSession) async {
-    await _storageManager.putString(
+    Map<String, dynamic> credentials,
+  ) async {
+    await _storageManager.putObjectMp(
       _storageManager.leetcodeSession,
-      leetcodeSession,
+      credentials,
     );
     final data = await _leetcodeApi.getGlobalData();
     if (data == null) {
@@ -44,7 +45,7 @@ class AuthServiceImp implements AuthService {
     await _storageManager.putString(_storageManager.leetcodeUserName, userName);
 
     return LeetcodeAccountAuthenticated(
-      leetcodeSession: leetcodeSession,
+      credentials: credentials,
       userName: userName,
     );
   }

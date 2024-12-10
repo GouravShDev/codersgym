@@ -14,10 +14,13 @@ class LeetCodeLoginButton extends StatelessWidget {
       onPressed: () {
         final authbloc = context.read<AuthBloc>();
         AutoRouter.of(context).push(const LeetcodeWebRoute()).then(
-          (leetcodeSessionToken) {
-            if (leetcodeSessionToken is String) {
-              authbloc
-                  .add(AuthLoginWithLeetcode(sessionId: leetcodeSessionToken));
+          (leetcodeCookie) {
+            if (leetcodeCookie is Map<String, dynamic>) {
+              authbloc.add(
+                AuthLoginWithLeetcode(
+                  credentials: leetcodeCookie,
+                ),
+              );
             }
           },
         );

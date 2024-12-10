@@ -88,7 +88,6 @@ class AppWebview extends HookWidget {
                 : null,
             shouldInterceptFetchRequest: (controller, ajaxRequest) async {
               final url = ajaxRequest.url;
-              print("URL : " + url.toString());
               if (redirectUrl != null) {
                 if (url.toString().startsWith(redirectUrl!)) {
                   onUrlRedirection?.call();

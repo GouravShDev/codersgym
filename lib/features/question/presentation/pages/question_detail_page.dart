@@ -1,6 +1,8 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:codersgym/core/routes/app_router.gr.dart';
 import 'package:codersgym/core/utils/inherited_provider.dart';
+import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
+import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
 import 'package:codersgym/features/question/presentation/blocs/community_solutions/community_solutions_bloc.dart';
 import 'package:codersgym/features/question/presentation/blocs/official_solution_available/official_solution_available_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/question_hints/question_hints_cubit.dart';
@@ -59,6 +61,31 @@ class QuestionDetailPage extends HookWidget implements AutoRouteWrapper {
       child: Scaffold(
         appBar: AppBar(
           title: Text(question.title ?? 'Question Detail'),
+        ),
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 60.0),
+          child: BlocBuilder<QuestionContentCubit, QuestionContentState>(
+            builder: (context, state) {
+              final currentQuestion = state.mayBeWhen(
+                orElse: () => question,
+                onLoaded: (questionWithDetail) => questionWithDetail,
+              );
+              if (currentQuestion.codeSnippets == null) {
+                return SizedBox.shrink();
+              }
+              return FloatingActionButton(
+                onPressed: () {
+                  AutoRouter.of(context).push(
+                    CodeEditorRoute(
+                      question: currentQuestion,
+                    ),
+                  );
+                },
+                child: Icon(Icons.code),
+                tooltip: 'Open Code Editor',
+              );
+            },
+          ),
         ),
         body: BlocConsumer<OfficialSolutionAvailableCubit,
             OfficialSolutionAvailableState>(

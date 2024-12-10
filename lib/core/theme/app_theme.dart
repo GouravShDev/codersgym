@@ -10,12 +10,16 @@ final ThemeData leetcodeTheme = ThemeData(
     primary: Color(0xFFFF9E0F), // Primary color for buttons and main accents
     secondary: Color(0xFF00FFB3),
     surface: Color(0xFF2A2A2A),
+    error: Color(0xffF53836),
   ),
 
   appBarTheme: const AppBarTheme(
     color: Color(0xFF2A2A2A), // Darker shade for app bar
     elevation: 0,
-
+    titleTextStyle: TextStyle(
+      color: Color(0xFFD4D4D4),
+      fontSize: 16,
+    ),
     iconTheme: IconThemeData(
       color: Color(0xFFFF9E0F),
     ),
@@ -40,16 +44,24 @@ final ThemeData leetcodeTheme = ThemeData(
 
   textTheme: const TextTheme(
     displayLarge: TextStyle(
-        color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
+      color: Colors.white,
+      fontSize: 24,
+      fontWeight: FontWeight.bold,
+    ),
     bodyLarge: TextStyle(
-        color: Color(0xFFD4D4D4), fontSize: 16), // Light gray for readability
-    bodyMedium: TextStyle(color: Color(0xFFD4D4D4), fontSize: 14),
+      color: Color(0xFFD4D4D4),
+      fontSize: 16,
+    ), // Light gray for readability
+    bodyMedium: TextStyle(
+      color: Color(0xFFD4D4D4),
+      fontSize: 14,
+    ),
   ),
 
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: const Color(0xFFFF9E0F), // LeetCode orange
-      foregroundColor: Colors.white, // Text color
+      foregroundColor: Color(0xFF2A2A2A), // Text color
       textStyle: const TextStyle(fontWeight: FontWeight.bold),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     ),
@@ -74,3 +86,17 @@ final ThemeData leetcodeTheme = ThemeData(
     ),
   ),
 );
+
+extension ColorSchemeExt on ColorScheme {
+  Color get successColorAccent {
+    return Color(0xff1ABBBB);
+  }
+
+  Color get successColor {
+    return Colors.green;
+  }
+
+  Color get warningColor {
+    return Color(0xffFEB600);
+  }
+}

@@ -1,5 +1,6 @@
 class Question {
   final String? title;
+  final String? questionId;
   final String? titleSlug;
   final String? difficulty;
   final double? acRate;
@@ -11,9 +12,12 @@ class Question {
   final String? content;
   final QuestionStatus? status;
   final List<String>? hints;
+  final List<CodeSnippet>? codeSnippets;
+  final List<TestCase>? exampleTestCases;
 
   const Question({
     this.title,
+    this.questionId,
     this.titleSlug,
     this.difficulty,
     this.acRate,
@@ -25,6 +29,8 @@ class Question {
     this.content,
     this.status,
     this.hints,
+    this.codeSnippets,
+    this.exampleTestCases,
   });
 
   factory Question.fromJson(Map<String, dynamic> json) {
@@ -97,4 +103,24 @@ extension QuestionStatusExtension on QuestionStatus {
         return "Unattempted";
     }
   }
+}
+
+class CodeSnippet {
+  final String? code;
+  final String? lang;
+  final String? langSlug;
+
+  CodeSnippet({
+    this.code,
+    this.lang,
+    this.langSlug,
+  });
+}
+
+class TestCase {
+  final List<String> inputs;
+
+  TestCase({
+    required this.inputs,
+  });
 }

@@ -13,16 +13,27 @@ sealed class Authenticated extends AuthState {
   final String userName;
 
   const Authenticated({required this.userName});
+  @override
+  List<Object> get props => [userName];
 }
 
 class UnAuthenticated extends AuthState {}
 
 class AuthenticatedWithLeetcodeAccount extends Authenticated {
-  final String leetcodeSession;
-  AuthenticatedWithLeetcodeAccount(
-      {required this.leetcodeSession, required super.userName});
+  final Map<String, dynamic> leetcodeSession;
+  const AuthenticatedWithLeetcodeAccount({
+    required this.leetcodeSession,
+    required super.userName,
+  });
+
+  @override
+  List<Object> get props => [leetcodeSession, userName];
 }
 
 class AuthenticatedWithLeetcodeUserName extends Authenticated {
-  AuthenticatedWithLeetcodeUserName({required super.userName});
+  const AuthenticatedWithLeetcodeUserName({
+    required super.userName,
+  });
+  @override
+  List<Object> get props => [userName];
 }

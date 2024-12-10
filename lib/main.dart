@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:codersgym/features/common/bloc/bloc_observer.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -23,5 +24,6 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+  AppBlocObserver.initialize();
   runApp(const AppInitializer());
 }

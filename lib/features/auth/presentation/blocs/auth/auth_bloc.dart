@@ -22,6 +22,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       }
     });
   }
+
+  bool get isUserAuthenticatedWithLeetcodeAccount =>
+      state is AuthenticatedWithLeetcodeAccount;
+
   void _onAuthCheckStatus(
       AuthCheckStatus event, Emitter<AuthState> emit) async {
     final authStatus = await _authService.checkAuthentication();
@@ -30,8 +34,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
   void _onAuthLoginWithLeetcode(
       AuthLoginWithLeetcode event, Emitter<AuthState> emit) async {
-    final authStatus =
-        await _authService.loginWithLeetcodeAccount(event.sessionId);
+    final authStatus = await _authService.loginWithLeetcodeAccount(
+      event.credentials,
+    );
     _emitAutheticatedState(emit, authStatus);
   }
 
@@ -52,7 +57,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       LeetcodeAccountAuthenticated() => {
           emit(
             AuthenticatedWithLeetcodeAccount(
-              leetcodeSession: status.leetcodeSession,
+              leetcodeSession: status.credentials,
               userName: status.userName,
             ),
           ),

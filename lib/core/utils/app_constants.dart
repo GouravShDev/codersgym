@@ -8,6 +8,8 @@ class AppConstants {
 class LeetcodeConstants {
   LeetcodeConstants._();
   static const leetcodeUrl = "https://leetcode.com";
+  // here 'lang' to replace with the language code
+  static const leetcodeFormatUrl = "https://lsp-{lang}.leetcode.com/format";
   static const leetcodeLoginUrl = "https://leetcode.com/accounts/login/";
   static const leetcodePostLoginUrl = "/api/home/";
   static const weeklyContestBannerImage =
