@@ -88,6 +88,7 @@ dependencies:
   hive: ^2.2.3
   another_flushbar: ^1.12.30
   timeago: ^3.7.0
+  vibration: ^2.0.1
 
 dev_dependencies:
   flutter_test:

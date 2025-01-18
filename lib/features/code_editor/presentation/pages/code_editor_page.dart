@@ -2,8 +2,10 @@ import 'package:auto_route/auto_route.dart';
 import 'package:codersgym/core/services/analytics.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:codersgym/features/code_editor/domain/model/code_execution_result.dart';
+import 'package:codersgym/features/code_editor/domain/model/coding_key_config.dart';
 import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
+import 'package:codersgym/features/code_editor/presentation/blocs/coding_key_configuration/coding_key_configuration_cubit.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/code_editor_language_dropdown.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/code_editor_top_action_bar.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/code_run_button.dart';
@@ -13,6 +15,7 @@ import 'package:codersgym/features/code_editor/presentation/widgets/coding_keys.
 import 'package:codersgym/features/code_editor/presentation/widgets/run_code_result_sheet.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/test_case_bottom_sheet.dart';
 import 'package:codersgym/features/common/data/models/analytics_events.dart';
+import 'package:codersgym/features/common/widgets/app_code_editor_field.dart';
 import 'package:codersgym/features/profile/presentation/blocs/user_profile/user_profile_cubit.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:codersgym/injection.dart';
@@ -34,10 +37,18 @@ class CodeEditorPage extends HookWidget implements AutoRouteWrapper {
 
   @override
   Widget wrappedRoute(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt.get<CodeEditorBloc>(
-        param1: question.questionId,
-      ),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt.get<CodeEditorBloc>(
+            param1: question.questionId,
+          ),
+        ),
+        BlocProvider(
+          create: (context) =>
+              getIt.get<CodingKeyConfigurationCubit>()..loadConfiguration(),
+        ),
+      ],
       child: this,
     );
   }
@@ -324,45 +335,23 @@ class CodeEditorPageBody extends HookWidget {
           Expanded(
             child: Stack(
               children: [
-                CodeTheme(
-                  data: CodeThemeData(styles: monokaiSublimeTheme),
-                  child: Theme(
-                    data: theme.copyWith(
-                      inputDecorationTheme: theme.inputDecorationTheme.copyWith(
-                        fillColor: theme.scaffoldBackgroundColor,
-                        border: InputBorder.none,
-                        enabledBorder: InputBorder.none,
-                      ),
-                    ),
-                    child: SingleChildScrollView(
-                      child: CodeField(
-                        controller: codeController,
-                        expands: false,
-                        focusNode: focusNode,
-                        wrap: true,
-                        textStyle: Theme.of(context).textTheme.bodyMedium,
-                        background: theme.scaffoldBackgroundColor,
-                        gutterStyle: GutterStyle(
-                          width: 44,
-                          showFoldingHandles: true,
-                          showErrors: false,
-                          textAlign: TextAlign.right,
-                          textStyle:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context).hintColor,
-                                    height: 1.46,
-                                  ),
-                          margin: 2,
-                          background: theme.scaffoldBackgroundColor,
-                        ),
-                      ),
-                    ),
+                SingleChildScrollView(
+                  child: AppCodeEditorField(
+                    codeController: codeController,
                   ),
                 ),
               ],
             ),
           ),
-          BlocBuilder<CodeEditorBloc, CodeEditorState>(
+          BlocBuilder<CodingKeyConfigurationCubit, CodingKeyConfigurationState>(
+            builder: (context, state) {
+              final configuration = switch (state) {
+                CodingKeyConfigurationLoaded() => state.keysConfiguration,
+                CodingKeyNoUserConfiguration() =>
+                  CodingKeyConfig.defaultCodingKeyConfiguration,
+                _ => <String>[],
+              };
+              return  BlocBuilder<CodeEditorBloc, CodeEditorState>(
             buildWhen: (previous, current) =>
                 previous.isCodeEditorFocused != current.isCodeEditorFocused,
             builder: (context, state) {
@@ -374,11 +363,13 @@ class CodeEditorPageBody extends HookWidget {
                     return const SizedBox.shrink();
                   }
                   return CodingKeys(
-                    codeController: codeController,
+                    codeController: codeController, codingKeyIds: configuration,
                   );
                 }),
               );
             },
+          );
+            }
           ),
         ],
       ),
