@@ -19,8 +19,11 @@ import 'package:codersgym/features/auth/data/service/auth_service.dart';
 import 'package:codersgym/features/auth/domain/service/auth_service.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:codersgym/features/code_editor/data/repository/code_editor_repository.dart';
+import 'package:codersgym/features/code_editor/data/services/coding_key_configuration_service.dart';
 import 'package:codersgym/features/code_editor/domain/repository/code_editor_repository.dart';
+import 'package:codersgym/features/code_editor/domain/services/coding_key_configuration_service.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
+import 'package:codersgym/features/code_editor/presentation/blocs/coding_key_configuration/coding_key_configuration_cubit.dart';
 import 'package:codersgym/features/common/bloc/app_file_downloader/app_file_downloader_bloc.dart';
 import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
 import 'package:codersgym/features/common/services/recent_question_manager.dart';
@@ -66,6 +69,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'features/code_editor/presentation/blocs/customize_coding_experience/customize_coding_experience_bloc.dart';
 import 'features/profile/domain/repository/profile_repository.dart';
 import 'features/question/presentation/blocs/question_content/question_content_cubit.dart';
 
@@ -136,9 +140,16 @@ Future<void> initializeDependencies() async {
 
   getIt.registerLazySingleton<GithubUpdater>(
     () => GithubUpdater(
-        repoName: AppConstants.githubRepo,
-        username: AppConstants.githubUsername,
-        storageManager: getIt.get()),
+      repoName: AppConstants.githubRepo,
+      username: AppConstants.githubUsername,
+      storageManager: getIt.get(),
+    ),
+  );
+
+  getIt.registerLazySingleton<CodingKeyConfigurationService>(
+    () => CodingKeyConfigurationServiceImp(
+      storageManager: getIt.get(),
+    ),
   );
   getIt.registerLazySingleton<NotificationScheduler>(
     () => NotificationScheduler(
@@ -308,10 +319,13 @@ Future<void> initializeDependencies() async {
     ),
   );
   getIt.registerFactory(
-    () => TimestampCubit(
+    () => CodingKeyConfigurationCubit(
       getIt.get(),
     ),
   );
+  getIt.registerFactory(() => TimestampCubit(
+        getIt.get(),
+      ));
   getIt.registerFactory(
     () => FavoriteQuesionsListBloc(
       getIt.get(),
@@ -366,6 +380,11 @@ Future<void> initializeDependencies() async {
     (articleCommentId, _) => CommentRepliesCubit(
       articleCommentId: articleCommentId,
       discussionArticleRepository: getIt.get(),
+    ),
+  );
+  getIt.registerFactory(
+    () => CustomizeCodingExperienceBloc(
+      getIt.get(),
     ),
   );
 }

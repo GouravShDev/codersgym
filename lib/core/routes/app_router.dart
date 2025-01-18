@@ -51,6 +51,7 @@ class AppRouter extends RootStackRouter {
               ]),
             ],
           ),
+          AutoRoute(page: CodingExperienceRoute.page),
           AutoRoute(page: QuestionDetailRoute.page),
           AutoRoute(page: CodeEditorRoute.page),
           AutoRoute(page: CommunityPostRoute.page),
