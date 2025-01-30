@@ -42,3 +42,12 @@ class CustomizeCodingExperienceOnReplaceKeyConfig
     required this.replaceKeyId,
   });
 }
+
+class CustomizeCodingExperienceOnThemeChanged
+    extends CustomizeCodingExperienceEvent {
+  final String themeId;
+
+  CustomizeCodingExperienceOnThemeChanged(
+    this.themeId,
+  );
+}

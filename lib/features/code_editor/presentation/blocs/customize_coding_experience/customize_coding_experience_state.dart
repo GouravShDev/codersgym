@@ -6,6 +6,7 @@ class CustomizeCodingExperienceState extends Equatable {
   final bool isReordering;
   final bool configurationLoaded;
   final ConfigurationModificationStatus modificationStatus;
+  final String? editorThemeId;
 
   const CustomizeCodingExperienceState({
     required this.configuration,
@@ -13,6 +14,7 @@ class CustomizeCodingExperienceState extends Equatable {
     required this.isReordering,
     required this.configurationLoaded,
     required this.modificationStatus,
+    this.editorThemeId,
   });
 
   factory CustomizeCodingExperienceState.initial() {
@@ -35,6 +37,7 @@ class CustomizeCodingExperienceState extends Equatable {
     bool? isReordering,
     bool? configurationLoaded,
     ConfigurationModificationStatus? modificationStatus,
+    String? editorThemeId,
   }) {
     return CustomizeCodingExperienceState(
       configuration: configuration ?? this.configuration,
@@ -42,16 +45,18 @@ class CustomizeCodingExperienceState extends Equatable {
       isReordering: isReordering ?? this.isReordering,
       configurationLoaded: configurationLoaded ?? this.configurationLoaded,
       modificationStatus: modificationStatus ?? this.modificationStatus,
+      editorThemeId: editorThemeId ?? this.editorThemeId,
     );
   }
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         configuration,
         isCustomizing,
         isReordering,
         configurationLoaded,
         modificationStatus,
+        editorThemeId,
       ];
 }
 

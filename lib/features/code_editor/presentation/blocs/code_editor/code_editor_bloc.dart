@@ -4,6 +4,7 @@ import 'package:codersgym/core/utils/track_analytic_mixin.dart';
 import 'package:codersgym/features/code_editor/domain/model/code_execution_result.dart';
 import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
 import 'package:codersgym/features/code_editor/domain/repository/code_editor_repository.dart';
+import 'package:codersgym/features/code_editor/domain/services/editor_theme_configuration_service.dart';
 import 'package:codersgym/features/common/data/models/analytics_events.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:equatable/equatable.dart';
@@ -16,6 +17,7 @@ part 'code_editor_state.dart';
 
 class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
   final CodeEditorRepository _codeEdtiorRepository;
+  final EditorThemeConfigurationService _editorThemeConfigurationService;
   final StorageManager _localStorageManager;
   final String _questionId;
 
@@ -28,6 +30,7 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
     this._codeEdtiorRepository,
     this._localStorageManager,
     this._questionId,
+    this._editorThemeConfigurationService,
   ) : super(CodeEditorState.initial()) {
     on<CodeEditorEvent>((event, emit) async {
       switch (event) {
@@ -259,7 +262,8 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
   ) async {
     final lastSelectedLanguage =
         await _localStorageManager.getString(_preferedCodingLanguageKey);
-
+    final editorThemeId =
+        await _editorThemeConfigurationService.loadThemeConfiguration();
     final language = lastSelectedLanguage != null
         ? ProgrammingLanguage.values.byName(lastSelectedLanguage)
         : ProgrammingLanguage.cpp;
@@ -280,6 +284,7 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
         // Used the cached code if present
         code: currentCode ?? defaultCode,
         question: event.question,
+        editorThemeId: editorThemeId,
         testCases: event.question.exampleTestCases,
       ),
     );

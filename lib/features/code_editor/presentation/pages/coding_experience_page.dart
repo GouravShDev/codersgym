@@ -33,6 +33,132 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
       appBar: AppBar(
         title: const Text("Customize Experience"),
       ),
+      endDrawer: Drawer(
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+              ),
+              child: const Text(
+                'Coding Experience Settings',
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+            ),
+            ListTile(
+                leading: const Icon(Icons.palette),
+                title: const Text("Themes"),
+                onTap: () {
+                  Navigator.pop(context);
+                  showThemePickerBottomSheet(
+                    context,
+                    (selectedThemeId) {
+                      codeExpBloc.add(
+                        CustomizeCodingExperienceOnThemeChanged(
+                          selectedThemeId.id,
+                        ),
+                      );
+                    },
+                  );
+                }
+                //   showModalBottomSheet(
+                //     context: context,
+                //     isScrollControlled: true,
+                //     builder: (BuildContext context) {
+                //       return DraggableScrollableSheet(
+                //         initialChildSize: 0.9,
+                //         minChildSize: 0.5,
+                //         maxChildSize: 0.95,
+                //         builder: (_, controller) => Container(
+                //           decoration: BoxDecoration(
+                //             color: Theme.of(context).cardColor,
+                //             borderRadius: const BorderRadius.vertical(
+                //                 top: Radius.circular(20)),
+                //           ),
+                //           child: Column(
+                //             children: [
+                //               Padding(
+                //                 padding: const EdgeInsets.all(8.0),
+                //                 child: Text('Select Theme',
+                //                     style:
+                //                         Theme.of(context).textTheme.titleLarge),
+                //               ),
+                //               Expanded(
+                //                 child: GridView.builder(
+                //                   shrinkWrap: true,
+                //                   controller: controller,
+                //                   padding: const EdgeInsets.all(10),
+                //                   gridDelegate:
+                //                       const SliverGridDelegateWithFixedCrossAxisCount(
+                //                     crossAxisCount: 3,
+                //                     childAspectRatio: 1.5,
+                //                     crossAxisSpacing: 10,
+                //                     mainAxisSpacing: 10,
+                //                   ),
+                //                   itemCount: themeMap.length,
+                //                   itemBuilder: (context, index) {
+                //                     final themeName =
+                //                         themeMap.keys.elementAt(index);
+                //                     return GestureDetector(
+                //                       onTap: () {
+                //                         // codeExpBloc.add(ThemeChangedEvent(themeName));
+                //                         Navigator.pop(context);
+                //                       },
+                //                       child: Container(
+                //                         decoration: BoxDecoration(
+                //                           color: Colors.transparent,
+                //                           borderRadius: BorderRadius.circular(10),
+                //                           border: Border.all(
+                //                             color: Theme.of(context)
+                //                                 .primaryColor
+                //                                 .withOpacity(0.5),
+                //                           ),
+                //                         ),
+                //                         child: Center(
+                //                           child: Text(
+                //                             themeName,
+                //                             textAlign: TextAlign.center,
+                //                             style: Theme.of(context)
+                //                                 .textTheme
+                //                                 .bodyMedium,
+                //                           ),
+                //                         ),
+                //                       ),
+                //                     );
+                //                   },
+                //                 ),
+                //               ),
+                //             ],
+                //           ),
+                //         ),
+                //       );
+                //     },
+                //   );
+                // },
+                ),
+            ListTile(
+              leading: const Icon(Icons.import_export),
+              title: const Text("Export Configuration"),
+              onTap: () {
+                // Implement export logic
+                Navigator.pop(context);
+                // Show export dialog or perform export action
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.file_upload),
+              title: const Text("Import Configuration"),
+              onTap: () {
+                // Implement import logic
+                Navigator.pop(context);
+                // Show import dialog or perform import action
+              },
+            ),
+          ],
+        ),
+      ),
       body: PopScope(
         canPop: false,
         onPopInvokedWithResult: (bool didPop, __) async {
@@ -40,17 +166,14 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
             return;
           }
           if (codeExpBloc.state.modificationStatus !=
-              ConfigurationModificationStatus.saved) {
+              ConfigurationModificationStatus.unsaved) {
             Navigator.pop(context);
             return;
           }
-          final shoudSaveChanges = await SaveConfigurationDialog.show(
-                  context) ??
+          final shouldGoBack = await SaveConfigurationDialog.show(context) ??
               false; // Default to staying on the page if the dialog is dismissed
-          if (shoudSaveChanges) {
-            codeExpBloc.add(
-              CustomizeCodingExperienceOnSaveConfiguration(),
-            );
+          if (!shouldGoBack) {
+            return;
           }
           if (context.mounted) {
             Navigator.pop(context);
@@ -82,6 +205,72 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
   }
 }
 
+void showThemePickerBottomSheet(
+    BuildContext context, Function(AppCodeEditorTheme) onThemeSelected) {
+  showModalBottomSheet(
+    context: context,
+    barrierColor: Colors.black.withOpacity(0.1),
+    builder: (context) {
+      return Container(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text(
+              'Choose a Theme',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Expanded(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: AppCodeEditorField.codeEditorThemes.length,
+                separatorBuilder: (context, index) => const SizedBox(height: 8),
+                itemBuilder: (context, index) {
+                  final theme = AppCodeEditorField.codeEditorThemes[index];
+                  return InkWell(
+                    onTap: () {
+                      onThemeSelected(theme);
+                      //  Navigator.pop(context);
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: theme.data['title']?.color ??
+                              Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      padding: const EdgeInsets.all(8),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            theme.id.convertToTitleCase(),
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
 class CustomizableKeyboard extends StatefulWidget {
   final CodeController codeController;
 
@@ -100,9 +289,23 @@ class _CustomizableKeyboardState extends State<CustomizableKeyboard> {
     return Column(
       children: [
         Expanded(
-          child: AppCodeEditorField(
-            codeController: widget.codeController,
-            enabled: false,
+          child: BlocBuilder<CustomizeCodingExperienceBloc,
+              CustomizeCodingExperienceState>(
+            buildWhen: (previous, current) =>
+                previous.isCustomizing != current.isCustomizing ||
+                previous.editorThemeId != current.editorThemeId,
+            builder: (context, state) {
+              // return HighlightView(
+              //   sampleCode,
+              //   language: "cpp",
+              //   theme: themeMap[state.editorThemeId]!,
+              // );
+              return AppCodeEditorField(
+                codeController: widget.codeController,
+                enabled: !state.isCustomizing,
+                editorThemeId: state.editorThemeId,
+              );
+            },
           ),
         ),
         CustomizableCodingKeys(
@@ -118,8 +321,7 @@ class CustomizableCodingKeys extends StatefulWidget {
   final CodeController codeController;
 
   @override
-  State<CustomizableCodingKeys> createState() =>
-      _CustomizableCodingKeysState();
+  State<CustomizableCodingKeys> createState() => _CustomizableCodingKeysState();
 }
 
 class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
@@ -202,7 +404,7 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
                 .toList(),
           );
         }
-      return ReorderableWrap(
+        return ReorderableWrap(
           children: codingExpState.configuration.mapIndexed((index, keyPair) {
             final key = _buildKeyButton(keyPair, index);
 
@@ -468,14 +670,19 @@ class SaveConfigurationDialog extends StatelessWidget {
           'You have unsaved changes. Do you want to save your configuration before proceeding?'),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(false), // Discard changes
+          onPressed: () => Navigator.of(context).pop(false),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(true),
           child: const Text('Discard'),
         ),
         TextButton(
           onPressed: () {
-            // Save the configuration and then close the dialog
-            // You can add your save logic here
-            Navigator.of(context).pop(true); // Save and proceed
+            context.read<CustomizeCodingExperienceBloc>().add(
+                  CustomizeCodingExperienceOnSaveConfiguration(),
+                );
+            Navigator.of(context).pop(true);
           },
           child: const Text('Save'),
         ),

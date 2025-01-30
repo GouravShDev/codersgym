@@ -338,6 +338,7 @@ class CodeEditorPageBody extends HookWidget {
                 SingleChildScrollView(
                   child: AppCodeEditorField(
                     codeController: codeController,
+                    editorThemeId: '', // TODO: add theme here
                   ),
                 ),
               ],
