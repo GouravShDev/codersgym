@@ -1,6 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:codersgym/features/code_editor/domain/model/coding_key_config.dart';
 import 'package:codersgym/features/code_editor/domain/services/coding_key_configuration_service.dart';
+import 'package:codersgym/features/code_editor/domain/services/editor_theme_configuration_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -10,13 +11,16 @@ part 'customize_coding_experience_state.dart';
 class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
     CustomizeCodingExperienceState> {
   final CodingKeyConfigurationService _service;
-  CustomizeCodingExperienceBloc(this._service)
-      : super(CustomizeCodingExperienceState.initial()) {
+  final EditorThemeConfigurationService _editorThemeService;
+  CustomizeCodingExperienceBloc(
+    this._service,
+    this._editorThemeService,
+  ) : super(CustomizeCodingExperienceState.initial()) {
     on<CustomizeCodingExperienceEvent>((event, emit) async {
       switch (event) {
         case CustomizeCodingExperienceLoadConfiguration():
           final configurationIds = await _service.loadConfiguration();
-
+          final themeId = await _editorThemeService.loadThemeConfiguration();
           final configuration = configurationIds
               ?.map((e) => CodingKeyConfig.lookupMap[e]?.call())
               .whereType<CodingKeyConfig>()
@@ -26,6 +30,7 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
             state.copyWith(
               configuration: configuration,
               configurationLoaded: true,
+              editorThemeId: themeId,
             ),
           );
 
@@ -91,6 +96,13 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
           emit(
             state.copyWith(
               modificationStatus: ConfigurationModificationStatus.saved,
+            ),
+          );
+        case CustomizeCodingExperienceOnThemeChanged():
+          // await _editorThemeService.saveThemeConfiguration(event.themeId);
+          emit(
+            state.copyWith(
+              editorThemeId: event.themeId,
             ),
           );
       }
