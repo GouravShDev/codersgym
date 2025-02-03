@@ -1,3 +1,4 @@
+import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:codersgym/core/utils/string_extension.dart';
 import 'package:codersgym/features/code_editor/domain/model/coding_key_config.dart';
@@ -389,7 +390,7 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
           previous.isReordering != current.isReordering ||
           previous.isCustomizing != current.isCustomizing ||
           previous.configurationLoaded != current.configurationLoaded ||
-          previous.configuration != current.configuration,
+          previous.keyConfiguration != current.keyConfiguration,
       builder: (context, codingExpState) {
         if (!codingExpState.configurationLoaded) {
           return const SizedBox.shrink();
@@ -397,67 +398,94 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
         if (!codingExpState.isCustomizing) {
           return CodingKeys(
             codeController: widget.codeController,
-            codingKeyIds: codingExpState.configuration
+            codingKeyIds: codingExpState.keyConfiguration
                 .map(
                   (e) => e.key.id,
                 )
                 .toList(),
           );
         }
-        return ReorderableWrap(
-          children: codingExpState.configuration.mapIndexed((index, keyPair) {
-            final key = _buildKeyButton(keyPair, index);
 
-            if (index > secondRowStartIndex &&
-                index <= secondRowEndIndex &&
-                !codingExpState.isReordering) {
-              return Container(
-                decoration: BoxDecoration(
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Theme.of(context).hintColor,
+        return Container(
+          width: 400,
+          height: 200,
+          child: AnimatedReorderableGridView(
+            items: codingExpState.keyConfiguration,
+            itemBuilder: (BuildContext context, int index) {
+              final keyPair = codingExpState.keyConfiguration[index];
+              final key = _buildKeyButton(keyPair, index);
+
+              if (index > secondRowStartIndex &&
+                  index <= secondRowEndIndex &&
+                  !codingExpState.isReordering) {
+                return Container(
+                  key: ValueKey(keyPair),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(
+                        color: Theme.of(context).hintColor,
+                      ),
                     ),
                   ),
-                ),
+                  child: key,
+                );
+              }
+              return Container(
+                key: ValueKey(keyPair),
                 child: key,
               );
-            }
-            return key;
-          }).toList(),
-          onReorder: (oldIndex, newIndex) {
-            context.read<CustomizeCodingExperienceBloc>().add(
-                  CustomizeCodingExperienceKeySwap(
-                    oldIndex: oldIndex,
-                    newIndex: newIndex,
-                  ),
-                );
-          },
-          onNoReorder: (int index) {
-            //debugPrint('${DateTime.now().toString().substring(5, 22)} reorder cancelled. index:$index');
-          },
-          onReorderStarted: (int index) {
-            _vibrateKey();
-            context.read<CustomizeCodingExperienceBloc>().add(
-                  CustomizeCodingExperienceOnReorrderingStart(),
-                );
+            },
 
-            //debugPrint('${DateTime.now().toString().substring(5, 22)} reorder started: index:$index');
-          },
-          buildDraggableFeedback: (context, constraints, child) {
-            return Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4),
-                border: Border.all(
-                  color: Theme.of(context).primaryColor.withOpacity(0.5),
-                  width: 2,
-                ),
-                color: Theme.of(context).primaryColor.withOpacity(0.1),
-              ),
-              width: constraints.maxWidth * 1.1,
-              height: constraints.maxHeight * 1.1,
-              child: child,
-            );
-          },
+            sliverGridDelegate:
+                SliverReorderableGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 4,
+              mainAxisSpacing: 4.0,
+              crossAxisSpacing: 4.0,
+            ),
+
+            // Animation configurations
+            enterTransition: [
+              FlipInX(),
+              ScaleIn(),
+            ],
+            exitTransition: [
+              SlideInLeft(),
+            ],
+            insertDuration: const Duration(milliseconds: 300),
+            removeDuration: const Duration(milliseconds: 300),
+
+            onReorder: (oldIndex, newIndex) {
+              context.read<CustomizeCodingExperienceBloc>().add(
+                    CustomizeCodingExperienceKeySwap(
+                      oldIndex: oldIndex,
+                      newIndex: newIndex,
+                    ),
+                  );
+            },
+
+            dragStartDelay: const Duration(milliseconds: 300),
+            isSameItem: (a, b) => a == b,
+            onReorderStart: (p0) {
+              _vibrateKey();
+              context.read<CustomizeCodingExperienceBloc>().add(
+                    CustomizeCodingExperienceOnReorrderingStart(),
+                  );
+            },
+
+            // dragFeedbackBuilder: (context, child) {
+            //   return Container(
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(4),
+            //       border: Border.all(
+            //         color: Theme.of(context).primaryColor.withOpacity(0.5),
+            //         width: 2,
+            //       ),
+            //       color: Theme.of(context).primaryColor.withOpacity(0.1),
+            //     ),
+            //     child: child,
+            //   );
+            // },
+          ),
         );
       },
     );

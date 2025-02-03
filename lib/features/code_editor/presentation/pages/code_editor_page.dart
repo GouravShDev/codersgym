@@ -5,7 +5,7 @@ import 'package:codersgym/features/code_editor/domain/model/code_execution_resul
 import 'package:codersgym/features/code_editor/domain/model/coding_key_config.dart';
 import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
-import 'package:codersgym/features/code_editor/presentation/blocs/coding_key_configuration/coding_key_configuration_cubit.dart';
+import 'package:codersgym/features/code_editor/presentation/blocs/coding_configuration/coding_configuration_cubit.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/code_editor_language_dropdown.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/code_editor_top_action_bar.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/code_run_button.dart';
@@ -344,7 +344,7 @@ class CodeEditorPageBody extends HookWidget {
               ],
             ),
           ),
-          BlocBuilder<CodingKeyConfigurationCubit, CodingKeyConfigurationState>(
+          BlocBuilder<CodingKeyConfigurationCubit, CodingConfigurationState>(
             builder: (context, state) {
               final configuration = switch (state) {
                 CodingKeyConfigurationLoaded() => state.keysConfiguration,
