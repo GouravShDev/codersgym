@@ -1,7 +1,7 @@
 part of 'customize_coding_experience_bloc.dart';
 
 class CustomizeCodingExperienceState extends Equatable {
-  final List<({String keyId, CodingKeyConfig key})> configuration;
+  final List<({String keyId, CodingKeyConfig key})> keyConfiguration;
   final bool isCustomizing;
   final bool isReordering;
   final bool configurationLoaded;
@@ -9,7 +9,7 @@ class CustomizeCodingExperienceState extends Equatable {
   final String? editorThemeId;
 
   const CustomizeCodingExperienceState({
-    required this.configuration,
+    required this.keyConfiguration,
     required this.isCustomizing,
     required this.isReordering,
     required this.configurationLoaded,
@@ -19,7 +19,7 @@ class CustomizeCodingExperienceState extends Equatable {
 
   factory CustomizeCodingExperienceState.initial() {
     return CustomizeCodingExperienceState(
-      configuration: CodingKeyConfig.defaultCodingKeyConfiguration
+      keyConfiguration: CodingKeyConfig.defaultCodingKeyConfiguration
           .map((e) => CodingKeyConfig.lookupMap[e]?.call())
           .whereType<CodingKeyConfig>()
           .map((config) => (keyId: UniqueKey().toString(), key: config))
@@ -40,7 +40,7 @@ class CustomizeCodingExperienceState extends Equatable {
     String? editorThemeId,
   }) {
     return CustomizeCodingExperienceState(
-      configuration: configuration ?? this.configuration,
+      keyConfiguration: configuration ?? this.keyConfiguration,
       isCustomizing: isCustomizing ?? this.isCustomizing,
       isReordering: isReordering ?? this.isReordering,
       configurationLoaded: configurationLoaded ?? this.configurationLoaded,
@@ -51,7 +51,7 @@ class CustomizeCodingExperienceState extends Equatable {
 
   @override
   List<Object?> get props => [
-        configuration,
+        keyConfiguration,
         isCustomizing,
         isReordering,
         configurationLoaded,

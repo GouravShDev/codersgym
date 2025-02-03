@@ -27,37 +27,7 @@ class AppCodeEditorField extends StatelessWidget {
   final String? editorThemeId;
   final bool? enabled;
 
-  // List of themes using the AppCodeEditorTheme model
-  static List<AppCodeEditorTheme> codeEditorThemes = [
-    AppCodeEditorTheme(
-      id: 'atom-one-dark',
-      data: atomOneDarkTheme,
-    ),
-    AppCodeEditorTheme(
-      id: 'darcula',
-      data: darculaTheme,
-    ),
-    AppCodeEditorTheme(
-      id: 'dracula',
-      data: draculaTheme,
-    ),
-    AppCodeEditorTheme(
-      id: 'monokai',
-      data: monokaiTheme,
-    ),
-    AppCodeEditorTheme(
-      id: 'nord',
-      data: nordTheme,
-    ),
-    AppCodeEditorTheme(
-      id: 'night-owl',
-      data: nightOwlTheme,
-    ),
-    AppCodeEditorTheme(
-      id: 'solarized-dark',
-      data: solarizedDarkTheme,
-    ),
-  ];
+
 
   @override
   Widget build(BuildContext context) {
@@ -104,12 +74,3 @@ class AppCodeEditorField extends StatelessWidget {
   }
 }
 
-class AppCodeEditorTheme {
-  final String id;
-  final Map<String, TextStyle> data;
-
-  AppCodeEditorTheme({
-    required this.id,
-    required this.data,
-  });
-}

@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:codersgym/features/code_editor/domain/model/coding_key_config.dart';
-import 'package:codersgym/features/code_editor/domain/services/coding_key_configuration_service.dart';
+import 'package:codersgym/features/code_editor/domain/services/coding_configuration_service.dart';
 import 'package:codersgym/features/code_editor/domain/services/editor_theme_configuration_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -10,19 +10,18 @@ part 'customize_coding_experience_state.dart';
 
 class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
     CustomizeCodingExperienceState> {
-  final CodingKeyConfigurationService _service;
-  final EditorThemeConfigurationService _editorThemeService;
+  final CodingConfigurationService _service;
   CustomizeCodingExperienceBloc(
     this._service,
-    this._editorThemeService,
   ) : super(CustomizeCodingExperienceState.initial()) {
     on<CustomizeCodingExperienceEvent>((event, emit) async {
       switch (event) {
         case CustomizeCodingExperienceLoadConfiguration():
-          final configurationIds = await _service.loadConfiguration();
-          final themeId = await _editorThemeService.loadThemeConfiguration();
+          final configuaration = await _service.loadConfiguration();
+          final configurationIds = configuaration.keysConfigs;
+          final themeId = configuaration.themeId;
           final configuration = configurationIds
-              ?.map((e) => CodingKeyConfig.lookupMap[e]?.call())
+              .map((e) => CodingKeyConfig.lookupMap[e]?.call())
               .whereType<CodingKeyConfig>()
               .map((config) => (keyId: UniqueKey().toString(), key: config))
               .toList();
@@ -37,7 +36,8 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
         case CustomizeCodingExperienceKeySwap():
           final currentConfig =
               List<({CodingKeyConfig key, String keyId})>.from(
-                  state.configuration);
+            state.keyConfiguration,
+          );
           final item = currentConfig.removeAt(event.oldIndex);
           currentConfig.insert(event.newIndex, item);
           emit(
@@ -68,7 +68,7 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
         case CustomizeCodingExperienceOnReplaceKeyConfig():
           final currentConfig =
               List<({CodingKeyConfig key, String keyId})>.from(
-            state.configuration,
+            state.keyConfiguration,
           );
           final replacedKey =
               CodingKeyConfig.lookupMap[event.replaceKeyId]?.call();
@@ -91,7 +91,7 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
             ),
           );
           await _service.saveConfiguration(
-            state.configuration.map((e) => e.key.id).toList(),
+            state.keyConfiguration.map((e) => e.key.id).toList(),
           );
           emit(
             state.copyWith(
