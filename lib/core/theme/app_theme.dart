@@ -1,34 +1,59 @@
 import 'package:flutter/material.dart';
 
+const Color kPrimaryColor = Color(0xFFFF9E0F); // LeetCode-like orange
+const Color kSecondaryColor = Color(0xFF00FFB3);
+const Color kSurfaceColor = Color(0xFF2A2A2A);
+const Color kErrorColor = Color(0xffF53836);
+const Color kSuccessColor = Colors.green;
+const Color kSuccessAccentColor = Color(0xff1ABBBB);
+const Color kWarningColor = Color(0xffFEB600);
+const Color kBackgroundColor = Color(0xFF1C1C1C);
+const Color kTextColor = Color(0xFFD4D4D4);
+const Color kHintColor = Color(0xFFB3B3B3);
+const Color kBorderColor = Color(0xFF707070);
+const Color kInputFillColor = Color(0xFF2E2E2E);
+const Color kAppBarColor = Color(0xFF2A2A2A);
+
 final ThemeData leetcodeTheme = ThemeData(
   brightness: Brightness.dark,
   fontFamily: 'Lato',
-  primaryColor: const Color.fromRGBO(255, 158, 15, 1), // LeetCode-like orange
-  scaffoldBackgroundColor: const Color(0xFF1C1C1C), // Dark background
+  primaryColor: kPrimaryColor,
+  scaffoldBackgroundColor: kBackgroundColor,
 
   colorScheme: const ColorScheme.dark(
-    primary: Color(0xFFFF9E0F), // Primary color for buttons and main accents
-    secondary: Color(0xFF00FFB3),
-    surface: Color(0xFF2A2A2A),
-    error: Color(0xffF53836),
+    primary: kPrimaryColor,
+    secondary: kSecondaryColor,
+    surface: kSurfaceColor,
+    error: kErrorColor,
   ),
+
   snackBarTheme: const SnackBarThemeData(
-    backgroundColor: Color(0xFFD4D4D4),
+    backgroundColor: kTextColor,
     contentTextStyle: TextStyle(
-      color: Color(
-        0xFF1C1C1C,
-      ),
+      color: kBackgroundColor,
       fontSize: 18,
     ),
   ),
+
   appBarTheme: const AppBarTheme(
-    color: Color(0xFF2A2A2A), // Darker shade for app bar
+    color: kAppBarColor,
     elevation: 0,
     titleTextStyle: TextStyle(
-      color: Color(0xFFD4D4D4),
+      color: kTextColor,
       fontSize: 16,
     ),
   ),
+
+  chipTheme: ChipThemeData(
+    backgroundColor: kSurfaceColor,
+    disabledColor: Colors.grey,
+    selectedColor: kPrimaryColor,
+    secondarySelectedColor: kSecondaryColor,
+    labelStyle: const TextStyle(color: kTextColor, fontSize: 12),
+    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+  ),
+
   scrollbarTheme: ScrollbarThemeData(
     interactive: true,
     thumbVisibility: WidgetStateProperty.all(true),
@@ -36,23 +61,23 @@ final ThemeData leetcodeTheme = ThemeData(
     thickness: WidgetStateProperty.all(6),
     minThumbLength: 30,
   ),
+
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
-    backgroundColor: Colors.grey[850], // Dark background for nav bar
-    selectedItemColor:
-        const Color(0xFFFF9E0F), // Accent color for selected item
-    unselectedItemColor: Colors.grey[400], // Subtle grey for unselected items
+    backgroundColor: Colors.grey[850],
+    selectedItemColor: kPrimaryColor,
+    unselectedItemColor: Colors.grey[400],
     showSelectedLabels: true,
     showUnselectedLabels: false,
     selectedLabelStyle: const TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.bold,
-      color: Color(0xFFFF9E0F),
+      color: kPrimaryColor,
     ),
     unselectedLabelStyle: TextStyle(
       fontSize: 12,
       color: Colors.grey[400],
     ),
-    type: BottomNavigationBarType.shifting, // Makes all items appear equally
+    type: BottomNavigationBarType.shifting,
   ),
 
   textTheme: const TextTheme(
@@ -62,59 +87,51 @@ final ThemeData leetcodeTheme = ThemeData(
       fontWeight: FontWeight.bold,
     ),
     bodyLarge: TextStyle(
-      color: Color(0xFFD4D4D4),
+      color: kTextColor,
       fontSize: 16,
-    ), // Light gray for readability
+    ),
     bodyMedium: TextStyle(
-      color: Color(0xFFD4D4D4),
+      color: kTextColor,
       fontSize: 14,
     ),
   ),
+
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
-      iconColor: const Color(0xFFFF9E0F),
+      iconColor: kPrimaryColor,
     ),
   ),
+
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFFFF9E0F), // LeetCode orange
-      foregroundColor: const Color(0xFF2A2A2A),
-      iconColor: const Color(0xFF2A2A2A), // Text color
+      backgroundColor: kPrimaryColor,
+      foregroundColor: kSurfaceColor,
+      iconColor: kSurfaceColor,
       textStyle: const TextStyle(fontWeight: FontWeight.bold),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     ),
+    
   ),
 
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
-    fillColor: const Color(0xFF2E2E2E), // Dark background for input fields
-    hintStyle:
-        const TextStyle(color: Color(0xFFB3B3B3)), // Light gray hint text
+    fillColor: kInputFillColor,
+    hintStyle: const TextStyle(color: kHintColor),
     border: OutlineInputBorder(
-      borderSide: const BorderSide(color: Color(0xFFFF9E0F)),
+      borderSide: const BorderSide(color: kPrimaryColor),
       borderRadius: BorderRadius.circular(8),
     ),
     enabledBorder: const OutlineInputBorder(
-      borderSide:
-          BorderSide(color: Color(0xFF707070)), // Lighter border for enabled
+      borderSide: BorderSide(color: kBorderColor),
     ),
     focusedBorder: const OutlineInputBorder(
-      borderSide:
-          BorderSide(color: Color(0xFFFF9E0F), width: 2), // Orange on focus
+      borderSide: BorderSide(color: kPrimaryColor, width: 2),
     ),
   ),
 );
 
 extension ColorSchemeExt on ColorScheme {
-  Color get successColorAccent {
-    return const Color(0xff1ABBBB);
-  }
-
-  Color get successColor {
-    return Colors.green;
-  }
-
-  Color get warningColor {
-    return const Color(0xffFEB600);
-  }
+  Color get successColorAccent => kSuccessAccentColor;
+  Color get successColor => kSuccessColor;
+  Color get warningColor => kWarningColor;
 }
