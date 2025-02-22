@@ -246,6 +246,8 @@ class TagSelectionBottomSheetState extends State<TagSelectionBottomSheet>
           TabBar(
             controller: _tabController,
             labelStyle: theme.textTheme.labelMedium,
+            splashBorderRadius:
+                const BorderRadius.vertical(top: const Radius.circular(20)),
             dividerHeight: 0,
             tabs: const [
               Tab(text: 'Topics'),
