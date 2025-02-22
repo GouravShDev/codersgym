@@ -6,6 +6,7 @@ import 'package:codersgym/features/common/widgets/app_pagination_list.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:codersgym/features/question/presentation/blocs/community_solution_filter/community_solution_filter_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/community_solutions/community_solutions_bloc.dart';
+import 'package:codersgym/features/question/presentation/widgets/no_solution_state_widget.dart';
 import 'package:codersgym/features/question/presentation/widgets/solution_filter_search_bar.dart';
 import 'package:codersgym/features/question/presentation/widgets/solution_post_tile.dart';
 import 'package:flutter/material.dart';
@@ -68,8 +69,10 @@ class QuestionCommunitySolution extends HookWidget {
               builder: (context, state) {
                 if (state.isTagsLoading) return const SizedBox.shrink();
                 return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                  padding: const EdgeInsets.symmetric(horizontal: 4)
+                      .add(const EdgeInsets.only(
+                    top: 8,
+                  )),
                   child: SolutionFilterSearchBar(
                     initialSearchQuery: state.searchQuery,
                     initialSortOption: state.sortOption,
@@ -104,21 +107,32 @@ class QuestionCommunitySolution extends HookWidget {
                 );
               }
               if (state.error != null) {
-                return AppErrorWidget(
-                  onRetry: () {
-                    communityFilterCubit.fetchSolutionsTags(question);
-                    communitySolutionCubit.add(
-                      FetchCommunitySolutionListEvent(
-                        questionTitleSlug: question.titleSlug ?? '',
-                        orderBy: communityFilterCubit.state.sortOption,
-                        searchQuery: communityFilterCubit.state.searchQuery,
-                        languageTags:
-                            communityFilterCubit.state.selectedLanguageTags,
-                        topicTags: communityFilterCubit.state.selectedTopicTags,
-                        skip: 0,
-                      ),
-                    );
-                  },
+                return Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: AppErrorWidget(
+                    onRetry: () {
+                      communityFilterCubit.fetchSolutionsTags(question);
+                      communitySolutionCubit.add(
+                        FetchCommunitySolutionListEvent(
+                          questionTitleSlug: question.titleSlug ?? '',
+                          orderBy: communityFilterCubit.state.sortOption,
+                          searchQuery: communityFilterCubit.state.searchQuery,
+                          languageTags:
+                              communityFilterCubit.state.selectedLanguageTags,
+                          topicTags:
+                              communityFilterCubit.state.selectedTopicTags,
+                          skip: 0,
+                        ),
+                      );
+                    },
+                  ),
+                );
+              }
+              if (solutions.isEmpty) {
+                return const Expanded(
+                  child: Center(
+                    child: NoSolutionStateWidget(),
+                  ),
                 );
               }
               return Expanded(

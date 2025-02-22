@@ -40,9 +40,7 @@ class CommunitySolutionRepositoryImp implements CommunitySolutionRepository {
                 (e) => e.toCommunitySolutionPostDetail(),
               )
               .toList();
-      if (communitySolutionsList?.isEmpty ?? true) {
-        return Failure(Exception("No community solution found"));
-      }
+
       return Success((
         solutionList: communitySolutionsList ?? [],
         totalSolutionCount: communitySolutions.questionSolutions?.totalNum ?? 0

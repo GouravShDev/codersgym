@@ -19,16 +19,18 @@ class CommunitySolutionTagsSelectionButton extends HookWidget {
   final Set<SolutionTag> knowledgeTags;
   final Set<SolutionTag> languageTags;
 
-  Future<void> _showTagSelectionDialog(
+  Future<void> _showTagSelectionSheet(
     BuildContext context,
     ValueNotifier<Set<SolutionTag>> selectedLanguageTags,
     ValueNotifier<Set<SolutionTag>> selectedKnowledgeTags,
   ) async {
-    final result = await showDialog<
+    final result = await showModalBottomSheet<
         ({Set<SolutionTag> languageTags, Set<SolutionTag> knowledgeTags})>(
       context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return TagSelectionDialog(
+        return TagSelectionBottomSheet(
           knowledgeTags: knowledgeTags,
           languageTags: languageTags,
           selectedLanguageTags: selectedLanguageTags.value,
@@ -54,7 +56,7 @@ class CommunitySolutionTagsSelectionButton extends HookWidget {
         selectedKnowledgeTags.value.length + selectedLanguageTags.value.length;
 
     return InkWell(
-      onTap: () => _showTagSelectionDialog(
+      onTap: () => _showTagSelectionSheet(
         context,
         selectedLanguageTags,
         selectedKnowledgeTags,
@@ -76,13 +78,13 @@ class CommunitySolutionTagsSelectionButton extends HookWidget {
   }
 }
 
-class TagSelectionDialog extends StatefulWidget {
+class TagSelectionBottomSheet extends StatefulWidget {
   final Set<SolutionTag> knowledgeTags;
   final Set<SolutionTag> languageTags;
   final Set<SolutionTag> selectedLanguageTags;
   final Set<SolutionTag> selectedKnowledgeTags;
 
-  const TagSelectionDialog({
+  const TagSelectionBottomSheet({
     super.key,
     required this.knowledgeTags,
     required this.languageTags,
@@ -91,66 +93,106 @@ class TagSelectionDialog extends StatefulWidget {
   });
 
   @override
-  TagSelectionDialogState createState() => TagSelectionDialogState();
+  TagSelectionBottomSheetState createState() => TagSelectionBottomSheetState();
 }
 
-class TagSelectionDialogState extends State<TagSelectionDialog> {
+class TagSelectionBottomSheetState extends State<TagSelectionBottomSheet>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
   late Set<SolutionTag> _tempSelectedLanguageTags;
   late Set<SolutionTag> _tempSelectedKnowledgeTags;
+  late TextEditingController _searchController;
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
+    _searchController = TextEditingController();
     _tempSelectedLanguageTags =
         Set<SolutionTag>.from(widget.selectedLanguageTags);
     _tempSelectedKnowledgeTags =
         Set<SolutionTag>.from(widget.selectedKnowledgeTags);
   }
 
-  Widget _buildTagSection(String title, Set<SolutionTag> tags,
-      Set<SolutionTag> selectedTags, Function(SolutionTag) onTagToggle) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 8.0, bottom: 8.0),
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+  @override
+  void dispose() {
+    _tabController.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  List<SolutionTag> _filterTags(Set<SolutionTag> tags) {
+    if (_searchQuery.isEmpty) return tags.toList();
+    return tags
+        .where((tag) =>
+            tag.name?.toLowerCase().contains(_searchQuery.toLowerCase()) ??
+            false)
+        .toList();
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: SizedBox(
+        height: 40,
+        child: TextField(
+          controller: _searchController,
+          onChanged: (value) {
+            setState(() {
+              _searchQuery = value;
+            });
+          },
+          decoration: InputDecoration(
+            hintText: 'Search tags...',
+            prefixIcon: const Icon(Icons.search, size: 20),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(8),
+              borderSide: BorderSide(
+                color: Theme.of(context).dividerColor,
+              ),
             ),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 12),
           ),
+          style: Theme.of(context).textTheme.bodySmall,
         ),
-        SizedBox(
-          width: double.maxFinite,
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: tags
-                .map((tag) =>
-                    _buildTagChip(tag, selectedTags.contains(tag), onTagToggle))
-                .toList(),
-          ),
-        ),
-      ],
+      ),
+    );
+  }
+
+  Widget _buildTagsGrid(List<SolutionTag> tags, Set<SolutionTag> selectedTags,
+      Function(SolutionTag) onToggle) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Wrap(
+        spacing: 6,
+        runSpacing: 6,
+        children: tags
+            .map((tag) =>
+                _buildTagChip(tag, selectedTags.contains(tag), onToggle))
+            .toList(),
+      ),
     );
   }
 
   Widget _buildTagChip(
       SolutionTag tag, bool isSelected, Function(SolutionTag) onToggle) {
-    return GestureDetector(
+    final theme = Theme.of(context);
+
+    return InkWell(
       onTap: () => onToggle(tag),
+      borderRadius: BorderRadius.circular(4),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        height: 28,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context).primaryColor
-              : Theme.of(context).focusColor,
-          borderRadius: BorderRadius.circular(8.0),
+              ? theme.primaryColor.withOpacity(0.1)
+              : theme.cardColor,
+          borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: Theme.of(context).cardColor,
-            width: 1.0,
+            color: isSelected ? theme.primaryColor : theme.dividerColor,
+            width: 1,
           ),
         ),
         child: Row(
@@ -158,28 +200,137 @@ class TagSelectionDialogState extends State<TagSelectionDialog> {
           children: [
             Text(
               tag.name ?? '',
-              style: TextStyle(
-                color: isSelected ? Colors.black : Colors.white,
-                fontWeight: FontWeight.w600,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: isSelected
+                    ? theme.primaryColor
+                    : theme.textTheme.bodySmall?.color,
+                fontSize: 12,
               ),
             ),
-            const SizedBox(width: 6),
+            const SizedBox(width: 4),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
               decoration: BoxDecoration(
-                color: isSelected ? Colors.black26 : Colors.white24,
-                borderRadius: BorderRadius.circular(12),
+                color: isSelected
+                    ? theme.primaryColor
+                    : theme.dividerColor.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
                 tag.count.toString(),
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isSelected ? Colors.black : Colors.white,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  fontSize: 10,
+                  color: isSelected ? theme.colorScheme.onPrimary : null,
                 ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.scaffoldBackgroundColor,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      padding: EdgeInsets.only(bottom: bottomPadding),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Handle bar
+          Center(
+            child: Container(
+              margin: const EdgeInsets.symmetric(vertical: 8),
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: theme.dividerColor,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          // Header
+          TabBar(
+            controller: _tabController,
+            labelStyle: theme.textTheme.labelMedium,
+            tabs: const [
+              Tab(text: 'Topics'),
+              Tab(text: 'Languages'),
+            ],
+          ),
+          const SizedBox(
+            height: 8,
+          ),
+          _buildSearchBar(),
+          const SizedBox(
+            height: 8,
+          ),
+          Flexible(
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.5,
+              ),
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  SingleChildScrollView(
+                    child: _buildTagsGrid(
+                      _filterTags(widget.knowledgeTags),
+                      _tempSelectedKnowledgeTags,
+                      _toggleKnowledgeTag,
+                    ),
+                  ),
+                  SingleChildScrollView(
+                    child: _buildTagsGrid(
+                      _filterTags(widget.languageTags),
+                      _tempSelectedLanguageTags,
+                      _toggleLanguageTag,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+            child: SizedBox(
+              width: double.infinity,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                  const SizedBox(
+                    width: 16,
+                  ),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.of(context).pop(
+                        (
+                          languageTags: _tempSelectedLanguageTags,
+                          knowledgeTags: _tempSelectedKnowledgeTags,
+                        ),
+                      ),
+                      child: const Text('Apply'),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -202,63 +353,5 @@ class TagSelectionDialogState extends State<TagSelectionDialog> {
         _tempSelectedLanguageTags.add(tag);
       }
     });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      titlePadding: EdgeInsets.zero,
-      title: Padding(
-        padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-        child:
-            Text('Select Tags', style: Theme.of(context).textTheme.titleLarge),
-      ),
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 12,
-        vertical: 16,
-      ),
-      content: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxHeight: MediaQuery.of(context).size.height * 0.7,
-          maxWidth: MediaQuery.of(context).size.width * 0.9,
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTagSection(
-                'Knowledge Areas',
-                widget.knowledgeTags,
-                _tempSelectedKnowledgeTags,
-                _toggleKnowledgeTag,
-              ),
-              const Divider(height: 32, thickness: 1),
-              _buildTagSection(
-                'Programming Languages',
-                widget.languageTags,
-                _tempSelectedLanguageTags,
-                _toggleLanguageTag,
-              ),
-            ],
-          ),
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(
-            (
-              languageTags: _tempSelectedLanguageTags,
-              knowledgeTags: _tempSelectedKnowledgeTags,
-            ),
-          ),
-          child: const Text('Apply'),
-        ),
-      ],
-    );
   }
 }
