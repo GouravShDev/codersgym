@@ -2,7 +2,6 @@ import 'package:codersgym/core/services/firebase_push_notification_service.dart'
 import 'package:codersgym/core/services/local_notification_service.dart';
 import 'package:codersgym/core/utils/custom_scroll_physics.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
-import 'package:codersgym/features/profile/presentation/blocs/user_profile/user_profile_cubit.dart';
 import 'package:codersgym/features/settings/presentation/blocs/app_info/app_info_cubit.dart';
 import 'package:codersgym/gen/assets.gen.dart';
 import 'package:flutter/material.dart';

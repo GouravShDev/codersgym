@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:codersgym/core/services/analytics.dart';
 import 'package:codersgym/core/theme/app_theme.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
-import 'package:codersgym/features/code_editor/presentation/pages/code_editor_page.dart';
 import 'package:codersgym/features/common/data/models/analytics_events.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:flutter/material.dart';
@@ -99,7 +98,7 @@ class TestCaseManager extends HookWidget {
                                           .successColor
                                       : Theme.of(context).colorScheme.error,
                                 ),
-                                SizedBox(width: 4),
+                                const SizedBox(width: 4),
                               ],
                               Text(
                                 "Case ${index + 1}",
@@ -224,11 +223,11 @@ class TestCaseManager extends HookWidget {
             );
           },
         ),
-        SizedBox(
+        const SizedBox(
           height: 12,
         ),
         if (stdOutput != null && stdOutput!.isNotEmpty) ...[
-          Text("StdOutput"),
+          const Text("StdOutput"),
           const SizedBox(
             height: 8,
           ),
@@ -245,7 +244,7 @@ class TestCaseManager extends HookWidget {
               focusedBorder: focusInputBorder,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 12,
           ),
         ],
@@ -253,7 +252,7 @@ class TestCaseManager extends HookWidget {
             expectedOutput != null &&
             codeOutput!.isNotEmpty &&
             expectedOutput!.isNotEmpty) ...[
-          Text("Output"),
+          const Text("Output"),
           const SizedBox(
             height: 8,
           ),
@@ -278,10 +277,10 @@ class TestCaseManager extends HookWidget {
               focusedBorder: focusInputBorder,
             ),
           ),
-          SizedBox(
+          const SizedBox(
             height: 8,
           ),
-          Text("Expected"),
+          const Text("Expected"),
           const SizedBox(
             height: 8,
           ),

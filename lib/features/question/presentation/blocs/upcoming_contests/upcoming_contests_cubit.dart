@@ -1,5 +1,4 @@
 import 'package:codersgym/core/api/api_state.dart';
-import 'package:codersgym/core/utils/bloc_extension.dart';
 import 'package:codersgym/features/question/domain/model/contest.dart';
 import 'package:codersgym/features/question/domain/repository/question_repository.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -11,12 +10,14 @@ class UpcomingContestsCubit
 
   Future<void> getUpcomingContest() async {
     final result = await _questionRepository.getUpcomingContests();
+   
+    if (isClosed) return;
     result.when(
       onSuccess: (contests) {
-        safeEmit(ApiLoaded(contests));
+        emit(ApiLoaded(contests));
       },
       onFailure: (exception) {
-        safeEmit(ApiError(exception));
+        emit(ApiError(exception));
       },
     );
   }

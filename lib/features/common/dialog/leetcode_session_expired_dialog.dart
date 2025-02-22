@@ -1,11 +1,9 @@
 import 'package:auto_route/auto_route.dart';
-import 'package:codersgym/app.dart';
 import 'package:codersgym/core/routes/app_router.gr.dart';
-import 'package:codersgym/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class LeetcodeSessionExpiredDialog extends StatelessWidget {
-  const LeetcodeSessionExpiredDialog({Key? key}) : super(key: key);
+  const LeetcodeSessionExpiredDialog({super.key});
 
   static void show(BuildContext context) {
     showDialog(

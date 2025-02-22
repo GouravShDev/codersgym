@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:codersgym/core/utils/app_constants.dart';
-import 'package:codersgym/core/utils/bloc_extension.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -31,20 +30,23 @@ class OnlineUserCountCubit extends Cubit<OnlineUserCountState> {
           _handleWebSocketMessage(message);
         },
         onError: (error) {
-          safeEmit(OnlineUserCountConnectionFailedState());
+          if (isClosed) return;
+          emit(OnlineUserCountConnectionFailedState());
         },
       );
     } catch (e) {
-      safeEmit(OnlineUserCountConnectionFailedState());
+      if (isClosed) return;
+      emit(OnlineUserCountConnectionFailedState());
     }
   }
 
   void _handleWebSocketMessage(dynamic message) {
+    if (isClosed) return;
     try {
       final userCount = int.tryParse(message);
       // Check if the message contains user count information
       if (userCount != null) {
-        safeEmit(OnlineUserCountConnectedState(userCount: userCount));
+        emit(OnlineUserCountConnectedState(userCount: userCount));
       }
     } catch (e) {
       // Ignore malformed messages

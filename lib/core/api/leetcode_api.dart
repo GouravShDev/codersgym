@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:codersgym/core/network/network_service.dart';
@@ -9,7 +7,6 @@ import 'package:codersgym/core/utils/storage/cookie_encoder.dart';
 import 'package:codersgym/core/utils/storage/storage_manager.dart';
 import 'package:codersgym/features/auth/data/service/auth_service.dart';
 import 'package:codersgym/features/common/widgets/app_error_notifier.dart';
-import 'package:codersgym/injection.dart';
 import 'package:exponential_back_off/exponential_back_off.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:codersgym/core/error/exception.dart';

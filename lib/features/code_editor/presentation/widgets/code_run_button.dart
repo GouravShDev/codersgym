@@ -1,11 +1,8 @@
 import 'dart:ui';
 
-import 'package:auto_route/auto_route.dart';
-import 'package:codersgym/core/routes/app_router.gr.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/leetcode_login_dialog.dart';
-import 'package:codersgym/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,7 +52,7 @@ class CodeRunButton extends StatelessWidget {
                             sigmaX: 10.0, sigmaY: 10.0), // Blur intensity
                         child: OutlinedButton.icon(
                           onPressed: () => LeetcodeLoginDialog.show(context),
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.lock,
                           ), // Change to lock icon for clarity
                           label: const Text('Locked'),

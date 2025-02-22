@@ -1,6 +1,4 @@
 
-import 'package:bloc/bloc.dart';
-import 'package:codersgym/core/utils/bloc_extension.dart';
 import 'package:codersgym/features/question/domain/model/problem_sort_option.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:codersgym/features/question/domain/repository/question_repository.dart';
@@ -52,7 +50,7 @@ class QuestionArchieveBloc
     if (state.isLoading) {
       return; // Prevent mutliple call resulting in duplicate items
     }
-    safeEmit(
+    emit(
       state.copyWith(
         isLoading: true,
       ),
@@ -76,6 +74,7 @@ class QuestionArchieveBloc
       ),
     );
 
+    if (isClosed) return;
     result.when(
       onSuccess: (newQuestionList) {
         List<Question> currentQuestionList =
@@ -92,7 +91,7 @@ class QuestionArchieveBloc
         // Update currentSkip
         currentSkip = updatedList.length;
 
-        safeEmit(
+        emit(
           state.copyWith(
             questions: updatedList,
             moreQuestionAvailable: moreQuestionAvailable,
@@ -101,7 +100,7 @@ class QuestionArchieveBloc
         );
       },
       onFailure: (exception) {
-        safeEmit(
+        emit(
           state.copyWith(
             error: exception,
             isLoading: false,

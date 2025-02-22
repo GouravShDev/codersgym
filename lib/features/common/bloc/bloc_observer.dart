@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:codersgym/core/services/analytics.dart';
 import 'package:codersgym/core/utils/track_analytic_mixin.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 /// A comprehensive BlocObserver utility for tracking and logging Bloc events and state changes

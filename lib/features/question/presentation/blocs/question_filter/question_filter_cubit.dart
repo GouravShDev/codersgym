@@ -1,5 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:codersgym/core/utils/bloc_extension.dart';
 import 'package:codersgym/features/question/domain/model/problem_sort_option.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:equatable/equatable.dart';
@@ -11,7 +10,7 @@ class QuestionFilterCubit extends Cubit<QuestionFilterState> {
 
   void setDifficulty(String? difficulty) {
     if (difficulty == null) {
-        safeEmit(
+        emit(
         QuestionFilterState(
           sortOption: state.sortOption,
           topicTags: state.topicTags,
@@ -19,7 +18,7 @@ class QuestionFilterCubit extends Cubit<QuestionFilterState> {
       );
       return;
     }
-    safeEmit(
+    emit(
       state.copyWith(
         difficulty: difficulty,
       ),
@@ -27,7 +26,7 @@ class QuestionFilterCubit extends Cubit<QuestionFilterState> {
   }
 
   void setTopicTags(Set<TopicTags> tags) {
-    safeEmit(
+    emit(
       state.copyWith(
         topicTags: tags,
       ),
@@ -36,7 +35,7 @@ class QuestionFilterCubit extends Cubit<QuestionFilterState> {
 
   void setSortOption(ProblemSortOption? sortOption) {
     if (sortOption == null) {
-      safeEmit(
+      emit(
         QuestionFilterState(
           difficulty: state.difficulty,
           topicTags: state.topicTags,
@@ -44,7 +43,7 @@ class QuestionFilterCubit extends Cubit<QuestionFilterState> {
       );
       return;
     }
-    safeEmit(
+    emit(
       state.copyWith(
         sortOption: sortOption,
       ),
@@ -52,7 +51,7 @@ class QuestionFilterCubit extends Cubit<QuestionFilterState> {
   }
 
   void reset() {
-    safeEmit(
+    emit(
       const QuestionFilterState(),
     );
   }
