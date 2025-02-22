@@ -28,7 +28,6 @@ class CommunitySolutionTagsSelectionButton extends HookWidget {
         ({Set<SolutionTag> languageTags, Set<SolutionTag> knowledgeTags})>(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return TagSelectionBottomSheet(
           knowledgeTags: knowledgeTags,
@@ -236,30 +235,18 @@ class TagSelectionBottomSheetState extends State<TagSelectionBottomSheet>
     final bottomPadding = MediaQuery.of(context).viewInsets.bottom;
 
     return Container(
-      decoration: BoxDecoration(
-        color: theme.scaffoldBackgroundColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
       padding: EdgeInsets.only(bottom: bottomPadding),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Handle bar
-          Center(
-            child: Container(
-              margin: const EdgeInsets.symmetric(vertical: 8),
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: theme.dividerColor,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
           // Header
           TabBar(
             controller: _tabController,
             labelStyle: theme.textTheme.labelMedium,
+            dividerHeight: 0,
             tabs: const [
               Tab(text: 'Topics'),
               Tab(text: 'Languages'),
@@ -299,7 +286,7 @@ class TagSelectionBottomSheetState extends State<TagSelectionBottomSheet>
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(16, 8, 16, 8),
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
             child: SizedBox(
               width: double.infinity,
               child: Row(

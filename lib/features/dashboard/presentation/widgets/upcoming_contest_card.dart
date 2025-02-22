@@ -176,7 +176,7 @@ class UpcomingContestCard extends HookWidget {
                                   builder: (context) => AlertDialog(
                                     title: const Text('Cancel Reminder'),
                                     content: Text(
-                                        'Are you sure you want to cancel the reminder for "${contest.title}"?'),
+                                        'Are you sure you want to cancel the reminder for ${contest.title}?'),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>

@@ -102,8 +102,10 @@ class QuestionCommunitySolution extends HookWidget {
             builder: (context, state) {
               final solutions = state.solutions;
               if (state.isLoading && solutions.isEmpty) {
-                return const Center(
-                  child: CircularProgressIndicator(),
+                return const Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
                 );
               }
               if (state.error != null) {
@@ -128,7 +130,7 @@ class QuestionCommunitySolution extends HookWidget {
                   ),
                 );
               }
-              if (solutions.isEmpty) {
+              if (solutions.isEmpty && !state.moreSolutionsAvailable) {
                 return const Expanded(
                   child: Center(
                     child: NoSolutionStateWidget(),
