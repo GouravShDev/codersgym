@@ -71,7 +71,7 @@ class QuestionCommunitySolution extends HookWidget {
                 return Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 4)
                       .add(const EdgeInsets.only(
-                    top: 8,
+                    top: 4,
                   )),
                   child: SolutionFilterSearchBar(
                     initialSearchQuery: state.searchQuery,
@@ -97,6 +97,9 @@ class QuestionCommunitySolution extends HookWidget {
                 );
               },
             ),
+          ),
+          const SizedBox(
+            height: 8,
           ),
           BlocBuilder<CommunitySolutionsBloc, CommunitySolutionsState>(
             builder: (context, state) {
