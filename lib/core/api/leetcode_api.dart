@@ -122,19 +122,28 @@ class LeetcodeApi {
     required String questionId,
     required int skip,
     required orderBy,
+    required String query,
+    required List<String> languageTags,
+    required List<String> topicTags,
   }) async {
     final request = LeetCodeRequests.getCommunitySolutions(
       first: 15,
       orderBy: orderBy,
-      query: '',
+      query: query,
       questionTitleSlug: questionId,
       skip: skip,
+      languageTags: languageTags,
+      topicTags: topicTags,
     );
     return _executeGraphQLQuery(request);
   }
 
   Future<Map<String, dynamic>?> getCommunitySolutionDetail(int topicId) async {
     final request = LeetCodeRequests.getCommunitySolutionDetails(topicId);
+    return _executeGraphQLQuery(request);
+  }
+  Future<Map<String, dynamic>?> getCommunitySolutionsTag(String questionId) async {
+    final request = LeetCodeRequests.getCommunitySolutiongsTags(questionId);
     return _executeGraphQLQuery(request);
   }
 
@@ -192,6 +201,13 @@ class LeetcodeApi {
               if (result.exception?.linkException?.originalException
                   is SocketException) {
                 _errorNotifier.notify(NoInternetSnackbarNotification());
+              }
+              final linkException = result.exception?.linkException;
+              if (linkException is HttpLinkServerException) {
+                final grahqlErrors = linkException.parsedResponse?.errors;
+                if(grahqlErrors?.isNotEmpty ?? false ) {
+                  _errorNotifier.notify(GenericSnackbarNotification(message: grahqlErrors?.firstOrNull?.message ?? "Something didn't work as expected"));
+                }
               }
             }
             throw ApiServerException("Server Error", result.exception);

@@ -54,18 +54,21 @@ class CommunityPostDetailEntity {
 class SolutionTagEntity {
   String? name;
   String? slug;
+  int? count;
 
   SolutionTagEntity({this.name, this.slug});
 
   SolutionTagEntity.fromJson(Map<String, dynamic> json) {
     name = json['name'];
     slug = json['slug'];
+    count = json['count'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['name'] = name;
     data['slug'] = slug;
+    data['count'] = count;
     return data;
   }
 }
@@ -75,6 +78,7 @@ extension SolutionTagEntityExt on SolutionTagEntity {
     return SolutionTag(
       name: name,
       slug: slug,
+      count: count,
     );
   }
 }

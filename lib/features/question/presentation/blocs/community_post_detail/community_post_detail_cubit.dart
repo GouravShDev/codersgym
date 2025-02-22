@@ -1,22 +1,22 @@
 import 'package:bloc/bloc.dart';
 import 'package:codersgym/core/api/api_state.dart';
 import 'package:codersgym/features/question/domain/model/community_solution_post_detail.dart';
-import 'package:codersgym/features/question/domain/repository/question_repository.dart';
+import 'package:codersgym/features/question/domain/repository/community_solution_repository.dart';
 
 typedef CommunityPostDetailState
     = ApiState<CommunitySolutionPostDetail, Exception>;
 
 class CommunityPostDetailCubit extends Cubit<CommunityPostDetailState> {
-  final QuestionRepository _questionRepository;
+  final CommunitySolutionRepository _solutionRepository;
   CommunityPostDetailCubit(
-    this._questionRepository,
+    this._solutionRepository,
   ) : super(ApiState.initial());
 
   Future<void> getCommunitySolutionsDetails(
     CommunitySolutionPostDetail post,
   ) async {
-    emit(ApiLoading());
-    final result = await _questionRepository.getCommunitySolutionDetails(
+    emit(const ApiLoading());
+    final result = await _solutionRepository.getCommunitySolutionDetails(
       post.id ?? 0,
     );
     if (result.isFailure) {
@@ -25,8 +25,9 @@ class CommunityPostDetailCubit extends Cubit<CommunityPostDetailState> {
     }
     final solutionDetail = result.getSuccessValue;
 
-    final parsedContentResult =
-        solutionDetail.post?.content?.replaceAll('\\n', "  \n").replaceAll('<br>', "  \n");
+    final parsedContentResult = solutionDetail.post?.content
+        ?.replaceAll('\\n', "  \n")
+        .replaceAll('<br>', "  \n");
 
     emit(
       ApiLoaded(

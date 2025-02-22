@@ -10,11 +10,19 @@ class FetchCommunitySolutionListEvent extends CommunitySolutionsEvent {
   final int? skip;
   final int? limit;
   final String questionTitleSlug;
+  final String? searchQuery;
+  final List<SolutionTag>? topicTags;
+  final List<SolutionTag>? languageTags;
+  final CommunitySolutionSortOption orderBy;
 
   const FetchCommunitySolutionListEvent({
     this.limit,
     this.skip,
-  required this.questionTitleSlug,
+    required this.questionTitleSlug,
+    this.searchQuery,
+    this.topicTags,
+    this.languageTags,
+    required this.orderBy,
   });
 
   @override

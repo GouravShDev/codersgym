@@ -2,8 +2,6 @@ import 'package:codersgym/core/api/leetcode_requests.dart';
 import 'package:codersgym/core/error/exception.dart';
 import 'package:codersgym/core/error/result.dart';
 import 'package:codersgym/core/api/leetcode_api.dart';
-import 'package:codersgym/features/question/data/entity/community_post_detail_entity.dart';
-import 'package:codersgym/features/question/data/entity/community_solutions_entity.dart';
 import 'package:codersgym/features/question/data/entity/contest_entity.dart';
 import 'package:codersgym/features/question/data/entity/daily_question_entity.dart';
 import 'package:codersgym/features/question/data/entity/official_solution_entity.dart';
@@ -12,7 +10,6 @@ import 'package:codersgym/features/question/data/entity/question_entity.dart';
 import 'package:codersgym/features/question/data/entity/similar_question_entity.dart';
 import 'package:codersgym/features/question/data/entity/solution_entity.dart';
 import 'package:codersgym/features/question/data/entity/upcoming_contest_entity.dart';
-import 'package:codersgym/features/question/domain/model/community_solution_post_detail.dart';
 import 'package:codersgym/features/question/domain/model/contest.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:codersgym/features/question/domain/model/solution.dart';
@@ -206,61 +203,6 @@ class QuestionRepositoryImpl implements QuestionRepository {
       final hintList = questionEntity.hints;
 
       return Success(hintList ?? []);
-    } on ApiException catch (e) {
-      return Failure(Exception(e.message));
-    }
-  }
-
-  @override
-  Future<Result<CommunitySolutionPostDetail, Exception>>
-      getCommunitySolutionDetails(int topicId) async {
-    try {
-      final data = await leetcodeApi.getCommunitySolutionDetail(topicId);
-      if (data == null) {
-        return Failure(Exception("No data found"));
-      }
-      final comunityPostDetails =
-          CommunityPostDetailEntity.fromJson(data['topic']);
-
-      return Success(comunityPostDetails.toCommunitySolutionPostDetail());
-    } on ApiException catch (e) {
-      return Failure(Exception(e.message));
-    }
-  }
-
-  @override
-  Future<
-      Result<
-          ({
-            List<CommunitySolutionPostDetail> solutionList,
-            int totalSolutionCount
-          }),
-          Exception>> getCommunitySolutions(
-    CommunitySolutionsInput input,
-  ) async {
-    try {
-      final data = await leetcodeApi.getCommunitySolutions(
-        questionId: input.questiontitleSlug,
-        orderBy: input.orderBy,
-        skip: input.skip,
-      );
-      if (data == null) {
-        return Failure(Exception("No data found"));
-      }
-      final communitySolutions = CommunitySolutionListEntity.fromJson(data);
-      final communitySolutionsList =
-          communitySolutions.questionSolutions?.solutions
-              ?.map(
-                (e) => e.toCommunitySolutionPostDetail(),
-              )
-              .toList();
-      if (communitySolutionsList?.isEmpty ?? true) {
-        return Failure(Exception("No community solution found"));
-      }
-      return Success((
-        solutionList: communitySolutionsList ?? [],
-        totalSolutionCount: communitySolutions.questionSolutions?.totalNum ?? 0
-      ));
     } on ApiException catch (e) {
       return Failure(Exception(e.message));
     }

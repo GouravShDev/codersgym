@@ -502,12 +502,46 @@ class LeetCodeRequests {
     );
   }
 
+  static LeetCodeRequests getCommunitySolutiongsTags(
+    String questionTitleSlug,
+  ) {
+    return LeetCodeRequests(
+      operationName: "ugcArticleSolutionTags",
+      variables: Variables(
+        questionSlug: questionTitleSlug,
+      ),
+      query: """
+        query ugcArticleSolutionTags(\$questionSlug: String!) {
+          ugcArticleSolutionTags(questionSlug: \$questionSlug) {
+            otherTags {
+              name
+              slug
+              count
+            }
+            knowledgeTags {
+              name
+              slug
+              count
+            }
+            languageTags {
+              name
+              slug
+              count
+            }
+          }
+        }
+    """,
+    );
+  }
+
   static LeetCodeRequests getCommunitySolutions({
     required int first,
     required String questionTitleSlug,
     required int skip,
     required String query,
     required String orderBy,
+    required List<String> languageTags,
+    required List<String> topicTags,
   }) {
     return LeetCodeRequests(
       operationName: "communitySolutions",
@@ -517,10 +551,11 @@ class LeetCodeRequests {
         first: first,
         query: query,
         questionSlug: questionTitleSlug,
-        languageTags: [],
-        topicTags: [],
+        languageTags: languageTags,
+        topicTags: topicTags,
       ),
       query: """
+
               query communitySolutions(\$questionSlug: String!, \$skip: Int!, \$first: Int!, \$query: String, \$orderBy: TopicSortingOption, \$languageTags: [String!], \$topicTags: [String!]) {
             questionSolutions(
               filters: {questionSlug: \$questionSlug, skip: \$skip, first: \$first, query: \$query, orderBy: \$orderBy, languageTags: \$languageTags, topicTags: \$topicTags}
@@ -657,6 +692,8 @@ class Variables {
   final int? limit;
   final List<String>? languageTags;
   final List<String>? topicTags;
+  final String? userInput;
+  final List<String>? tagSlugs;
 
   Variables({
     this.username,
@@ -675,6 +712,8 @@ class Variables {
     this.limit,
     this.languageTags,
     this.topicTags,
+    this.userInput,
+    this.tagSlugs,
   });
 
   Map<String, dynamic> toJson() {
@@ -693,6 +732,10 @@ class Variables {
       'topicId': topicId,
       'tags': tags,
       'limit': limit,
+      'userInput': userInput,
+      'tagSlugs': tagSlugs,
+      'languageTags': languageTags,
+      'topicTags': topicTags,
     };
   }
 }

@@ -1,6 +1,4 @@
 import 'package:codersgym/core/error/result.dart';
-import 'package:codersgym/features/question/domain/model/community_solution_post.dart';
-import 'package:codersgym/features/question/domain/model/community_solution_post_detail.dart';
 import 'package:codersgym/features/question/domain/model/contest.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:codersgym/features/question/domain/model/solution.dart';
@@ -28,19 +26,6 @@ abstract interface class QuestionRepository {
   );
   Future<Result<List<String>, Exception>> getQuestionHints(
     String questiontitleSlug,
-  );
-  Future<
-      Result<
-          ({
-            List<CommunitySolutionPostDetail> solutionList,
-            int totalSolutionCount
-          }),
-          Exception>> getCommunitySolutions(
-    CommunitySolutionsInput input,
-  );
-  Future<Result<CommunitySolutionPostDetail, Exception>>
-      getCommunitySolutionDetails(
-    int topicId,
   );
 }
 
@@ -73,19 +58,5 @@ class ProblemFilter {
     this.listId,
     this.difficulty,
     this.sortOrder,
-  });
-}
-
-class CommunitySolutionsInput {
-  final String questiontitleSlug;
-  final String orderBy;
-  final int skip;
-  final int limit;
-
-  CommunitySolutionsInput({
-    required this.questiontitleSlug,
-    required this.orderBy,
-    required this.skip,
-    required this.limit,
   });
 }

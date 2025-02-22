@@ -21,7 +21,10 @@ import 'package:codersgym/features/profile/presentation/blocs/contest_ranking_in
 import 'package:codersgym/features/profile/presentation/blocs/cubit/user_profile_calendar_cubit.dart';
 import 'package:codersgym/features/profile/presentation/blocs/user_profile/user_profile_cubit.dart';
 import 'package:codersgym/features/question/data/parser/leetcode_solution_parser.dart';
+import 'package:codersgym/features/question/data/repository/community_solution_repository.dart';
+import 'package:codersgym/features/question/domain/repository/community_solution_repository.dart';
 import 'package:codersgym/features/question/presentation/blocs/community_post_detail/community_post_detail_cubit.dart';
+import 'package:codersgym/features/question/presentation/blocs/community_solution_filter/community_solution_filter_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/community_solutions/community_solutions_bloc.dart';
 import 'package:codersgym/features/question/presentation/blocs/official_solution_available/official_solution_available_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/online_user_count/online_user_count_cubit.dart';
@@ -140,6 +143,11 @@ Future<void> initializeDependencies() async {
       leetcodeApi: getIt.get(),
     ),
   );
+  getIt.registerSingleton<CommunitySolutionRepository>(
+    CommunitySolutionRepositoryImp(
+      getIt.get(),
+    ),
+  );
 
   // BLOC/CUBIT
   getIt.registerFactory(
@@ -242,6 +250,11 @@ Future<void> initializeDependencies() async {
   getIt.registerFactoryParam<OnlineUserCountCubit, String, void>(
     (questionId, _) => OnlineUserCountCubit(
       questionTitleSlug: questionId,
+    ),
+  );
+  getIt.registerFactory(
+    () => CommunitySolutionFilterCubit(
+      getIt.get(),
     ),
   );
 }

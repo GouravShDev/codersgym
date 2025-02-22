@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
+import 'package:codersgym/features/question/data/entity/community_solution_sort_option.dart';
 import 'package:codersgym/features/question/domain/model/community_solution_post_detail.dart';
+import 'package:codersgym/features/question/domain/repository/community_solution_repository.dart';
 import 'package:codersgym/features/question/domain/repository/question_repository.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rxdart/rxdart.dart';
@@ -9,19 +11,19 @@ part 'community_solutions_state.dart';
 
 class CommunitySolutionsBloc
     extends Bloc<CommunitySolutionsEvent, CommunitySolutionsState> {
-  final QuestionRepository _questionRepository;
+  final CommunitySolutionRepository _solutionRepository;
 
   int currentSkip = 0;
   int currentLimit = 10;
   CommunitySolutionsBloc(
-    this._questionRepository,
+    this._solutionRepository,
   ) : super(CommunitySolutionsState.initial()) {
     on<CommunitySolutionsEvent>(
       (event, emit) async {
         switch (event) {
           case FetchCommunitySolutionListEvent():
             await _onFetchSolutionList(event, emit);
-            break;
+          break;
           default:
             break;
         }
@@ -50,13 +52,15 @@ class CommunitySolutionsBloc
       return; // Prevent mutliple call resulting in duplicate items
     }
     emit(state.copyWith(isLoading: true));
-    final result = await _questionRepository.getCommunitySolutions(
+    final result = await _solutionRepository.getCommunitySolutions(
       CommunitySolutionsInput(
         skip: currentSkip,
         limit: currentLimit,
-        questiontitleSlug: event.questionTitleSlug ?? '',
-        orderBy:
-            'hot', // Temporary passing "hot" as default until filter are implemented
+        questiontitleSlug: event.questionTitleSlug,
+        orderBy: event.orderBy.value,
+        query: event.searchQuery ?? '',
+        topics: event.topicTags?.map((e) => e.slug ?? '',).toList() ?? [],
+        languages: event.languageTags?.map((e) => e.slug ?? '',).toList() ?? [],
       ),
     );
 

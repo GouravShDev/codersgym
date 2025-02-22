@@ -58,9 +58,11 @@ class CommunitySolutionPostDetail {
 class SolutionTag {
   final String? name;
   final String? slug;
+  final int? count;
 
   SolutionTag({
     this.name,
     this.slug,
+    this.count,
   });
 }
