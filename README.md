@@ -1,6 +1,6 @@
 # <img src="https://github.com/GouravShDev/codersgym/blob/main/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png?raw=true" alt="app_icon" height="40"/>  Coders Gym
 
-Coders Gym is a mobile application build with Flutter and designed to provide a mobile-friendly interface for LeetCode challenges.
+Coders Gym is an unofficial client for LeetCode, built with Flutter. It allows you to solve LeetCode questions directly from your mobile device with a user-friendly interface.
 
 ![Google Pixel 3 XL Presentation_compreesed](https://github.com/user-attachments/assets/283c4010-bb11-48f5-9c12-de19437bfef8)
 
