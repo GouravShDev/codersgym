@@ -58,7 +58,7 @@ class QuestionDescription extends HookWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Flexible(
-                            child: Text(
+                            child: SelectableText(
                               ("${question.frontendQuestionId}. ") +
                                   (question.title ?? ""),
                               style: textTheme.titleLarge
@@ -115,10 +115,12 @@ class QuestionDescription extends HookWidget {
                         ),
                       ],
                     ),
-                    HtmlWidget(
-                      question.content ?? '',
-                      renderMode: RenderMode.column,
-                      textStyle: const TextStyle(fontSize: 14),
+                    SelectionArea(
+                      child: HtmlWidget(
+                        question.content ?? '',
+                        renderMode: RenderMode.column,
+                        textStyle: const TextStyle(fontSize: 14),
+                      ),
                     ),
                     const SizedBox(
                       height: 12,
