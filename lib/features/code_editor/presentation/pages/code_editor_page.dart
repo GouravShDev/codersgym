@@ -388,19 +388,6 @@ class CodeEditorPageBody extends HookWidget {
     required CodeExecutionResult result,
     required List<TestCase> testcases,
   }) {
-    AnalyticsService().logCustomEvent(
-      name: AnalyticsEvents.questionsCompleted,
-      parameters: question.toAnalyticsMap(),
-    );
-    final InAppReview inAppReview = InAppReview.instance;
-    inAppReview.isAvailable().then(
-      (available) {
-        if (available) {
-          inAppReview.requestReview();
-        }
-      },
-    );
-
     final codeEditorBloc = context.read<CodeEditorBloc>();
     if (result.didCodeResultInError) {
       showModalBottomSheet(
@@ -419,6 +406,18 @@ class CodeEditorPageBody extends HookWidget {
       );
       return;
     }
+    AnalyticsService().logCustomEvent(
+      name: AnalyticsEvents.questionsCompleted,
+      parameters: question.toAnalyticsMap(),
+    );
+    final InAppReview inAppReview = InAppReview.instance;
+    inAppReview.isAvailable().then(
+      (available) {
+        if (available) {
+          inAppReview.requestReview();
+        }
+      },
+    );
 
     showDialog(
       context: context,
