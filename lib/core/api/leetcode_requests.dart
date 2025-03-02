@@ -285,6 +285,17 @@ class LeetCodeRequests {
 """,
     );
   }
+  static LeetCodeRequests getCurrentTimestamp() {
+    return LeetCodeRequests(
+      operationName: "currentTimestamp",
+      variables: Variables(),
+      query: """
+          query currentTimestamp {
+            currentTimestamp
+          }      
+        """,
+    );
+  }
 
   static LeetCodeRequests getUserContestRankingInfo(String userName) {
     return LeetCodeRequests(

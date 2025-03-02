@@ -1,5 +1,6 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
+import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
 import 'package:codersgym/features/common/widgets/app_error_widget.dart';
 import 'package:codersgym/features/common/widgets/app_loading.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/contest_reminder_cubit.dart';
@@ -108,19 +109,6 @@ class HomePageBody extends StatelessWidget {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                          child: Text(
-                            "Ready For Today's Challenge",
-                            style: Theme.of(context)
-                                .textTheme
-                                .headlineSmall
-                                ?.copyWith(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 16,
-                        ),
                         state.mayBeWhen(
                           onLoaded: (question) => _buildQuestionCard(
                             context,
@@ -220,12 +208,23 @@ class HomePageBody extends StatelessWidget {
     required Question question,
     bool isFetching = false,
   }) {
-    return DailyQuestionCard(
-      question: question,
-      isFetching: isFetching,
-      onSolveTapped: () {
-        AutoRouter.of(context).push(
-          QuestionDetailRoute(question: question),
+    return BlocBuilder<TimestampCubit, TimestampState>(
+      builder: (context, state) {
+        final timestamp = state.mayBeWhen(
+          onLoaded: (value) => value,
+          orElse: () => null,
+        );
+        return DailyQuestionCard(
+          question: question,
+          isFetching: isFetching,
+          currentTime: timestamp != null
+              ? DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt())
+              : null,
+          onSolveTapped: () {
+            AutoRouter.of(context).push(
+              QuestionDetailRoute(question: question),
+            );
+          },
         );
       },
     );

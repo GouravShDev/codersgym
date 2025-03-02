@@ -14,6 +14,7 @@ import 'package:codersgym/features/code_editor/data/repository/code_editor_repos
 import 'package:codersgym/features/code_editor/domain/repository/code_editor_repository.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
 import 'package:codersgym/features/common/bloc/app_file_downloader/app_file_downloader_bloc.dart';
+import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
 import 'package:codersgym/features/common/widgets/app_error_notifier.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/contest_reminder_cubit.dart';
 import 'package:codersgym/features/profile/data/repository/profile_repository.dart';
@@ -254,6 +255,11 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerFactory(
     () => CommunitySolutionFilterCubit(
+      getIt.get(),
+    ),
+  );
+  getIt.registerFactory(
+    () => TimestampCubit(
       getIt.get(),
     ),
   );

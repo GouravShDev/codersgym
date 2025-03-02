@@ -146,6 +146,10 @@ class LeetcodeApi {
     final request = LeetCodeRequests.getCommunitySolutiongsTags(questionId);
     return _executeGraphQLQuery(request);
   }
+   Future<Map<String, dynamic>?> getCurrentTimestamp() async {
+    final request = LeetCodeRequests.getCurrentTimestamp();
+    return _executeGraphQLQuery(request);
+  }
 
   Future<Map<String, dynamic>?> _executeGraphQLQuery(
     LeetCodeRequests request, {
