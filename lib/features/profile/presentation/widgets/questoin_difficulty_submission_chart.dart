@@ -1,5 +1,6 @@
 import 'package:codersgym/app.dart';
 import 'package:codersgym/core/theme/app_theme.dart';
+import 'package:codersgym/features/profile/presentation/widgets/question_difficulty_legend.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 
@@ -124,64 +125,18 @@ class QuestionDifficultySubmissionChart extends StatelessWidget {
                   ),
                 ],
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildLegendItem(
-                    label: "Easy",
-                    color: Color(0xff1ABBBB),
-                    solvedQuestionCount: easyCount,
-                    totalQuestionCount: totalEasyCount,
-                  ),
-                  _buildLegendItem(
-                    label: "Medium",
-                    color: Color(0xffFEB600),
-                    solvedQuestionCount: mediumCount,
-                    totalQuestionCount: totalMediumCount,
-                  ),
-                  _buildLegendItem(
-                    label: "Hard",
-                    color: Color(0xffF53836),
-                    solvedQuestionCount: hardCount,
-                    totalQuestionCount: totalHardCount,
-                  ),
-                ],
+              QuestionDifficultyLegend(
+                easyCount: easyCount,
+                mediumCount: mediumCount,
+                hardCount: hardCount,
+                totalEasyCount: totalEasyCount,
+                totalMediumCount: totalMediumCount,
+                totalHardCount: totalHardCount,
               ),
             ],
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildLegendItem({
-    required String label,
-    required Color color,
-    required int solvedQuestionCount,
-    required int totalQuestionCount,
-  }) {
-    return SizedBox(
-      width: 100,
-      child: Card(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(solvedQuestionCount.toString() +
-                  "/" +
-                  totalQuestionCount.toString()),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

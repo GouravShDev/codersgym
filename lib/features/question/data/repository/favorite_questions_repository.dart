@@ -5,9 +5,11 @@ import 'package:codersgym/core/error/result.dart';
 import 'package:codersgym/core/services/firebase_remote_config_service.dart';
 import 'package:codersgym/features/question/data/entity/favorite_list_entity.dart';
 import 'package:codersgym/features/question/data/entity/favorite_questions_list_entity.dart';
+import 'package:codersgym/features/question/data/entity/problem_list_progress_entity.dart';
 import 'package:codersgym/features/question/data/entity/problem_sheet_entity.dart';
 import 'package:codersgym/features/question/data/entity/question_entity.dart';
 import 'package:codersgym/features/question/domain/model/favorite_problemset.dart';
+import 'package:codersgym/features/question/domain/model/problem_list_progress.dart';
 import 'package:codersgym/features/question/domain/model/problem_sheet.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:codersgym/features/question/domain/repository/favorite_questions_repository.dart';
@@ -96,5 +98,26 @@ class FavoriteQuestionsRepositoryImp implements FavoriteQuestionsRepository {
     return Success(
       problemSheets.list.map((e) => e.toProblemSheet()).toList(),
     );
+  }
+
+  @override
+  Future<Result<ProblemListProgress, Exception>> getProblemListProgess(
+    String favoriteSlug,
+  ) async {
+    try {
+      final data = await leetcodeApi.getProblemListProgress(
+        favoriteSlug,
+      );
+      if (data == null) {
+        return Failure(Exception("No data found"));
+      }
+      final problemListProgress = ProblemListProgressEntity.fromJson(data);
+
+      return Success(
+        problemListProgress.toProblemListProgress(),
+      );
+    } on ApiException catch (e) {
+      return Failure(Exception(e.message));
+    }
   }
 }

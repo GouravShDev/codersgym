@@ -34,6 +34,7 @@ import 'package:codersgym/features/question/presentation/blocs/favorite_quesions
 import 'package:codersgym/features/question/presentation/blocs/my_favorite_list/my_favorite_list_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/official_solution_available/official_solution_available_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/online_user_count/online_user_count_cubit.dart';
+import 'package:codersgym/features/question/presentation/blocs/problem_list_progress/problem_list_progress_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/problem_sheets/problem_sheets_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/question_archieve/question_archieve_bloc.dart';
 import 'package:codersgym/features/question/presentation/blocs/question_filter/question_filter_cubit.dart';
@@ -295,6 +296,11 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerFactory(
     () => ProblemSheetsCubit(
+      getIt.get(),
+    ),
+  );
+  getIt.registerFactory(
+    () => ProblemListProgressCubit(
       getIt.get(),
     ),
   );

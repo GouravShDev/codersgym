@@ -735,8 +735,7 @@ class LeetCodeRequests {
     );
   }
 
-  static LeetCodeRequests getMyFavoriteList(
-  ) {
+  static LeetCodeRequests getMyFavoriteList() {
     return LeetCodeRequests(
       operationName: "myFavoriteList",
       variables: Variables(),
@@ -773,6 +772,38 @@ class LeetCodeRequests {
                 }
               }
             }
+    """,
+    );
+  }
+
+  static LeetCodeRequests getProblemListProgess(String favoriteSlug) {
+    return LeetCodeRequests(
+      operationName: "favoriteUserQuestionProgressV2",
+      variables: Variables(
+        favoriteSlug: favoriteSlug,
+      ),
+      query: """
+        query favoriteUserQuestionProgressV2(\$favoriteSlug: String!) {
+          favoriteUserQuestionProgressV2(favoriteSlug: \$favoriteSlug) {
+            numAcceptedQuestions {
+              count
+              difficulty
+            }
+            numFailedQuestions {
+              count
+              difficulty
+            }
+            numUntouchedQuestions {
+              count
+              difficulty
+            }
+            userSessionBeatsPercentage {
+              difficulty
+              percentage
+            }
+          }
+        }
+    
     """,
     );
   }

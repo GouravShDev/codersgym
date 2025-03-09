@@ -174,6 +174,12 @@ class LeetcodeApi {
     final request = LeetCodeRequests.getMyFavoriteList();
     return _executeGraphQLQuery(request);
   }
+  Future<Map<String, dynamic>?> getProblemListProgress(String favoriteSlug) async {
+    final request = LeetCodeRequests.getProblemListProgess(
+      favoriteSlug,
+    );
+    return _executeGraphQLQuery(request);
+  }
 
   Future<Map<String, dynamic>?> _executeGraphQLQuery(
     LeetCodeRequests request, {

@@ -1,6 +1,7 @@
 import 'package:codersgym/core/api/leetcode_requests.dart';
 import 'package:codersgym/core/error/result.dart';
 import 'package:codersgym/features/question/domain/model/favorite_problemset.dart';
+import 'package:codersgym/features/question/domain/model/problem_list_progress.dart';
 import 'package:codersgym/features/question/domain/model/problem_sheet.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 
@@ -19,6 +20,8 @@ abstract interface class FavoriteQuestionsRepository {
           Exception>> getFavorites();
 
   Future<Result<List<ProblemSheet>, Exception>> getProblemSheets();
+
+  Future<Result<ProblemListProgress, Exception>> getProblemListProgess(String favoriteSlug);
 }
 
 class FavoriteQuestionQueryInput {
