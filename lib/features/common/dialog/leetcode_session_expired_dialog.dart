@@ -1,6 +1,6 @@
-import 'package:auto_route/auto_route.dart';
-import 'package:codersgym/core/routes/app_router.gr.dart';
+import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LeetcodeSessionExpiredDialog extends StatelessWidget {
   const LeetcodeSessionExpiredDialog({super.key});
@@ -14,10 +14,7 @@ class LeetcodeSessionExpiredDialog extends StatelessWidget {
   }
 
   Future<void> _launchLeetCodeLogin(BuildContext context) async {
-    context.router.pushAndPopUntil(
-      const LoginRoute(),
-      predicate: (route) => false,
-    );
+    context.read<AuthBloc>().add(AuthLogout());
   }
 
   @override
