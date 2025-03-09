@@ -1,14 +1,12 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:codersgym/core/theme/app_theme.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
-import 'package:codersgym/features/common/widgets/app_error_widget.dart';
 import 'package:codersgym/features/common/widgets/app_loading.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/contest_reminder_cubit.dart';
-import 'package:codersgym/features/dashboard/presentation/widgets/upcoming_contest_card.dart';
+import 'package:codersgym/features/dashboard/presentation/widgets/feature_card.dart';
 import 'package:codersgym/features/profile/domain/model/user_profile.dart';
 import 'package:codersgym/features/profile/presentation/blocs/user_profile/user_profile_cubit.dart';
-import 'package:codersgym/features/question/domain/model/contest.dart';
-import 'package:codersgym/features/question/presentation/blocs/upcoming_contests/upcoming_contests_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -18,7 +16,6 @@ import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:codersgym/features/question/presentation/blocs/daily_challenge/daily_challenge_cubit.dart';
 import 'package:codersgym/features/question/presentation/widgets/daily_question_card.dart';
 import 'package:codersgym/features/dashboard/presentation/widgets/user_greeting_card.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 @RoutePage()
 class HomePage extends HookWidget {
@@ -37,22 +34,19 @@ class HomePageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SafeArea(
       child: RefreshIndicator(
         onRefresh: () async {
           final dailyChallengeCubit = context.read<DailyChallengeCubit>();
           final profileCubit = context.read<UserProfileCubit>();
           final authBloc = context.read<AuthBloc>();
-          final upcomingContestCubit = context.read<UpcomingContestsCubit>();
-          final contestReminderCubit = context.read<ContestReminderCubit>();
-
           await dailyChallengeCubit.getTodayChallenge();
-          await upcomingContestCubit.getUpcomingContest();
           final authState = authBloc.state;
           if (authState is Authenticated) {
             await profileCubit.getUserProfile(authState.userName);
           }
-          contestReminderCubit.checkSchedulesContests();
         },
         child: SingleChildScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
@@ -135,7 +129,7 @@ class HomePageBody extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                   child: Text(
-                    "Upcoming Contests",
+                    "Coding Toolkit",
                     style: Theme.of(context)
                         .textTheme
                         .titleLarge
@@ -144,57 +138,76 @@ class HomePageBody extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(
-                  height: 16,
+                  height: 8,
                 ),
-                BlocBuilder<UpcomingContestsCubit,
-                    ApiState<List<Contest>, Exception>>(
-                  buildWhen: (previous, current) =>
-                      current.isLoaded ||
-                      (current.isError && !previous.isLoaded),
-                  builder: (context, state) {
-                    return state.mayBeWhen(
-                      orElse: () => AppWidgetLoading(
-                        child: Column(
-                          children: List.generate(
-                            2,
-                            (index) => UpcomingContestCard.empty(),
-                          ),
-                        ),
-                      ),
-                      onLoaded: (contests) {
-                        // Using column instead of listview because number of
-                        // contests will always be two.
-                        // Atleast for now its just two elements
+                // Feature Grid
+                GridView.count(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  crossAxisCount: 3,
+                  mainAxisSpacing: 4,
+                  crossAxisSpacing: 4,
+                  children: [
+                    // Upcoming Contests
+                    FeatureCard(
+                      icon: Icons.timer,
+                      title: "Contests",
+                      color: theme.colorScheme.primary,
+                      onTap: () {
+                        context.pushRoute(const ContestRoute());
+                      },
+                    ),
 
-                        return BlocListener<ContestReminderCubit,
-                            ContestReminderState>(
-                          listener: (context, state) {
-                            if (state is ContestReminderLoaded) {
-                              final error = state.error;
-                              if (error != null) {
-                                _handleScheduleFailure(context, error);
-                              }
-                            }
-                          },
-                          child: Column(
-                              children: contests
-                                  .map(
-                                    (contest) => UpcomingContestCard(
-                                      contest: contest,
-                                    ),
-                                  )
-                                  .toList()),
-                        );
+                    // SDE Sheets
+                    FeatureCard(
+                      icon: Icons.description,
+                      title: "Sheets",
+                      color: theme.colorScheme.secondary,
+                      onTap: () {
+                        context.pushRoute(const ProblemSheetListRoute());
                       },
-                      onError: (exception) {
-                        return const AppErrorWidget(
-                          message: "That was not supposed to happen!!",
-                          showRetryButton: false,
-                        );
+                    ),
+
+                    // My List
+                    FeatureCard(
+                      icon: Icons.bookmark,
+                      title: "My List",
+                      color: theme.colorScheme.successColor,
+                      onTap: () {
+                        context.pushRoute(const MyListRoute());
                       },
-                    );
-                  },
-                )
+                    ),
+
+                    // Discuss Section
+                    FeatureCard(
+                      icon: Icons.forum,
+                      title: "Discuss",
+                      color: theme.colorScheme.primary,
+                      onTap: () {
+                        // Navigate to discuss section
+                      },
+                    ),
+
+                    // Practice
+                    FeatureCard(
+                      icon: Icons.code,
+                      title: "Practice",
+                      color: theme.colorScheme.secondary,
+                      onTap: () {
+                        context.tabsRouter
+                            .setActiveIndex(1); // (ExploreRoute());
+                      },
+                    ),
+                    FeatureCard(
+                      icon: Icons.terminal,
+                      title: "CodingEXP",
+                      color: theme.colorScheme.successColor,
+                      onTap: () {
+                        // Navigate to practice section
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -227,43 +240,6 @@ class HomePageBody extends StatelessWidget {
           },
         );
       },
-    );
-  }
-
-  void _handleScheduleFailure(BuildContext context, SetReminderError error) {
-    switch (error) {
-      case SetReminderError.notificationPermissionDenied:
-      case SetReminderError.notificationPermissionDeniedPermanently:
-        _showSettingsDialog(context);
-      case SetReminderError.alarmNotificationPermissionDenied:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please allow alarm permission')),
-        );
-    }
-  }
-
-  void _showSettingsDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("Enable Notifications"),
-        content: const Text(
-          "Notifications are disabled. Please enable them in settings.",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              openAppSettings();
-            },
-            child: const Text("Open Settings"),
-          ),
-        ],
-      ),
     );
   }
 }

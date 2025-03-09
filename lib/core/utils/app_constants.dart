@@ -22,5 +22,6 @@ class LeetcodeConstants {
   static const biweeklyContestBannerImage =
       "https://leetcode.com/_next/static/images/biweekly-default-f5a8fc3be85b6c9175207fd8fd855d47.png";
 
-  static const onlineUserSocket = "wss://collaboration-ws.leetcode.com/problems/{slug}";
+  static const onlineUserSocket =
+      "wss://collaboration-ws.leetcode.com/problems/{slug}";
 }

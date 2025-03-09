@@ -41,11 +41,12 @@ class QuestionNodeEntity {
     difficulty = json['difficulty'];
     acRate = json['acRate']?.toDouble();
     paidOnly = json['paidOnly'];
-    frontendQuestionId = json['frontendQuestionId'];
+    frontendQuestionId =
+        json['frontendQuestionId'] ?? json['questionFrontendId'];
     hasVideoSolution = json['hasVideoSolution'];
     hasSolution = json['hasSolution'];
     content = json['content'];
-    questionId = json['questionId'];
+    questionId = json['questionId'] ?? (json['id'] as int?)?.toString();
     if (json['hints'] != null) {
       hints = (json['hints'] as List)
           .map(
@@ -115,7 +116,10 @@ extension QuestionNodeEntityExt on QuestionNodeEntity {
       questionId: questionId,
       titleSlug: titleSlug,
       difficulty: difficulty,
-      acRate: acRate,
+      // Multiplying 100 because we are getting accuracy rate in between 0 - 1
+      // leetcode v2 apis but previously we were getting 0-100.
+      // Need to find better way to handle this
+      acRate: (acRate != null && acRate! < 1) ? (acRate! * 100) : acRate,
       paidOnly: paidOnly,
       frontendQuestionId: frontendQuestionId,
       hasVideoSolution: hasVideoSolution,
@@ -177,11 +181,11 @@ extension TopicTagsNodeEntityExt on TopicTagsNodeEntity {
 
 QuestionStatus _parseQuestionStatus(String? jsonValue) {
   switch (jsonValue) {
-    case "ac":
+    case "ac" || "SOLVED":
       return QuestionStatus.accepted;
-    case "notac":
+    case "notac" || "ATTEMPTED":
       return QuestionStatus.notAccepted;
-    case null:
+    case "TO_DO" || null:
       return QuestionStatus.unattempted;
     default:
       throw ArgumentError("Invalid JSON value for QuestionStatus: $jsonValue");

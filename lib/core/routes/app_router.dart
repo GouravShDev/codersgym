@@ -1,8 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:codersgym/core/routes/app_router.gr.dart';
 import 'package:codersgym/core/routes/observer/analytic_router_observer.dart';
-import 'package:flutter/src/foundation/change_notifier.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/material.dart';
 
 @AutoRouterConfig(replaceInRouteName: 'Page,Route')
 class AppRouter extends RootStackRouter {
@@ -55,6 +54,10 @@ class AppRouter extends RootStackRouter {
           AutoRoute(page: QuestionDetailRoute.page),
           AutoRoute(page: CodeEditorRoute.page),
           AutoRoute(page: CommunityPostRoute.page),
+          AutoRoute(page: ProblemSheetListRoute.page),
+          AutoRoute(page: ProblemSheetDetailRoute.page),
+          AutoRoute(page: ContestRoute.page),
+          AutoRoute(page: MyListRoute.page),
         ]),
       ];
 }

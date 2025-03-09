@@ -64,10 +64,10 @@ class QuestionDifficultyText extends HookWidget {
 }
 
 getColorFromDifficulty(String difficulty) {
-  return switch (difficulty) {
-    "Easy" => Colors.green,
-    "Medium" => Colors.amber,
-    "Hard" => Colors.red,
+  return switch (difficulty.toLowerCase()) {
+    "easy" => Colors.green,
+    "medium" => Colors.amber,
+    "hard" => Colors.red,
     _ => Colors.grey,
   };
 }

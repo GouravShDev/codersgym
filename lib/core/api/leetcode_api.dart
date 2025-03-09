@@ -142,12 +142,36 @@ class LeetcodeApi {
     final request = LeetCodeRequests.getCommunitySolutionDetails(topicId);
     return _executeGraphQLQuery(request);
   }
-  Future<Map<String, dynamic>?> getCommunitySolutionsTag(String questionId) async {
+
+  Future<Map<String, dynamic>?> getCommunitySolutionsTag(
+    String questionId,
+  ) async {
     final request = LeetCodeRequests.getCommunitySolutiongsTags(questionId);
     return _executeGraphQLQuery(request);
   }
-   Future<Map<String, dynamic>?> getCurrentTimestamp() async {
+
+  Future<Map<String, dynamic>?> getCurrentTimestamp() async {
     final request = LeetCodeRequests.getCurrentTimestamp();
+    return _executeGraphQLQuery(request);
+  }
+
+  Future<Map<String, dynamic>?> getFavoriteQuestionList({
+    required String? favoriteSlug,
+    required int? limit,
+    required SortBy? sortBy,
+    required int? skip,
+  }) async {
+    final request = LeetCodeRequests.getFavoriteQuesionsRequest(
+      favoriteSlug,
+      limit,
+      sortBy,
+      skip,
+    );
+    return _executeGraphQLQuery(request);
+  }
+
+  Future<Map<String, dynamic>?> getMyFavoritesList() async {
+    final request = LeetCodeRequests.getMyFavoriteList();
     return _executeGraphQLQuery(request);
   }
 
@@ -209,8 +233,13 @@ class LeetcodeApi {
               final linkException = result.exception?.linkException;
               if (linkException is HttpLinkServerException) {
                 final grahqlErrors = linkException.parsedResponse?.errors;
-                if(grahqlErrors?.isNotEmpty ?? false ) {
-                  _errorNotifier.notify(GenericSnackbarNotification(message: grahqlErrors?.firstOrNull?.message ?? "Something didn't work as expected"));
+                if (grahqlErrors?.isNotEmpty ?? false) {
+                  _errorNotifier.notify(
+                    GenericSnackbarNotification(
+                      message: grahqlErrors?.firstOrNull?.message ??
+                          "Something didn't work as expected",
+                    ),
+                  );
                 }
               }
             }

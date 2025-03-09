@@ -27,12 +27,9 @@ class DashboardPage extends HookWidget {
     final dailyChallengeCubit = context.read<DailyChallengeCubit>();
     final profileCubit = context.read<UserProfileCubit>();
     final authBloc = context.read<AuthBloc>();
-    final upcomingContestCubit = context.read<UpcomingContestsCubit>();
     useEffect(
       () {
         dailyChallengeCubit.getTodayChallenge();
-        upcomingContestCubit.getUpcomingContest();
-        context.read<ContestReminderCubit>().checkSchedulesContests();
         context.read<TimestampCubit>().getCurrentTimestamp();
         final authState = authBloc.state;
         if (authState is Authenticated) {

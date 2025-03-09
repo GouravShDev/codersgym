@@ -34,17 +34,12 @@ class DashboardShell extends StatelessWidget implements AutoRouteWrapper {
           create: (context) => getIt.get<QuestionArchieveBloc>(),
         ),
         BlocProvider(
-          create: (context) => getIt.get<UpcomingContestsCubit>(),
-        ),
-        BlocProvider(
           create: (context) => getIt.get<AppFileDownloaderBloc>(),
         ),
         BlocProvider(
           create: (context) => getIt.get<QuestionFilterCubit>(),
         ),
-        BlocProvider(
-          create: (context) => getIt.get<ContestReminderCubit>(),
-        ),
+      
         BlocProvider(
           create: (context) => getIt.get<TimestampCubit>(),
         ),

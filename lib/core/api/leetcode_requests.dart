@@ -265,6 +265,55 @@ class LeetCodeRequests {
     );
   }
 
+  static LeetCodeRequests getFavoriteQuesionsRequest(
+    String? favoriteSlug,
+    int? limit,
+    SortBy? sortBy,
+    int? skip,
+  ) {
+    return LeetCodeRequests(
+      operationName: "favoriteQuestionList",
+      variables: Variables(
+        skip: skip ?? 0,
+        favoriteSlug: favoriteSlug,
+        limit: limit ?? 100,
+        sortBy: sortBy ?? SortBy(),
+      ),
+      query: """
+      query favoriteQuestionList(\$favoriteSlug: String!, \$filter: FavoriteQuestionFilterInput, \$sortBy: QuestionSortByInput, \$limit: Int, \$skip: Int, \$version: String = "v2") {
+        favoriteQuestionList(
+          favoriteSlug: \$favoriteSlug
+          filter: \$filter
+          sortBy: \$sortBy
+          limit: \$limit
+          skip: \$skip
+          version: \$version
+        ) {
+          questions {
+            difficulty
+            id
+            paidOnly
+            questionFrontendId
+            status
+            title
+            titleSlug
+            isInMyFavorites
+            frequency
+            acRate
+            topicTags {
+              name
+              slug
+            }
+          }
+          totalLength
+          hasMore
+        }
+      }
+          
+      """,
+    );
+  }
+
   static LeetCodeRequests getGlobalData() {
     return LeetCodeRequests(
       operationName: "globalData",
@@ -285,6 +334,7 @@ class LeetCodeRequests {
 """,
     );
   }
+
   static LeetCodeRequests getCurrentTimestamp() {
     return LeetCodeRequests(
       operationName: "currentTimestamp",
@@ -684,6 +734,48 @@ class LeetCodeRequests {
     """,
     );
   }
+
+  static LeetCodeRequests getMyFavoriteList(
+  ) {
+    return LeetCodeRequests(
+      operationName: "myFavoriteList",
+      variables: Variables(),
+      query: """
+          query myFavoriteList {
+              myCreatedFavoriteList {
+                favorites {
+                  coverUrl
+                  coverEmoji
+                  coverBackgroundColor
+                  hasCurrentQuestion
+                  isPublicFavorite
+                  lastQuestionAddedAt
+                  name
+                  slug
+                  favoriteType
+                }
+                hasMore
+                totalLength
+              }
+              myCollectedFavoriteList {
+                hasMore
+                totalLength
+                favorites {
+                  coverUrl
+                  coverEmoji
+                  coverBackgroundColor
+                  hasCurrentQuestion
+                  isPublicFavorite
+                  name
+                  slug
+                  lastQuestionAddedAt
+                  favoriteType
+                }
+              }
+            }
+    """,
+    );
+  }
 }
 
 class Variables {
@@ -705,7 +797,8 @@ class Variables {
   final List<String>? topicTags;
   final String? userInput;
   final List<String>? tagSlugs;
-
+  final String? favoriteSlug;
+  final SortBy? sortBy;
   Variables({
     this.username,
     this.titleSlug,
@@ -725,6 +818,8 @@ class Variables {
     this.topicTags,
     this.userInput,
     this.tagSlugs,
+    this.favoriteSlug,
+    this.sortBy,
   });
 
   Map<String, dynamic> toJson() {
@@ -747,6 +842,8 @@ class Variables {
       'tagSlugs': tagSlugs,
       'languageTags': languageTags,
       'topicTags': topicTags,
+      'favoriteSlug': favoriteSlug,
+      'sortBy': sortBy?.toJson(),
     };
   }
 }
@@ -776,6 +873,23 @@ class Filters {
       if (listId != null) 'listId': listId,
       if (difficulty != null) 'difficulty': difficulty,
       if (sortOrder != null) 'sortOrder': sortOrder,
+    };
+  }
+}
+
+class SortBy {
+  final String? sortField;
+  final String? sortOrder;
+
+  SortBy({
+    this.sortField,
+    this.sortOrder,
+  });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'sortField': sortField ?? "CUSTOM",
+      'sortOrder': sortOrder ?? "ASCENDING",
     };
   }
 }

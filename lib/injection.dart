@@ -1,6 +1,7 @@
 import 'package:codersgym/core/network/app_dio_logger.dart';
 import 'package:codersgym/core/network/dio_network_service.dart';
 import 'package:codersgym/core/network/network_service.dart';
+import 'package:codersgym/core/services/firebase_remote_config_service.dart';
 import 'package:codersgym/core/services/github_updater.dart';
 import 'package:codersgym/core/services/local_notification_service.dart';
 import 'package:codersgym/core/services/notification_scheduler.dart';
@@ -23,12 +24,17 @@ import 'package:codersgym/features/profile/presentation/blocs/cubit/user_profile
 import 'package:codersgym/features/profile/presentation/blocs/user_profile/user_profile_cubit.dart';
 import 'package:codersgym/features/question/data/parser/leetcode_solution_parser.dart';
 import 'package:codersgym/features/question/data/repository/community_solution_repository.dart';
+import 'package:codersgym/features/question/data/repository/favorite_questions_repository.dart';
 import 'package:codersgym/features/question/domain/repository/community_solution_repository.dart';
+import 'package:codersgym/features/question/domain/repository/favorite_questions_repository.dart';
 import 'package:codersgym/features/question/presentation/blocs/community_post_detail/community_post_detail_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/community_solution_filter/community_solution_filter_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/community_solutions/community_solutions_bloc.dart';
+import 'package:codersgym/features/question/presentation/blocs/favorite_quesions_list/favorite_quesions_list_bloc.dart';
+import 'package:codersgym/features/question/presentation/blocs/my_favorite_list/my_favorite_list_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/official_solution_available/official_solution_available_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/online_user_count/online_user_count_cubit.dart';
+import 'package:codersgym/features/question/presentation/blocs/problem_sheets/problem_sheets_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/question_archieve/question_archieve_bloc.dart';
 import 'package:codersgym/features/question/presentation/blocs/question_filter/question_filter_cubit.dart';
 import 'package:codersgym/features/question/presentation/blocs/question_hints/question_hints_cubit.dart';
@@ -70,6 +76,14 @@ Future<void> initializeDependencies() async {
   getIt.registerLazySingleton<HydratedStorage>(
     () => hydradedStorage,
   );
+
+  final configService = FirebaseRemoteConfigService();
+  await configService.initialize(
+    minimumFetchInterval: 3600, // 1 hour
+    fetchImmediately: true,
+  );
+
+  getIt.registerSingleton(configService);
 
   // ROUTER
   getIt.registerSingleton(AppRouter());
@@ -146,6 +160,12 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerSingleton<CommunitySolutionRepository>(
     CommunitySolutionRepositoryImp(
+      getIt.get(),
+    ),
+  );
+  getIt.registerSingleton<FavoriteQuestionsRepository>(
+    FavoriteQuestionsRepositoryImp(
+      getIt.get(),
       getIt.get(),
     ),
   );
@@ -260,6 +280,21 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerFactory(
     () => TimestampCubit(
+      getIt.get(),
+    ),
+  );
+  getIt.registerFactory(
+    () => FavoriteQuesionsListBloc(
+      getIt.get(),
+    ),
+  );
+  getIt.registerFactory(
+    () => MyFavoriteListCubit(
+      getIt.get(),
+    ),
+  );
+  getIt.registerFactory(
+    () => ProblemSheetsCubit(
       getIt.get(),
     ),
   );
