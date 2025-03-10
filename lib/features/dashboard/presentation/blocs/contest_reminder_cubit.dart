@@ -93,6 +93,11 @@ class ContestReminderCubit extends Cubit<ContestReminderState> {
         .cancelNotification(scheduledContest.scheduledId);
     checkSchedulesContests();
   }
+
+  Future<void> cancelAllReminders() async {
+    await _notificationScheduler.cancelAllNotifications();
+    emit(ContestReminderLoaded(scheduledContests: const {}));
+  }
 }
 
 String _formatDuration(Duration duration) {

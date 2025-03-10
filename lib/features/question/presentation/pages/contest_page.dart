@@ -29,6 +29,12 @@ class ContestPage extends HookWidget implements AutoRouteWrapper {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Contests"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.notifications_off),
+            onPressed: () => _cancelAllReminders(context),
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -106,6 +112,31 @@ class ContestPage extends HookWidget implements AutoRouteWrapper {
             )
           ],
         ),
+      ),
+    );
+  }
+
+  void _cancelAllReminders(BuildContext context) {
+    final contestReminderCubit = context.read<ContestReminderCubit>();
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Cancel All Reminders"),
+        content: const Text(
+            "Are you sure you want to cancel all contest reminders?"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("No"),
+          ),
+          TextButton(
+            onPressed: () {
+              contestReminderCubit.cancelAllReminders();
+              Navigator.pop(context);
+            },
+            child: const Text("Yes"),
+          ),
+        ],
       ),
     );
   }

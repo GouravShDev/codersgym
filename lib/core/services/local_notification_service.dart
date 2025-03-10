@@ -145,7 +145,6 @@ class LocalNotificationService {
       body,
       tz.TZDateTime.from(scheduledDate, tz.local),
       notificationDetails,
-      matchDateTimeComponents: DateTimeComponents.time,
       payload: payload,
       androidScheduleMode: AndroidScheduleMode.alarmClock,
     );
