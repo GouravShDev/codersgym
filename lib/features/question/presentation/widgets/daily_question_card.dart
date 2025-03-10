@@ -1,4 +1,3 @@
-import 'package:codersgym/core/utils/app_constants.dart';
 import 'package:codersgym/features/common/widgets/app_countdown_timer.dart';
 import 'package:codersgym/features/common/widgets/loading_dots.dart';
 import 'package:flutter/material.dart';
