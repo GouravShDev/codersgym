@@ -25,6 +25,9 @@ class ProblemSheetListPage extends HookWidget implements AutoRouteWrapper {
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       child: InkWell(
+        customBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
         onTap: () {
           context.router.push(
             ProblemSheetDetailRoute(

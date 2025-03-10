@@ -30,9 +30,10 @@ class MyListPage extends HookWidget implements AutoRouteWrapper {
         title: const Text('My Lists'),
         bottom: TabBar(
           controller: tabController,
+          dividerColor: theme.canvasColor,
           tabs: const [
-            Tab(text: 'My Favorites'),
-            Tab(text: 'Collected Favorites'),
+            Tab(text: 'Created Favorites'),
+            Tab(text: 'Saved Favorites'),
           ],
         ),
       ),
@@ -68,7 +69,7 @@ class MyListPage extends HookWidget implements AutoRouteWrapper {
     if (favoriteList.isEmpty) {
       return Center(
         child: Text(
-          'No favorites found',
+          'No Problems found',
           style: textTheme.bodyLarge,
         ),
       );
@@ -142,7 +143,6 @@ class MyListPage extends HookWidget implements AutoRouteWrapper {
 
   Widget _buildFavoriteImage(
       BuildContext context, FavoriteProblemset favorite) {
-    final theme = Theme.of(context);
 
     if (favorite.coverUrl != null) {
       return ClipRRect(

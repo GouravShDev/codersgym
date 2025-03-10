@@ -174,6 +174,33 @@ class HomePageBody extends StatelessWidget {
                       title: "My List",
                       color: theme.colorScheme.successColor,
                       onTap: () {
+                        final isLoginViaLeetcode = context
+                            .read<AuthBloc>()
+                            .isUserAuthenticatedWithLeetcodeAccount;
+                        if (!isLoginViaLeetcode) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text('Login Required'),
+                                content: const Text(
+                                    'Please login with your LeetCode account to view saved list.'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      context.router.pushAndPopUntil(
+                                        const LoginRoute(),
+                                        predicate: (route) => false,
+                                      );
+                                    },
+                                    child: const Text('Go to Login'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                          return;
+                        }
                         context.pushRoute(const MyListRoute());
                       },
                     ),
@@ -183,6 +210,7 @@ class HomePageBody extends StatelessWidget {
                       icon: Icons.forum,
                       title: "Discuss",
                       color: theme.colorScheme.primary,
+                      isComingSoon: true,
                       onTap: () {
                         // Navigate to discuss section
                       },
@@ -202,6 +230,7 @@ class HomePageBody extends StatelessWidget {
                       icon: Icons.terminal,
                       title: "CodingEXP",
                       color: theme.colorScheme.successColor,
+                      isComingSoon: true,
                       onTap: () {
                         // Navigate to practice section
                       },
@@ -232,6 +261,7 @@ class HomePageBody extends StatelessWidget {
           isFetching: isFetching,
           currentTime: timestamp != null
               ? DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt())
+                  .toLocal()
               : null,
           onSolveTapped: () {
             AutoRouter.of(context).push(
