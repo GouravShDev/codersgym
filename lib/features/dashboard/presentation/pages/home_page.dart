@@ -260,8 +260,10 @@ class HomePageBody extends StatelessWidget {
           question: question,
           isFetching: isFetching,
           currentTime: timestamp != null
-              ? DateTime.fromMillisecondsSinceEpoch((timestamp * 1000).toInt())
-                  .toLocal()
+              ? DateTime.fromMillisecondsSinceEpoch(
+                  (timestamp * 1000).toInt(),
+                  isUtc: true,
+                )
               : null,
           onSolveTapped: () {
             AutoRouter.of(context).push(
