@@ -44,10 +44,44 @@ class QuestionCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Flexible(
-                    child: Text(
-                      ("${question.frontendQuestionId}. ") +
-                          (question.title ?? "No Title"),
-                      style: textTheme.titleMedium,
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            ("${question.frontendQuestionId}. ") +
+                                (question.title ?? "No Title"),
+                            style: textTheme.titleMedium,
+                          ),
+                        ),
+                        if (question.paidOnly == true)
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color:
+                                    theme.colorScheme.primary.withOpacity(0.2),
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                'Premium',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: theme.colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                  shadows: <Shadow>[
+                                    Shadow(
+                                      offset: const Offset(1.2, 1.0),
+                                      blurRadius: 3.0,
+                                      color: theme.colorScheme.onPrimary,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   if (question.status != null)

@@ -40,7 +40,7 @@ class QuestionNodeEntity {
     titleSlug = json['titleSlug'];
     difficulty = json['difficulty'];
     acRate = json['acRate']?.toDouble();
-    paidOnly = json['paidOnly'];
+    paidOnly = json['paidOnly'] ?? json['isPaidOnly'];
     frontendQuestionId =
         json['frontendQuestionId'] ?? json['questionFrontendId'];
     hasVideoSolution = json['hasVideoSolution'];

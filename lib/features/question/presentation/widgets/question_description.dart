@@ -113,8 +113,31 @@ class QuestionDescription extends HookWidget {
                             };
                           },
                         ),
+                        if (question.paidOnly ?? false)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              'Premium',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Theme.of(context).colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
                       ],
                     ),
+                    if ((question.paidOnly ?? false) &&
+                        (question.content?.isEmpty ?? true))
+                      _buildPremiumContentLock(context),
                     SelectionArea(
                       child: HtmlWidget(
                         question.content ?? '',
@@ -285,6 +308,55 @@ class QuestionDescription extends HookWidget {
             ),
           )
           .toList(),
+    );
+  }
+
+  Widget _buildPremiumContentLock(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 16),
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: colorScheme.primary.withOpacity(0.05),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: colorScheme.primary.withOpacity(0.3)),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            Icons.lock,
+            size: 64,
+            color: colorScheme.primary,
+          ),
+          const SizedBox(height: 24),
+          Text(
+            'Premium Question',
+            style: textTheme.headlineSmall?.copyWith(
+              color: colorScheme.primary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            'This is a premium question available with a leetcode premium subscription.',
+            textAlign: TextAlign.center,
+            style: textTheme.bodyLarge,
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: () {
+              context.maybePop();
+            },
+            child: Text(
+              'Go back',
+              style: TextStyle(color: colorScheme.primary),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
