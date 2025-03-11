@@ -51,11 +51,10 @@ class QuestionDescription extends HookWidget {
                     Padding(
                       padding: const EdgeInsets.only(
                         top: 8.0,
-                        right: 8.0,
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Flexible(
                             child: SelectableText(
