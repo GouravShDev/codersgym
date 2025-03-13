@@ -199,6 +199,7 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
 
     _timer = Timer.periodic(const Duration(seconds: 2), (timer) async {
       if (elapsedSeconds >= timeoutInSeconds) {
+        if(isClosed) return;
         onCodeExecutionResultRecieved(CodeExecutionError());
 
         _timer?.cancel();

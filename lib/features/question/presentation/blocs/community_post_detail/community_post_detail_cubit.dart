@@ -19,6 +19,7 @@ class CommunityPostDetailCubit extends Cubit<CommunityPostDetailState> {
     final result = await _solutionRepository.getCommunitySolutionDetails(
       post.id ?? 0,
     );
+    if (isClosed) return;
     if (result.isFailure) {
       emit(ApiError(result.getFailureException));
       return;
