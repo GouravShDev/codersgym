@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:codersgym/core/services/analytics.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
+import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/leetcode_login_dialog.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/question_description_bottomsheet.dart';
@@ -71,8 +72,12 @@ class CodeEditorTopActionBar extends StatelessWidget {
         ),
         BlocBuilder<CodeEditorBloc, CodeEditorState>(
           buildWhen: (previous, current) =>
-              previous.isCodeFormatting != current.isCodeFormatting,
+              previous.isCodeFormatting != current.isCodeFormatting ||
+              previous.language != current.language,
           builder: (context, state) {
+            if (state.language == ProgrammingLanguage.csharp) {
+              return const SizedBox.shrink();
+            }
             return IconButton(
               onPressed: () {
                 final isAuthenticated = context

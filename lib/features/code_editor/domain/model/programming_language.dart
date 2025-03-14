@@ -2,8 +2,9 @@ import 'package:highlight/highlight.dart';
 import 'package:highlight/languages/cpp.dart';
 import 'package:highlight/languages/java.dart';
 import 'package:highlight/languages/python.dart';
+import 'package:highlight/languages/cs.dart';
 
-enum ProgrammingLanguage { cpp, java, python, python3 }
+enum ProgrammingLanguage { cpp, java, python, python3, csharp }
 
 extension ProgrammingLanguageExt on ProgrammingLanguage {
   Mode get mode {
@@ -12,6 +13,7 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
       ProgrammingLanguage.java => java,
       ProgrammingLanguage.python => python,
       ProgrammingLanguage.python3 => python,
+      ProgrammingLanguage.csharp => cs,
     };
   }
 
@@ -25,6 +27,8 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
         return 'Python';
       case ProgrammingLanguage.python3:
         return 'Python3';
+      case ProgrammingLanguage.csharp:
+        return 'C#';
     }
   }
 
@@ -49,6 +53,13 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
         return 'py3'; // not sure using py3 here
       case ProgrammingLanguage.python3:
         return 'py3';
+      case ProgrammingLanguage.csharp:
+        return 'cs';
     }
   }
 }
+
+/// List of [ProgrammingLanguage] whose code formatting is not provided by leetcode
+final List<ProgrammingLanguage> formatUnSupportedLanguages = [
+  ProgrammingLanguage.csharp,
+];
