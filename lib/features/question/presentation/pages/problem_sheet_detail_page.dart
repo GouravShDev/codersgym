@@ -88,9 +88,6 @@ class ProblemSheetDetailPage extends HookWidget implements AutoRouteWrapper {
           if (state.isLoading && state.questions.isEmpty) {
             return const Center(child: CircularProgressIndicator());
           }
-          if (state.questions.isEmpty) {
-            return const Center(child: Text("No Questions available"));
-          }
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8.0),
             child: RefreshIndicator(
@@ -217,7 +214,10 @@ class ProblemSheetDetailPage extends HookWidget implements AutoRouteWrapper {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 6,
-                          vertical: 0,
+                        ).add(
+                          const EdgeInsets.only(
+                            bottom: 6,
+                          ),
                         ),
                         child: QuestionFilterBar(
                           onShowDifficultyToggle: (value) {
@@ -227,6 +227,15 @@ class ProblemSheetDetailPage extends HookWidget implements AutoRouteWrapper {
                       ),
                     ),
                   ),
+                  if (state.questions.isEmpty)
+                    const SliverFillRemaining(
+                      child: Center(
+                        child: Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: Text("No Questions available"),
+                        ),
+                      ),
+                    ),
                   AppPaginationSliverList(
                     itemBuilder: (BuildContext context, int index) {
                       return ValueListenableBuilder(

@@ -15,8 +15,8 @@ class QuestionFilterBar extends HookWidget {
     this.showTopicTagsFilter = true,
     this.showSortFilter = true,
     this.showResetButton = true,
-    this.showHideSolvedToggle = true,
-    this.showDifficultyToggle = true,
+    this.showHideSolvedToggle = false,
+    this.showDifficultyToggle = false,
     this.onShowDifficultyToggle,
   });
 

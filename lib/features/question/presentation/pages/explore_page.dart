@@ -103,10 +103,7 @@ class ExplorePage extends HookWidget {
                       horizontal: 6,
                       vertical: 8,
                     ),
-                    child: QuestionFilterBar(
-                      showHideSolvedToggle: false,
-                      showDifficultyToggle: false,
-                    ),
+                    child: QuestionFilterBar(),
                   ),
                 ),
                 Expanded(
