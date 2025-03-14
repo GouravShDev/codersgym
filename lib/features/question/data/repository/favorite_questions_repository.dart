@@ -29,6 +29,7 @@ class FavoriteQuestionsRepositoryImp implements FavoriteQuestionsRepository {
         sortBy: query.sortOption?.toSortBy() ?? SortBy(),
         limit: query.limit,
         skip: query.skip,
+        filtersV2: query.problemFilterV2,
       );
       if (data == null) {
         return Failure(Exception("No data found"));

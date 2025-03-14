@@ -98,7 +98,16 @@ class ExplorePage extends HookWidget {
                       ),
                     );
                   },
-                  child: const QuestionFilterBar(),
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 8,
+                    ),
+                    child: QuestionFilterBar(
+                      showHideSolvedToggle: false,
+                      showDifficultyToggle: false,
+                    ),
+                  ),
                 ),
                 Expanded(
                   child: AppPaginationList(

@@ -1,6 +1,8 @@
+import 'package:codersgym/features/question/domain/repository/favorite_questions_repository.dart';
+
 enum ProblemSortOption {
-  titleAsc,
-  titleDesc,
+  idAsc,
+  idDesc,
   acceptanceRateAsc,
   acceptanceRateDesc,
   difficultyAsc,
@@ -8,10 +10,10 @@ enum ProblemSortOption {
 
   String get displayValue {
     switch (this) {
-      case ProblemSortOption.titleAsc:
-        return 'ABC ▲';
-      case ProblemSortOption.titleDesc:
-        return 'ABC ▼';
+      case ProblemSortOption.idAsc:
+        return 'ID ▲';
+      case ProblemSortOption.idDesc:
+        return 'ID ▼';
       case ProblemSortOption.acceptanceRateAsc:
         return 'AC ▲';
       case ProblemSortOption.acceptanceRateDesc:
@@ -25,8 +27,8 @@ enum ProblemSortOption {
 
   String get orderBy {
     switch (this) {
-      case ProblemSortOption.titleAsc:
-      case ProblemSortOption.titleDesc:
+      case ProblemSortOption.idAsc:
+      case ProblemSortOption.idDesc:
         return "FRONTEND_ID";
       case ProblemSortOption.acceptanceRateAsc:
       case ProblemSortOption.acceptanceRateDesc:
@@ -39,14 +41,23 @@ enum ProblemSortOption {
 
   String get sortOrder {
     switch (this) {
-      case ProblemSortOption.titleAsc:
+      case ProblemSortOption.idAsc:
       case ProblemSortOption.acceptanceRateAsc:
       case ProblemSortOption.difficultyAsc:
         return "ASCENDING";
-      case ProblemSortOption.titleDesc:
+      case ProblemSortOption.idDesc:
       case ProblemSortOption.acceptanceRateDesc:
       case ProblemSortOption.difficultyDesc:
         return "DESCENDING";
     }
+  }
+}
+
+extension ProblemSortOptionExt on ProblemSortOption {
+  FavoriteQuestionSortOption toFavoriteSortOption() {
+    return FavoriteQuestionSortOption(
+      sortField: orderBy,
+      sortOrder: sortOrder,
+    );
   }
 }

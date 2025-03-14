@@ -138,6 +138,14 @@ extension QuestionStatusExtension on QuestionStatus {
         return "Unattempted";
     }
   }
+
+  String get value {
+    return switch (this) {
+      QuestionStatus.accepted => "SOLVED",
+      QuestionStatus.notAccepted => "ATTEMPTED",
+      QuestionStatus.unattempted => "TO_DO",
+    };
+  }
 }
 
 class CodeSnippet {

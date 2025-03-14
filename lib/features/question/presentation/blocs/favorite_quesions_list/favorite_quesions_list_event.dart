@@ -2,9 +2,7 @@ part of 'favorite_quesions_list_bloc.dart';
 
 sealed class FavoriteQuesionsListEvent{
   const FavoriteQuesionsListEvent();
-
 }
-
 
 class FetchFavoriteQuestionsListEvent extends FavoriteQuesionsListEvent {
   /// Pass skip : 0 for reseting the list to start from the begining
@@ -16,6 +14,7 @@ class FetchFavoriteQuestionsListEvent extends FavoriteQuesionsListEvent {
   final String? difficulty;
   final Set<TopicTags>? topics;
   final FavoriteQuestionSortOption? sortOption;
+  final QuestionStatus? hideQuestionWithStatus;
 
   const FetchFavoriteQuestionsListEvent({
     this.limit,
@@ -25,5 +24,6 @@ class FetchFavoriteQuestionsListEvent extends FavoriteQuesionsListEvent {
     this.difficulty,
     this.topics,
     this.sortOption,
+    this.hideQuestionWithStatus,
   });
 }

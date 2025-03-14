@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_interpolation_to_compose_strings
 
+import 'package:codersgym/features/question/domain/model/problem_filter_v2.dart';
+
 class LeetCodeRequests {
   final String operationName;
   final Variables variables;
@@ -270,6 +272,7 @@ class LeetCodeRequests {
     int? limit,
     SortBy? sortBy,
     int? skip,
+    ProblemFilterV2? filtersV2,
   ) {
     return LeetCodeRequests(
       operationName: "favoriteQuestionList",
@@ -278,12 +281,15 @@ class LeetCodeRequests {
         favoriteSlug: favoriteSlug,
         limit: limit ?? 100,
         sortBy: sortBy ?? SortBy(),
+        filtersV2: filtersV2,
       ),
       query: """
-      query favoriteQuestionList(\$favoriteSlug: String!, \$filter: FavoriteQuestionFilterInput, \$sortBy: QuestionSortByInput, \$limit: Int, \$skip: Int, \$version: String = "v2") {
+      query favoriteQuestionList(\$favoriteSlug: String!, \$filter: FavoriteQuestionFilterInput, \$filtersV2: QuestionFilterInput, \$searchKeyword: String, \$sortBy: QuestionSortByInput, \$limit: Int, \$skip: Int, \$version: String = "v2") {
         favoriteQuestionList(
           favoriteSlug: \$favoriteSlug
           filter: \$filter
+          filtersV2: \$filtersV2
+          searchKeyword: \$searchKeyword
           sortBy: \$sortBy
           limit: \$limit
           skip: \$skip
@@ -830,6 +836,7 @@ class Variables {
   final List<String>? tagSlugs;
   final String? favoriteSlug;
   final SortBy? sortBy;
+  final ProblemFilterV2? filtersV2;
   Variables({
     this.username,
     this.titleSlug,
@@ -851,6 +858,7 @@ class Variables {
     this.tagSlugs,
     this.favoriteSlug,
     this.sortBy,
+    this.filtersV2,
   });
 
   Map<String, dynamic> toJson() {
@@ -875,6 +883,7 @@ class Variables {
       'topicTags': topicTags,
       'favoriteSlug': favoriteSlug,
       'sortBy': sortBy?.toJson(),
+      'filtersV2': filtersV2?.toJson(),
     };
   }
 }

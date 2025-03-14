@@ -45,13 +45,16 @@ class TopicTagsSelectionDialogButton extends HookWidget {
         ),
         child: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.label_outline,
               size: 18,
+              color: currentTags?.isNotEmpty ?? false
+                  ? Theme.of(context).primaryColor
+                  : null,
             ),
             const SizedBox(width: 6),
             Text(
-              'Topics ${currentTags != null ? "(${currentTags.length})" : ''}',
+              'Topics ${currentTags?.isNotEmpty ?? false ? "(${currentTags!.length})" : ''}',
               style: const TextStyle(
                 fontSize: 14,
               ),

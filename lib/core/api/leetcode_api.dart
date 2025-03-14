@@ -7,6 +7,7 @@ import 'package:codersgym/core/utils/storage/cookie_encoder.dart';
 import 'package:codersgym/core/utils/storage/storage_manager.dart';
 import 'package:codersgym/features/auth/data/service/auth_service.dart';
 import 'package:codersgym/features/common/widgets/app_error_notifier.dart';
+import 'package:codersgym/features/question/domain/model/problem_filter_v2.dart';
 import 'package:exponential_back_off/exponential_back_off.dart';
 import 'package:graphql_flutter/graphql_flutter.dart';
 import 'package:codersgym/core/error/exception.dart';
@@ -160,12 +161,14 @@ class LeetcodeApi {
     required int? limit,
     required SortBy? sortBy,
     required int? skip,
+    required ProblemFilterV2? filtersV2,
   }) async {
     final request = LeetCodeRequests.getFavoriteQuesionsRequest(
       favoriteSlug,
       limit,
       sortBy,
       skip,
+      filtersV2,
     );
     return _executeGraphQLQuery(request);
   }
@@ -174,7 +177,9 @@ class LeetcodeApi {
     final request = LeetCodeRequests.getMyFavoriteList();
     return _executeGraphQLQuery(request);
   }
-  Future<Map<String, dynamic>?> getProblemListProgress(String favoriteSlug) async {
+
+  Future<Map<String, dynamic>?> getProblemListProgress(
+      String favoriteSlug) async {
     final request = LeetCodeRequests.getProblemListProgess(
       favoriteSlug,
     );

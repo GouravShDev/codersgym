@@ -146,7 +146,13 @@ class ExploreSearchDelegate extends SearchDelegate<String> {
             ),
           );
         },
-        child: const QuestionFilterBar(),
+        child: const Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: 6,
+            vertical: 8,
+          ),
+          child: QuestionFilterBar(),
+        ),
       ),
     );
   }

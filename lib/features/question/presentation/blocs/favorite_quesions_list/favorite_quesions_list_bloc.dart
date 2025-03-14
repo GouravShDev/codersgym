@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:codersgym/features/question/domain/model/problem_filter_v2.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:codersgym/features/question/domain/repository/favorite_questions_repository.dart';
 import 'package:equatable/equatable.dart';
@@ -40,11 +41,31 @@ class FavoriteQuesionsListBloc
     );
     final result = await favoriteQuestiionsRepository.getFavoriteQuesitions(
       FavoriteQuestionQueryInput(
-        skip: currentSkip,
-        limit: currentLimit,
-        favoriteSlug: event.favoriteSlug,
-        sortOption: event.sortOption,
-      ),
+          skip: currentSkip,
+          limit: currentLimit,
+          favoriteSlug: event.favoriteSlug,
+          sortOption: event.sortOption,
+          problemFilterV2: ProblemFilterV2(
+            statusFilter:event.hideQuestionWithStatus != null ?  StatusFilter(
+              operator: FilterOperator.IS_NOT,
+              questionStatuses: [event.hideQuestionWithStatus!.value]
+            ) :null,
+            difficultyFilter: event.difficulty != null
+                ? DifficultyFilter(
+                    difficulties: [event.difficulty!],
+                    operator: FilterOperator.IS,
+                  )
+                : null,
+            topicFilter: TopicFilter(
+              topicSlugs: event.topics
+                  ?.map(
+                    (e) => e.slug ?? '',
+                  )
+                  .toList(),
+              operator: FilterOperator.IS,
+            ),
+            filterCombineType: FilterCombineType.ALL,
+          )),
     );
 
     if (isClosed) return;

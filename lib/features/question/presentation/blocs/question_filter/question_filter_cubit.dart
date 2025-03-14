@@ -55,4 +55,12 @@ class QuestionFilterCubit extends Cubit<QuestionFilterState> {
       const QuestionFilterState(),
     );
   }
+
+  void toggleHideSolved() {
+    emit(
+      state.copyWith(
+        hideSolved: !state.hideSolved,
+      ),
+    );
+  }
 }
