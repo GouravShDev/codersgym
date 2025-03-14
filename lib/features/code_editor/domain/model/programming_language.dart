@@ -3,7 +3,7 @@ import 'package:highlight/languages/cpp.dart';
 import 'package:highlight/languages/java.dart';
 import 'package:highlight/languages/python.dart';
 
-enum ProgrammingLanguage { cpp, java, python }
+enum ProgrammingLanguage { cpp, java, python, python3 }
 
 extension ProgrammingLanguageExt on ProgrammingLanguage {
   Mode get mode {
@@ -11,6 +11,7 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
       ProgrammingLanguage.cpp => cpp,
       ProgrammingLanguage.java => java,
       ProgrammingLanguage.python => python,
+      ProgrammingLanguage.python3 => python,
     };
   }
 
@@ -22,6 +23,8 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
         return 'Java';
       case ProgrammingLanguage.python:
         return 'Python';
+      case ProgrammingLanguage.python3:
+        return 'Python3';
     }
   }
 
@@ -44,6 +47,8 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
         return 'java';
       case ProgrammingLanguage.python:
         return 'py3'; // not sure using py3 here
+      case ProgrammingLanguage.python3:
+        return 'py3';
     }
   }
 }
