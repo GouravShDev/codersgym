@@ -11,6 +11,7 @@ import 'package:codersgym/features/question/presentation/blocs/question_tags/que
 import 'package:codersgym/features/question/presentation/blocs/similar_question/similar_question_cubit.dart';
 import 'package:codersgym/features/question/presentation/widgets/question_difficulty_text.dart';
 import 'package:codersgym/features/question/presentation/widgets/question_info_tile.dart';
+import 'package:codersgym/features/question/presentation/widgets/question_premium_card.dart';
 import 'package:codersgym/features/question/presentation/widgets/question_status_icon.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
@@ -113,24 +114,9 @@ class QuestionDescription extends HookWidget {
                           },
                         ),
                         if (question.paidOnly ?? false)
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 2),
-                            decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              'Premium',
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context).colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8.0),
+                            child: QuestionPremiumCard(),
                           ),
                       ],
                     ),

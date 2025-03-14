@@ -1,3 +1,4 @@
+import 'package:codersgym/features/question/presentation/widgets/question_premium_card.dart';
 import 'package:codersgym/features/question/presentation/widgets/question_status_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
@@ -45,6 +46,7 @@ class QuestionCard extends StatelessWidget {
                 children: [
                   Flexible(
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Flexible(
                           child: Text(
@@ -54,32 +56,9 @@ class QuestionCard extends StatelessWidget {
                           ),
                         ),
                         if (question.paidOnly == true)
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: 2),
-                              decoration: BoxDecoration(
-                                color:
-                                    theme.colorScheme.primary.withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                'Premium',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: theme.colorScheme.primary,
-                                  fontWeight: FontWeight.bold,
-                                  shadows: <Shadow>[
-                                    Shadow(
-                                      offset: const Offset(1.2, 1.0),
-                                      blurRadius: 3.0,
-                                      color: theme.colorScheme.onPrimary,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                          const Padding(
+                            padding: EdgeInsets.only(left: 8.0, top: 2.0),
+                            child: QuestionPremiumCard(),
                           ),
                       ],
                     ),
