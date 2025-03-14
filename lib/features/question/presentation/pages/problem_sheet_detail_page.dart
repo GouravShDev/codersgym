@@ -220,6 +220,8 @@ class ProblemSheetDetailPage extends HookWidget implements AutoRouteWrapper {
                           ),
                         ),
                         child: QuestionFilterBar(
+                          showHideSolvedToggle: true,
+                          showDifficultyToggle: true,
                           onShowDifficultyToggle: (value) {
                             showAllQuestionDifficulty.value = value;
                           },
