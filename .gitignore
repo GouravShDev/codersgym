@@ -58,3 +58,6 @@ app.*.map.json
 # Fastlane files
 android/fastlane/coders-gym-creds.json
 android/fastlane/report.xml
+
+# Files generated while building patches using shorebird
+android/app/.cxx
