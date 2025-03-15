@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:codersgym/core/utils/number_extension.dart';
+import 'package:codersgym/features/common/widgets/app_network_image.dart';
 import 'package:codersgym/features/question/domain/model/community_solution_post_detail.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -31,15 +32,12 @@ class SolutionPostTile extends StatelessWidget {
             children: [
               ListTile(
                 contentPadding: const EdgeInsets.all(2),
-                leading: CircleAvatar(
-                  radius: 18,
-                  foregroundImage:
-                      CachedNetworkImageProvider(author.profile!.userAvatar!),
-                  child: author.profile?.userAvatar == null
-                      ? Text(
-                          author.username?[0].toUpperCase() ?? '?',
-                        )
-                      : null,
+                leading: AppNetworkImage.avatar(
+                  imageUrl: author.profile?.userAvatar ?? '',
+                  size: 36,
+                  errorWidget: Text(
+                    author.username?[0].toUpperCase() ?? '?',
+                  ),
                 ),
                 title: Text(
                   author.username ?? 'Anonymous',

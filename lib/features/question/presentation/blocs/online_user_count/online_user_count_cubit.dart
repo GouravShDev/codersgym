@@ -15,7 +15,7 @@ class OnlineUserCountCubit extends Cubit<OnlineUserCountState> {
     connectToWebSocket();
   }
 
-  void connectToWebSocket() {
+  Future<void> connectToWebSocket() async {
     try {
       emit(OnlineUserCountConnectingState());
 
@@ -34,6 +34,11 @@ class OnlineUserCountCubit extends Cubit<OnlineUserCountState> {
           emit(OnlineUserCountConnectionFailedState());
         },
       );
+      // Wait for channel to connect to server
+      // If we don't wait here then in case of failure it will
+      // throw [WebSocketException] after the method call execution
+      // is finished
+      await _channel?.ready;
     } catch (e) {
       if (isClosed) return;
       emit(OnlineUserCountConnectionFailedState());
