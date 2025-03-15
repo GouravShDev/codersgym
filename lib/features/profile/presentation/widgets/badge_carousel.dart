@@ -1,5 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:codersgym/features/common/widgets/app_network_image.dart';
 import 'package:codersgym/features/profile/domain/model/user_profile.dart';
 import 'package:flutter/material.dart';
 
@@ -22,7 +22,7 @@ class BadgeCarousel extends StatelessWidget {
       ),
       items: badges
           .map(
-            (e) => CachedNetworkImage(imageUrl: e.icon!),
+            (e) => AppNetworkImage.cached(imageUrl: e.icon!),
           )
           .toList(),
     );

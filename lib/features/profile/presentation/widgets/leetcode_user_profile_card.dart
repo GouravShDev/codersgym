@@ -1,5 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:codersgym/core/utils/number_extension.dart';
+import 'package:codersgym/features/common/widgets/app_network_image.dart';
 import 'package:codersgym/features/profile/presentation/widgets/leetcode_streak_fire.dart';
 import 'package:flutter/material.dart';
 import 'package:collection/collection.dart';
@@ -21,10 +21,15 @@ class LeetcodeUserProfileCard extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CircleAvatar(
-          radius: 40,
-          backgroundImage: CachedNetworkImageProvider(userProfile.userAvatar ?? ""),
+        AppNetworkImage.avatar(
+          imageUrl: userProfile.userAvatar ?? "",
+          size: 80,
         ),
+        // CircleAvatar(
+        //   radius: 40,
+        //   backgroundImage:
+        //       CachedNetworkImageProvider(userProfile.userAvatar ?? ""),
+        // ),
         const SizedBox(width: 12),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:codersgym/features/common/widgets/app_network_image.dart';
 import 'package:codersgym/features/profile/domain/model/user_profile.dart';
 import 'package:flutter/material.dart';
 
@@ -15,19 +16,23 @@ class UserGreetingCard extends StatelessWidget {
     required this.userName,
     required this.avatarUrl,
     required this.streak,
-     this.isFetching = false,
+    this.isFetching = false,
   });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 30.0,
-          backgroundImage:
-              (avatarUrl.isNotEmpty) ? CachedNetworkImageProvider(avatarUrl) : null,
-          // You can use AssetImage('assets/images/avatar.png') for a local image
+        AppNetworkImage.avatar(
+          imageUrl: avatarUrl,
+          size: 60,
         ),
+        // CircleAvatar(
+        //   radius: 30.0,
+        //   backgroundImage: (avatarUrl.isNotEmpty)
+        //       ? CachedNetworkImageProvider(avatarUrl)
+        //       : null,
+        // ),
         const SizedBox(width: 16.0),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,

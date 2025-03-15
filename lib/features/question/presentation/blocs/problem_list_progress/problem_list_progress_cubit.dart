@@ -13,6 +13,7 @@ class ProblemListProgressCubit extends Cubit<ProblemListProgressState> {
     emit(const ApiLoading());
     final result =
         await _favoriteQuestionsRepository.getProblemListProgess(listSlug);
+    if (isClosed) return;
     result.when(
       onSuccess: (value) => emit(
         ApiLoaded(value),

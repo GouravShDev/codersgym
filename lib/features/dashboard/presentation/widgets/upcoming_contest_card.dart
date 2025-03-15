@@ -1,4 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:codersgym/features/common/widgets/app_network_image.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/contest_reminder_cubit.dart';
 import 'package:codersgym/features/dashboard/presentation/widgets/contest_reminder_dialog.dart';
 import 'package:codersgym/features/question/domain/model/contest.dart';
@@ -68,7 +68,7 @@ class UpcomingContestCard extends HookWidget {
                   ? ClipRRect(
                       borderRadius: const BorderRadius.vertical(
                           top: Radius.circular(12.0)),
-                      child: CachedNetworkImage(
+                      child: AppNetworkImage.cached(
                         imageUrl: contest.cardImg!,
                         height: 150,
                         width: double.infinity,
