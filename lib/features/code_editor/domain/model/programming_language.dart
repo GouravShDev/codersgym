@@ -4,11 +4,12 @@ import 'package:highlight/languages/java.dart';
 import 'package:highlight/languages/python.dart';
 import 'package:highlight/languages/cs.dart';
 
-enum ProgrammingLanguage { cpp, java, python, python3, csharp }
+enum ProgrammingLanguage { c, cpp, java, python, python3, csharp }
 
 extension ProgrammingLanguageExt on ProgrammingLanguage {
   Mode get mode {
     return switch (this) {
+      ProgrammingLanguage.c => cpp,
       ProgrammingLanguage.cpp => cpp,
       ProgrammingLanguage.java => java,
       ProgrammingLanguage.python => python,
@@ -29,6 +30,8 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
         return 'Python3';
       case ProgrammingLanguage.csharp:
         return 'C#';
+      case ProgrammingLanguage.c:
+        return 'C';
     }
   }
 
@@ -55,6 +58,8 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
         return 'py3';
       case ProgrammingLanguage.csharp:
         return 'cs';
+      case ProgrammingLanguage.c:
+        return 'c';
     }
   }
 }
