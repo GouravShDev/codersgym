@@ -67,9 +67,8 @@ class DailyQuestionCard extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             AppCountdownTimer(
-                              referenceTime: currentTime!.toLocal(),
-                              targetTime: getLeetCodeDailyChallengeResetTime()
-                                  .toLocal(),
+                              referenceTime: currentTime!,
+                              targetTime: getLeetCodeDailyChallengeResetTime(),
                               timeStyle: textTheme.bodySmall?.copyWith(
                                 fontWeight: FontWeight.bold,
                               ),
@@ -133,5 +132,6 @@ class DailyQuestionCard extends StatelessWidget {
 
 DateTime getLeetCodeDailyChallengeResetTime() {
   final now = DateTime.now();
-  return DateTime.utc(now.year, now.month, now.day).add(const Duration(days: 1));
+  return DateTime.utc(now.year, now.month, now.day)
+      .add(const Duration(days: 1));
 }

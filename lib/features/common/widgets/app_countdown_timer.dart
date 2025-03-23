@@ -82,7 +82,7 @@ class _AppCountdownTimerState extends State<AppCountdownTimer>
       }
     } else {
       // Normal real-time mode using current time
-      final now = DateTime.now();
+      final now = DateTime.now().toUtc();
 
       if (widget.targetTime.isAfter(now)) {
         setState(() {
