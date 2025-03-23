@@ -56,7 +56,7 @@ class AppNetworkImage extends StatelessWidget {
     Widget? placeholder,
     Widget? errorWidget,
     BorderRadius? borderRadius,
-    Color shimmerColor = const Color(0xFFE0E0E0),
+    Color? shimmerColor,
     Duration fadeInDuration = const Duration(milliseconds: 300),
   }) {
     return AppNetworkImage._(
@@ -136,8 +136,7 @@ class AppNetworkImage extends StatelessWidget {
     final defaultPlaceholder = Container(
       height: height,
       width: width,
-      color:
-          shimmerColor ?? Theme.of(context).colorScheme.surfaceContainerHighest,
+      color: shimmerColor ?? Theme.of(context).scaffoldBackgroundColor,
     );
 
     // Default error widget if none provided
