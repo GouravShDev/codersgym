@@ -131,7 +131,7 @@ class DailyQuestionCard extends StatelessWidget {
 }
 
 DateTime getLeetCodeDailyChallengeResetTime() {
-  final now = DateTime.now();
+  final now = DateTime.now().toUtc();
   return DateTime.utc(now.year, now.month, now.day)
       .add(const Duration(days: 1));
 }
