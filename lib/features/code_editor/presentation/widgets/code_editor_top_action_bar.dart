@@ -75,7 +75,7 @@ class CodeEditorTopActionBar extends StatelessWidget {
               previous.isCodeFormatting != current.isCodeFormatting ||
               previous.language != current.language,
           builder: (context, state) {
-            if (state.language == ProgrammingLanguage.csharp) {
+            if (formatUnSupportedLanguages.contains(state.language)) {
               return const SizedBox.shrink();
             }
             return IconButton(
