@@ -4,9 +4,11 @@ import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
 import 'package:codersgym/features/common/widgets/app_loading.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/contest_reminder_cubit.dart';
+import 'package:codersgym/features/dashboard/presentation/blocs/recent_question/recent_question_cubit.dart';
 import 'package:codersgym/features/dashboard/presentation/widgets/feature_card.dart';
 import 'package:codersgym/features/profile/domain/model/user_profile.dart';
 import 'package:codersgym/features/profile/presentation/blocs/user_profile/user_profile_cubit.dart';
+import 'package:codersgym/features/question/presentation/widgets/question_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -42,6 +44,7 @@ class HomePageBody extends StatelessWidget {
           final dailyChallengeCubit = context.read<DailyChallengeCubit>();
           final profileCubit = context.read<UserProfileCubit>();
           final authBloc = context.read<AuthBloc>();
+          context.read<RecentQuestionCubit>().getRecentQuestions();
           await dailyChallengeCubit.getTodayChallenge();
           final authState = authBloc.state;
           if (authState is Authenticated) {
@@ -237,6 +240,58 @@ class HomePageBody extends StatelessWidget {
                     ),
                   ],
                 ),
+
+                BlocBuilder<RecentQuestionCubit, RecentQuestionState>(
+                  builder: (context, state) {
+                    return state.mayBeWhen(
+                      orElse: () => const SizedBox.shrink(),
+                      onLoaded: (questions) {
+                        if (questions.isEmpty) return const SizedBox.shrink();
+                        return Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(
+                              height: 16,
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8.0),
+                              child: Text(
+                                "Your Recent Questions",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleLarge
+                                    ?.copyWith(fontWeight: FontWeight.bold),
+                                textAlign: TextAlign.left,
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 8,
+                            ),
+                            ListView.builder(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                final problem = questions[index];
+                                return QuestionCard(
+                                  onTap: () {
+                                    AutoRouter.of(context).push(
+                                      QuestionDetailRoute(question: problem),
+                                    );
+                                  },
+                                  question: problem,
+                                  hideDifficulty: true,
+                                );
+                              },
+                              itemCount: questions.length,
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                )
               ],
             ),
           ),

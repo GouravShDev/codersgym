@@ -189,6 +189,7 @@ class LeetCodeRequests {
           content
           status
           isPaidOnly
+          acRate
           difficulty
           likes
           dislikes

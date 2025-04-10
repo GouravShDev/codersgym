@@ -43,6 +43,7 @@ app.*.map.json
 /android/app/release
 
 *.gen.dart
+*.g.dart
 *.gr.dart
 
 # ignore .firebaserc for all examples

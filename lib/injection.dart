@@ -16,8 +16,10 @@ import 'package:codersgym/features/code_editor/domain/repository/code_editor_rep
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
 import 'package:codersgym/features/common/bloc/app_file_downloader/app_file_downloader_bloc.dart';
 import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
+import 'package:codersgym/features/common/services/recent_question_manager.dart';
 import 'package:codersgym/features/common/widgets/app_error_notifier.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/contest_reminder_cubit.dart';
+import 'package:codersgym/features/dashboard/presentation/blocs/recent_question/recent_question_cubit.dart';
 import 'package:codersgym/features/profile/data/repository/profile_repository.dart';
 import 'package:codersgym/features/profile/presentation/blocs/contest_ranking_info/contest_ranking_info_cubit.dart';
 import 'package:codersgym/features/profile/presentation/blocs/cubit/user_profile_calendar_cubit.dart';
@@ -98,6 +100,7 @@ Future<void> initializeDependencies() async {
       getIt.get(),
       getIt.get(),
       getIt.get(),
+      getIt.get(),
     ),
   );
   getIt.registerLazySingleton<NetworkService>(
@@ -132,6 +135,10 @@ Future<void> initializeDependencies() async {
       notificationService: LocalNotificationService(),
       storage: getIt.get(),
     ),
+  );
+
+  getIt.registerLazySingleton<RecentQuestionManager>(
+    () => RecentQuestionManager(),
   );
 
   // REPOSITORY
@@ -184,6 +191,7 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerFactory(
     () => QuestionContentCubit(
+      getIt.get(),
       getIt.get(),
     ),
   );
@@ -301,6 +309,11 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerFactory(
     () => ProblemListProgressCubit(
+      getIt.get(),
+    ),
+  );
+  getIt.registerFactory(
+    () => RecentQuestionCubit(
       getIt.get(),
     ),
   );

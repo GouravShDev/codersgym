@@ -2,6 +2,7 @@ import 'package:codersgym/core/services/firebase_push_notification_service.dart'
 import 'package:codersgym/core/services/local_notification_service.dart';
 import 'package:codersgym/core/utils/custom_scroll_physics.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
+import 'package:codersgym/features/common/services/recent_question_manager.dart';
 import 'package:codersgym/features/settings/presentation/blocs/app_info/app_info_cubit.dart';
 import 'package:codersgym/gen/assets.gen.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,8 @@ import 'package:codersgym/core/theme/app_theme.dart';
 import 'package:codersgym/injection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hive/hive.dart';
+import 'package:path_provider/path_provider.dart';
 
 class AppInitializer extends HookWidget {
   const AppInitializer({super.key});
@@ -23,7 +26,10 @@ class AppInitializer extends HookWidget {
         Future<void> initialize() async {
           await LocalNotificationService().initialize();
           await FirebasePushNotificationService().initialize();
+          var path = await getExternalStorageDirectory();
+          Hive.init(path?.path);
           await initializeDependencies();
+          await getIt.get<RecentQuestionManager>().init();
           isInitialized.value = true;
         }
 

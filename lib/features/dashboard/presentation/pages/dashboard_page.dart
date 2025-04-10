@@ -7,11 +7,10 @@ import 'package:codersgym/features/common/bloc/app_file_downloader/app_file_down
 import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
 import 'package:codersgym/features/common/dialog/leetcode_session_expired_dialog.dart';
 import 'package:codersgym/features/common/widgets/app_updater.dart';
-import 'package:codersgym/features/dashboard/presentation/blocs/contest_reminder_cubit.dart';
+import 'package:codersgym/features/dashboard/presentation/blocs/recent_question/recent_question_cubit.dart';
 import 'package:codersgym/features/profile/domain/model/user_profile.dart';
 import 'package:codersgym/features/profile/domain/repository/profile_repository.dart';
 import 'package:codersgym/features/profile/presentation/blocs/user_profile/user_profile_cubit.dart';
-import 'package:codersgym/features/question/presentation/blocs/upcoming_contests/upcoming_contests_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -31,6 +30,8 @@ class DashboardPage extends HookWidget {
       () {
         dailyChallengeCubit.getTodayChallenge();
         context.read<TimestampCubit>().getCurrentTimestamp();
+
+        context.read<RecentQuestionCubit>().getRecentQuestions();
         final authState = authBloc.state;
         if (authState is Authenticated) {
           profileCubit.getUserProfile(authState.userName);
