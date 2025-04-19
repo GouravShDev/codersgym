@@ -827,8 +827,163 @@ class LeetCodeRequests {
                 error
               }
             }
-        """
-          ,
+        """,
+    );
+  }
+
+  static LeetCodeRequests getDiscussionArticles({
+    required String? orderBy,
+    required int skip,
+    required int first,
+    required List<String> keywords,
+    required List<String>? tagSlugs,
+  }) {
+    return LeetCodeRequests(
+      operationName: "discussPostItems",
+      variables: Variables(
+        orderBy: orderBy,
+        skip: skip,
+        first: first,
+        tagSlugs: tagSlugs,
+        keywords: keywords,
+      ),
+      query: """
+          query discussPostItems(\$orderBy: ArticleOrderByEnum, \$keywords: [String]!, \$tagSlugs: [String!], \$skip: Int, \$first: Int) {
+              ugcArticleDiscussionArticles(
+                orderBy: \$orderBy
+                keywords: \$keywords
+                tagSlugs: \$tagSlugs
+                skip: \$skip
+                first: \$first
+              ) {
+                totalNum
+                pageInfo {
+                  hasNextPage
+                }
+                edges {
+                  node {
+                    uuid
+                    title
+                    slug
+                    summary
+                    author {
+                      realName
+                      userAvatar
+                      userSlug
+                      userName
+                      nameColor
+                      certificationLevel
+                      activeBadge {
+                        icon
+                        displayName
+                      }
+                    }
+                    isOwner
+                    isAnonymous
+                    isSerialized
+                    scoreInfo {
+                      scoreCoefficient
+                    }
+                    articleType
+                    thumbnail
+                    summary
+                    createdAt
+                    updatedAt
+                    status
+                    isLeetcode
+                    canSee
+                    canEdit
+                    isMyFavorite
+                    myReactionType
+                    topicId
+                    hitCount
+                    reactions {
+                      count
+                      reactionType
+                    }
+                    tags {
+                      name
+                      slug
+                      tagType
+                    }
+                    topic {
+                      id
+                      topLevelCommentCount
+                    }
+                  }
+                }
+              }
+            }
+                
+    
+    """,
+    );
+  }
+
+  static getDiscussionArticleDetail(int aritcleId) {
+    return LeetCodeRequests(
+      operationName: "communitySolution",
+      variables: Variables(
+        topicId: aritcleId,
+      ),
+      query: """
+          query discussPostDetail(\$topicId: ID!) {
+              ugcArticleDiscussionArticle(topicId: \$topicId) {
+                uuid
+                title
+                slug
+                summary
+                content
+                isSlate
+                author {
+                  realName
+                  userAvatar
+                  userSlug
+                  userName
+                  nameColor
+                  certificationLevel
+                  activeBadge {
+                    icon
+                    displayName
+                  }
+                }
+                isOwner
+                isAnonymous
+                isSerialized
+                isAuthorArticleReviewer
+                scoreInfo {
+                  scoreCoefficient
+                }
+                articleType
+                thumbnail
+                summary
+                createdAt
+                updatedAt
+                status
+                isLeetcode
+                canSee
+                canEdit
+                isMyFavorite
+                myReactionType
+                topicId
+                hitCount
+                reactions {
+                  count
+                  reactionType
+                }
+                tags {
+                  name
+                  slug
+                  tagType
+                }
+                topic {
+                  id
+                  topLevelCommentCount
+                }
+              }
+            }
+                
+    """,
     );
   }
 }
@@ -855,6 +1010,7 @@ class Variables {
   final String? favoriteSlug;
   final SortBy? sortBy;
   final ProblemFilterV2? filtersV2;
+  final List<String>? keywords;
   Variables({
     this.username,
     this.titleSlug,
@@ -877,6 +1033,7 @@ class Variables {
     this.favoriteSlug,
     this.sortBy,
     this.filtersV2,
+    this.keywords,
   });
 
   Map<String, dynamic> toJson() {
@@ -902,6 +1059,7 @@ class Variables {
       'favoriteSlug': favoriteSlug,
       'sortBy': sortBy?.toJson(),
       'filtersV2': filtersV2?.toJson(),
+      'keywords': keywords,
     };
   }
 }

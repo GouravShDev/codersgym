@@ -87,6 +87,7 @@ dependencies:
   firebase_remote_config: ^5.4.2
   hive: ^2.2.3
   another_flushbar: ^1.12.30
+  timeago: ^3.7.0
 
 dev_dependencies:
   flutter_test:

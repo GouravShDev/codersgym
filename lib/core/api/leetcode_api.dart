@@ -139,6 +139,29 @@ class LeetcodeApi {
     return _executeGraphQLQuery(request);
   }
 
+  Future<Map<String, dynamic>?> getDiscussionArticles({
+    required String? orderBy,
+    required List<String> keywords,
+    required List<String>? tagSlugs,
+    required int skip,
+    required int first,
+  }) async {
+    final request = LeetCodeRequests.getDiscussionArticles(
+      orderBy: orderBy,
+      skip: skip,
+      first: first,
+      keywords: keywords,
+      tagSlugs: tagSlugs,
+    );
+    return _executeGraphQLQuery(request);
+  }
+
+  Future<Map<String, dynamic>?> getDiscussionArticleDetail(
+      int articleId) async {
+    final request = LeetCodeRequests.getDiscussionArticleDetail(articleId);
+    return _executeGraphQLQuery(request);
+  }
+
   Future<Map<String, dynamic>?> getCommunitySolutionDetail(int topicId) async {
     final request = LeetCodeRequests.getCommunitySolutionDetails(topicId);
     return _executeGraphQLQuery(request);

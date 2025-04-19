@@ -19,14 +19,12 @@ final ThemeData leetcodeTheme = ThemeData(
   fontFamily: 'Lato',
   primaryColor: kPrimaryColor,
   scaffoldBackgroundColor: kBackgroundColor,
-
   colorScheme: const ColorScheme.dark(
     primary: kPrimaryColor,
     secondary: kSecondaryColor,
     surface: kSurfaceColor,
     error: kErrorColor,
   ),
-
   snackBarTheme: const SnackBarThemeData(
     backgroundColor: kTextColor,
     contentTextStyle: TextStyle(
@@ -34,7 +32,6 @@ final ThemeData leetcodeTheme = ThemeData(
       fontSize: 18,
     ),
   ),
-
   appBarTheme: const AppBarTheme(
     color: kAppBarColor,
     elevation: 0,
@@ -43,7 +40,6 @@ final ThemeData leetcodeTheme = ThemeData(
       fontSize: 16,
     ),
   ),
-
   chipTheme: ChipThemeData(
     backgroundColor: kSurfaceColor,
     disabledColor: Colors.grey,
@@ -51,9 +47,14 @@ final ThemeData leetcodeTheme = ThemeData(
     secondarySelectedColor: kSecondaryColor,
     labelStyle: const TextStyle(color: kTextColor, fontSize: 12),
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(8.0),
+      side: const BorderSide(
+        color: kBorderColor,
+        width: 1.0,
+      ),
+    ),
   ),
-
   scrollbarTheme: ScrollbarThemeData(
     interactive: true,
     thumbVisibility: WidgetStateProperty.all(true),
@@ -61,7 +62,6 @@ final ThemeData leetcodeTheme = ThemeData(
     thickness: WidgetStateProperty.all(6),
     minThumbLength: 30,
   ),
-
   bottomNavigationBarTheme: BottomNavigationBarThemeData(
     backgroundColor: Colors.grey[850],
     selectedItemColor: kPrimaryColor,
@@ -79,7 +79,6 @@ final ThemeData leetcodeTheme = ThemeData(
     ),
     type: BottomNavigationBarType.shifting,
   ),
-
   textTheme: const TextTheme(
     displayLarge: TextStyle(
       color: Colors.white,
@@ -95,13 +94,11 @@ final ThemeData leetcodeTheme = ThemeData(
       fontSize: 14,
     ),
   ),
-
   outlinedButtonTheme: OutlinedButtonThemeData(
     style: OutlinedButton.styleFrom(
       iconColor: kPrimaryColor,
     ),
   ),
-
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       backgroundColor: kPrimaryColor,
@@ -110,9 +107,7 @@ final ThemeData leetcodeTheme = ThemeData(
       textStyle: const TextStyle(fontWeight: FontWeight.bold),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
     ),
-    
   ),
-
   inputDecorationTheme: InputDecorationTheme(
     filled: true,
     fillColor: kInputFillColor,
