@@ -12,8 +12,11 @@ class DiscussionArticlesEntity {
   factory DiscussionArticlesEntity.fromJson(Map<String, dynamic> json) {
     return DiscussionArticlesEntity(
       totalNum: json['ugcArticleDiscussionArticles']['totalNum'],
-      hasNextPage: json['ugcArticleDiscussionArticles']['pageInfo']['hasNextPage'],
-      articles: (json['ugcArticleDiscussionArticles']['edges'] as List?)?.map((e) => ArticleNode.fromJson(e['node'])).toList(),
+      hasNextPage: json['ugcArticleDiscussionArticles']['pageInfo']
+          ['hasNextPage'],
+      articles: (json['ugcArticleDiscussionArticles']['edges'] as List?)
+          ?.map((e) => ArticleNode.fromJson(e['node']))
+          .toList(),
     );
   }
 
@@ -28,6 +31,17 @@ class DiscussionArticlesEntity {
   }
 }
 
+class ActiveBadge {
+  final String? icon;
+  final String? displayName;
+
+  ActiveBadge({this.icon, this.displayName});
+
+  factory ActiveBadge.fromJson(Map<String, dynamic> json) =>
+      ActiveBadge(icon: json['icon'], displayName: json['displayName']);
+  Map<String, dynamic> toJson() => {'icon': icon, 'displayName': displayName};
+}
+
 class ArticleNode {
   final String? uuid;
   final String? title;
@@ -35,22 +49,50 @@ class ArticleNode {
   final String? summary;
   final Author? author;
   final bool? isAnonymous;
+  final bool? isOwner;
+  final bool? isSerialized;
+  final dynamic scoreInfo;
+  final String? articleType;
+  final String? thumbnail;
+  final String? createdAt;
+  final String? updatedAt;
   final String? status;
+  final bool? isLeetcode;
+  final bool? canSee;
+  final bool? canEdit;
+  final bool? isMyFavorite;
+  final dynamic myReactionType;
+  final int? topicId;
   final int? hitCount;
+  final List<Reaction>? reactions;
   final List<Tag>? tags;
-  final int? topLevelCommentCount;
+  final Topic? topic;
 
   ArticleNode({
     this.uuid,
     this.title,
     this.slug,
     this.summary,
-    this.author,
+    required this.author,
     this.isAnonymous,
+    this.isOwner,
+    this.isSerialized,
+    this.scoreInfo,
+    this.articleType,
+    this.thumbnail,
+    this.createdAt,
+    this.updatedAt,
     this.status,
-    this.hitCount,
+    required this.hitCount,
+    required this.reactions,
     this.tags,
-    this.topLevelCommentCount,
+    required this.topic,
+    this.isLeetcode,
+    this.canSee,
+    this.canEdit,
+    this.isMyFavorite,
+    this.myReactionType,
+    this.topicId,
   });
 
   factory ArticleNode.fromJson(Map<String, dynamic> json) {
@@ -61,13 +103,29 @@ class ArticleNode {
       summary: json['summary'],
       author: json['author'] != null ? Author.fromJson(json['author']) : null,
       isAnonymous: json['isAnonymous'],
+      isOwner: json['isOwner'],
+      isSerialized: json['isSerialized'],
+      scoreInfo: json['scoreInfo'],
+      articleType: json['articleType'],
+      thumbnail: json['thumbnail'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
       status: json['status'],
+      isLeetcode: json['isLeetcode'],
+      canSee: json['canSee'],
+      canEdit: json['canEdit'],
+      isMyFavorite: json['isMyFavorite'],
+      myReactionType: json['myReactionType'],
+      topicId: json['topicId'],
       hitCount: json['hitCount'],
+      reactions: (json['reactions'] as List?)
+              ?.map((e) => Reaction.fromJson(e))
+              .toList() ??
+          [],
       tags: (json['tags'] as List?)?.map((e) => Tag.fromJson(e)).toList(),
-      topLevelCommentCount: json['topic']?['topLevelCommentCount'],
+      topic: json['topic'] != null ? Topic.fromJson(json['topic']) : null,
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       'uuid': uuid,
@@ -75,11 +133,42 @@ class ArticleNode {
       'slug': slug,
       'summary': summary,
       'author': author?.toJson(),
+      'isOwner': isOwner,
+      'isSerialized': isSerialized,
+      'scoreInfo': scoreInfo,
+      'articleType': articleType,
+      'thumbnail': thumbnail,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
+      'isLeetcode': isLeetcode,
+      'canSee': canSee,
+      'canEdit': canEdit,
       'isAnonymous': isAnonymous,
       'status': status,
       'hitCount': hitCount,
       'tags': tags?.map((e) => e.toJson()).toList(),
-      'topic': {'topLevelCommentCount': topLevelCommentCount},
+      'topic': topic?.toJson(),
+    };
+  }
+}
+
+class Reaction {
+  final int? count;
+  final String? reactionType;
+
+  Reaction({this.count, this.reactionType});
+
+  factory Reaction.fromJson(Map<String, dynamic> json) {
+    return Reaction(
+      count: json['count'],
+      reactionType: json['reactionType'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'count': count,
+      'reactionType': reactionType,
     };
   }
 }
@@ -87,13 +176,32 @@ class ArticleNode {
 class Author {
   final String? realName;
   final String? userAvatar;
+  final String? userSlug;
+  final String? userName;
+  final String? nameColor;
+  final String? certificationLevel;
+  final ActiveBadge? activeBadge;
 
-  Author({this.realName, this.userAvatar});
+  Author(
+      {this.realName,
+      this.userAvatar,
+      this.userSlug,
+      this.userName,
+      this.nameColor,
+      this.certificationLevel,
+      this.activeBadge});
 
   factory Author.fromJson(Map<String, dynamic> json) {
     return Author(
       realName: json['realName'],
       userAvatar: json['userAvatar'],
+      userSlug: json['userSlug'],
+      userName: json['userName'],
+      nameColor: json['nameColor'],
+      certificationLevel: json['certificationLevel'],
+      activeBadge: json['activeBadge'] != null
+          ? ActiveBadge.fromJson(json['activeBadge'])
+          : null,
     );
   }
 
@@ -101,6 +209,27 @@ class Author {
     return {
       'realName': realName,
       'userAvatar': userAvatar,
+    };
+  }
+}
+
+class Topic {
+  final int? id;
+  final int? topLevelCommentCount;
+
+  Topic({this.id, this.topLevelCommentCount});
+
+  factory Topic.fromJson(Map<String, dynamic> json) {
+    return Topic(
+      id: json['id'],
+      topLevelCommentCount: json['topLevelCommentCount'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'topLevelCommentCount': topLevelCommentCount,
     };
   }
 }

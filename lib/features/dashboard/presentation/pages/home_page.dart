@@ -212,9 +212,9 @@ class HomePageBody extends StatelessWidget {
                       icon: Icons.forum,
                       title: "Discuss",
                       color: theme.colorScheme.primary,
-                      isComingSoon: true,
                       onTap: () {
                         // Navigate to discuss section
+                        context.pushRoute(const DiscussRoute());
                       },
                     ),
 

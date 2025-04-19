@@ -1,0 +1,66 @@
+import 'package:codersgym/core/api/leetcode_api.dart';
+import 'package:codersgym/core/error/exception.dart';
+import 'package:codersgym/core/error/result.dart';
+import 'package:codersgym/features/articles/data/entity/discussion_articles_entity.dart'; // Assuming this exists
+import 'package:codersgym/features/articles/domain/model/discussion_article.dart';
+import 'package:codersgym/features/articles/domain/repository/discussion_article_repository.dart';
+
+class DiscussionArticleRepositoryImp implements DiscussionArticleRepository {
+  final LeetcodeApi leetcodeApi;
+
+  DiscussionArticleRepositoryImp(this.leetcodeApi);
+
+  @override
+  Future<
+      Result<({List<DiscussionArticle> articleList, int totalArticleCount}),
+          Exception>> getDiscussionArticles(
+      DiscussionArticlesInput input) async {
+    try {
+      final data = await leetcodeApi.getDiscussionArticles(
+        orderBy: input.orderBy,
+        keywords: input.keywords,
+        tagSlugs: input.tagSlugs,
+        skip: input.skip,
+        first: input.first,
+      );
+
+      if (data == null) {
+        return Failure(Exception("No data found"));
+      }
+
+      final discussionArticleList = DiscussionArticlesEntity.fromJson(
+          data); // Assuming this entity exists
+      final articles = discussionArticleList.articles
+              ?.map((edge) => DiscussionArticle.fromArticleNode(edge))
+              .toList() ??
+          [];
+
+      return Success((
+        articleList: articles,
+        totalArticleCount: discussionArticleList.totalNum ?? 0,
+      ));
+    } on ApiException catch (e) {
+      return Failure(Exception(e.message));
+    }
+  }
+
+  @override
+  Future<Result<DiscussionArticle, Exception>> getDiscussionArticleDetail(
+      int articleId) async {
+    try {
+      final data = await leetcodeApi.getDiscussionArticleDetail(
+          articleId); // Assuming this method exists in LeetcodeApi
+
+      if (data == null) {
+        return Failure(Exception("No data found"));
+      }
+
+      final discussionArticleDetail =
+          ArticleNode.fromJson(data); // Assuming this entity exists
+      return Success(
+          DiscussionArticle.fromArticleNode(discussionArticleDetail));
+    } on ApiException catch (e) {
+      return Failure(Exception(e.message));
+    }
+  }
+}

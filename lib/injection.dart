@@ -8,6 +8,9 @@ import 'package:codersgym/core/services/notification_scheduler.dart';
 import 'package:codersgym/core/utils/app_constants.dart';
 import 'package:codersgym/core/utils/storage/local_storage_manager.dart';
 import 'package:codersgym/core/utils/storage/storage_manager.dart';
+import 'package:codersgym/features/articles/data/repository/discussion_article_repository.dart';
+import 'package:codersgym/features/articles/domain/repository/discussion_article_repository.dart';
+import 'package:codersgym/features/articles/presentation/blocs/discussion/discussion_bloc.dart';
 import 'package:codersgym/features/auth/data/service/auth_service.dart';
 import 'package:codersgym/features/auth/domain/service/auth_service.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
@@ -185,6 +188,11 @@ Future<void> initializeDependencies() async {
       getIt.get(),
     ),
   );
+  getIt.registerSingleton<DiscussionArticleRepository>(
+    DiscussionArticleRepositoryImp(
+      getIt.get(),
+    ),
+  );
 
   // BLOC/CUBIT
   getIt.registerFactory(
@@ -327,6 +335,11 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerFactory(
     () => DailyCheckinCubit(
+      getIt.get(),
+    ),
+  );
+  getIt.registerFactory(
+    () => DiscussionBloc(
       getIt.get(),
     ),
   );

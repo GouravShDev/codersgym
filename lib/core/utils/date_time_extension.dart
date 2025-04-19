@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 extension DateTimeExtension on DateTime {
   DateTime get onlyDate => DateTime(year, month, day);
@@ -18,6 +19,9 @@ extension DateTimeExtension on DateTime {
 
     return "$formattedDate GMT$sign$hoursOffset:$minutesOffset";
   }
+
+  String formatTimeAgo() => timeago.format(this);
+
 }
 
 String formatTime(int o) {
