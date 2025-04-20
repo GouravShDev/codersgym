@@ -4,6 +4,7 @@ import 'package:codersgym/core/error/result.dart';
 import 'package:codersgym/features/articles/data/entity/discussion_articles_entity.dart'; // Assuming this exists
 import 'package:codersgym/features/articles/domain/model/discussion_article.dart';
 import 'package:codersgym/features/articles/domain/repository/discussion_article_repository.dart';
+import 'package:codersgym/features/common/data/models/tag.dart';
 
 class DiscussionArticleRepositoryImp implements DiscussionArticleRepository {
   final LeetcodeApi leetcodeApi;
@@ -59,6 +60,38 @@ class DiscussionArticleRepositoryImp implements DiscussionArticleRepository {
           ArticleNode.fromJson(data); // Assuming this entity exists
       return Success(
           DiscussionArticle.fromArticleNode(discussionArticleDetail));
+    } on ApiException catch (e) {
+      return Failure(Exception(e.message));
+    }
+  }
+
+  @override
+  Future<Result<List<Tag>, Exception>> getDiscussionTags() async {
+    try {
+      final data = await leetcodeApi
+          .getDiscussionTags(); // Assuming this method exists in LeetcodeApi
+
+      if (data == null) {
+        return Failure(Exception("No data found"));
+      }
+
+      final discussionTags =
+          (data['ugcArticleFollowedDiscussionTags'] as List?)?.map(
+        (e) => DiscussionTagsEntity.fromJson(e),
+      );
+
+      final tags = discussionTags
+              ?.map(
+                (tag) => Tag(
+                  id: tag.id?.toString(),
+                  name: tag.name,
+                  slug: tag.slug,
+                ),
+              )
+              .toList() ??
+          [];
+
+      return Success(tags);
     } on ApiException catch (e) {
       return Failure(Exception(e.message));
     }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:codersgym/features/articles/domain/model/discussion_article.dart';
 import 'package:codersgym/features/articles/domain/repository/discussion_article_repository.dart';
@@ -67,13 +69,17 @@ class DiscussionBloc extends Bloc<DiscussionEvent, DiscussionState> {
       currentSkip = updatedList.length;
       emit(
         state.copyWith(
-            articles: updatedList,
-            isLoading: false,
-            moreArticlesAvailable: moreArticlesAvailable),
+          articles: updatedList,
+          isLoading: false,
+          moreArticlesAvailable: moreArticlesAvailable,
+        ),
       );
     }, onFailure: (exception) {
       emit(
-        state.copyWith(error: exception, isLoading: false),
+        state.copyWith(
+          error: exception,
+          isLoading: false,
+        ),
       );
     });
   }

@@ -41,11 +41,19 @@ final ThemeData leetcodeTheme = ThemeData(
     ),
   ),
   chipTheme: ChipThemeData(
-    backgroundColor: kSurfaceColor,
+    backgroundColor: kSurfaceColor, // Background for unselected chips
     disabledColor: Colors.grey,
-    selectedColor: kPrimaryColor,
-    secondarySelectedColor: kSecondaryColor,
+    color: WidgetStateColor.resolveWith(
+      (states) {
+        if (states.contains(WidgetState.selected)) {
+          return kPrimaryColor;
+        }
+        return kSurfaceColor;
+      },
+    ),
+// Background for selected chips
     labelStyle: const TextStyle(color: kTextColor, fontSize: 12),
+    secondaryLabelStyle: TextStyle(color: kSurfaceColor),
     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.circular(8.0),

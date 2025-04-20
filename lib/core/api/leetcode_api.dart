@@ -162,6 +162,11 @@ class LeetcodeApi {
     return _executeGraphQLQuery(request);
   }
 
+  Future<Map<String, dynamic>?> getDiscussionTags() async {
+    final request = LeetCodeRequests.getDiscussionTags();
+    return _executeGraphQLQuery(request);
+  }
+
   Future<Map<String, dynamic>?> getCommunitySolutionDetail(int topicId) async {
     final request = LeetCodeRequests.getCommunitySolutionDetails(topicId);
     return _executeGraphQLQuery(request);
