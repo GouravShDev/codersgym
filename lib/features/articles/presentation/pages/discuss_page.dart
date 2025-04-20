@@ -1,4 +1,5 @@
 import 'package:auto_route/auto_route.dart';
+import 'package:codersgym/core/routes/app_router.gr.dart';
 import 'package:codersgym/features/articles/domain/model/discussion_sort_option.dart';
 import 'package:codersgym/features/articles/presentation/blocs/discussion/discussion_bloc.dart';
 import 'package:codersgym/features/articles/presentation/blocs/discussion_tags/discussion_tags_cubit.dart';
@@ -144,7 +145,13 @@ class DiscussPage extends HookWidget implements AutoRouteWrapper {
                   return AppPaginationSliverList(
                     itemBuilder: (context, index) => DiscussionPostTile(
                       article: state.articles[index],
-                      onCardTap: () {},
+                      onCardTap: () {
+                        context.pushRoute(
+                          ArticleDetailRoute(
+                            article: state.articles[index],
+                          ),
+                        );
+                      },
                     ),
                     itemCount: state.articles.length,
                     moreAvailable: state.moreArticlesAvailable,

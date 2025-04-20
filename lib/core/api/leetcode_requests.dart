@@ -922,7 +922,7 @@ class LeetCodeRequests {
 
   static getDiscussionArticleDetail(int aritcleId) {
     return LeetCodeRequests(
-      operationName: "communitySolution",
+      operationName: "discussPostDetail",
       variables: Variables(
         topicId: aritcleId,
       ),

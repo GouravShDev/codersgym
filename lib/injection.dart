@@ -11,6 +11,7 @@ import 'package:codersgym/core/utils/storage/storage_manager.dart';
 import 'package:codersgym/features/articles/data/repository/discussion_article_repository.dart';
 import 'package:codersgym/features/articles/domain/repository/discussion_article_repository.dart';
 import 'package:codersgym/features/articles/presentation/blocs/discussion/discussion_bloc.dart';
+import 'package:codersgym/features/articles/presentation/blocs/discussion_article_detail/discussion_article_detail_cubit.dart';
 import 'package:codersgym/features/articles/presentation/blocs/discussion_tags/discussion_tags_cubit.dart';
 import 'package:codersgym/features/auth/data/service/auth_service.dart';
 import 'package:codersgym/features/auth/domain/service/auth_service.dart';
@@ -346,6 +347,11 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerFactory(
     () => DiscussionTagsCubit(
+      getIt.get(),
+    ),
+  );
+  getIt.registerFactory(
+    () => DiscussionArticleDetailCubit(
       getIt.get(),
     ),
   );
