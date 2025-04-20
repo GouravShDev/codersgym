@@ -65,7 +65,7 @@ class ArticleNode {
   final int? topicId;
   final int? hitCount;
   final List<Reaction>? reactions;
-  final List<Tag>? tags;
+  final List<DiscussionTagsEntity>? tags;
   final Topic? topic;
 
   ArticleNode({
@@ -122,7 +122,9 @@ class ArticleNode {
               ?.map((e) => Reaction.fromJson(e))
               .toList() ??
           [],
-      tags: (json['tags'] as List?)?.map((e) => Tag.fromJson(e)).toList(),
+      tags: (json['tags'] as List?)
+          ?.map((e) => DiscussionTagsEntity.fromJson(e))
+          .toList(),
       topic: json['topic'] != null ? Topic.fromJson(json['topic']) : null,
     );
   }
@@ -234,16 +236,22 @@ class Topic {
   }
 }
 
-class Tag {
+class DiscussionTagsEntity {
   final String? name;
   final String? slug;
+  final int? id;
 
-  Tag({this.name, this.slug});
+  DiscussionTagsEntity({
+    this.name,
+    this.slug,
+    this.id,
+  });
 
-  factory Tag.fromJson(Map<String, dynamic> json) {
-    return Tag(
+  factory DiscussionTagsEntity.fromJson(Map<String, dynamic> json) {
+    return DiscussionTagsEntity(
       name: json['name'],
       slug: json['slug'],
+      id: json['id'],
     );
   }
 
@@ -251,6 +259,7 @@ class Tag {
     return {
       'name': name,
       'slug': slug,
+      'id': id,
     };
   }
 }

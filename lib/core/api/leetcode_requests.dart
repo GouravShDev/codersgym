@@ -986,6 +986,22 @@ class LeetCodeRequests {
     """,
     );
   }
+
+  static getDiscussionTags() {
+    return LeetCodeRequests(
+      operationName: "discussFollowedTopics",
+      variables: Variables(),
+      query: """
+          query discussFollowedTopics {
+              ugcArticleFollowedDiscussionTags {
+                id
+                name
+                slug
+              }
+            }        
+    """,
+    );
+  }
 }
 
 class Variables {

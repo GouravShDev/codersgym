@@ -8,8 +8,8 @@ final class FetchDiscussionArticlesEvent extends DiscussionEvent {
   final String? orderBy;
   final List<String>? keywords;
   final List<String>? tagSlugs;
-  final int skip;
-  final int first;
+  final int? skip;
+  final int? first;
 
   FetchDiscussionArticlesEvent({
     this.orderBy = 'MOST_RELEVANT',

@@ -29,7 +29,7 @@ class DiscussionState extends Equatable {
       DiscussionState(
         articles: articles ?? this.articles,
         isLoading: isLoading ?? this.isLoading,
-        error: error ?? this.error,
+        error: error, // Override error because we don't want to show error with new state
         moreArticlesAvailable:
             moreArticlesAvailable ?? this.moreArticlesAvailable,
       );

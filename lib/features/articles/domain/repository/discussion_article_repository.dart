@@ -1,5 +1,6 @@
 import 'package:codersgym/core/error/result.dart';
 import 'package:codersgym/features/articles/domain/model/discussion_article.dart';
+import 'package:codersgym/features/common/data/models/tag.dart';
 
 abstract class DiscussionArticleRepository {
   Future<
@@ -10,6 +11,7 @@ abstract class DiscussionArticleRepository {
   Future<Result<DiscussionArticle, Exception>> getDiscussionArticleDetail(
     int articleId,
   );
+  Future<Result<List<Tag>, Exception>> getDiscussionTags();
 }
 
 class DiscussionArticlesInput {
