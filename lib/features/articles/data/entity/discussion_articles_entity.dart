@@ -50,6 +50,7 @@ class ArticleNode {
   final Author? author;
   final bool? isAnonymous;
   final bool? isOwner;
+  final String? content;
   final bool? isSerialized;
   final dynamic scoreInfo;
   final String? articleType;
@@ -74,6 +75,7 @@ class ArticleNode {
     this.slug,
     this.summary,
     required this.author,
+    this.content,
     this.isAnonymous,
     this.isOwner,
     this.isSerialized,
@@ -100,6 +102,7 @@ class ArticleNode {
       uuid: json['uuid'],
       title: json['title'],
       slug: json['slug'],
+      content: json['content'],
       summary: json['summary'],
       author: json['author'] != null ? Author.fromJson(json['author']) : null,
       isAnonymous: json['isAnonymous'],

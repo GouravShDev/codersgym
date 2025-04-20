@@ -50,14 +50,15 @@ class DiscussionArticleRepositoryImp implements DiscussionArticleRepository {
       int articleId) async {
     try {
       final data = await leetcodeApi.getDiscussionArticleDetail(
-          articleId); // Assuming this method exists in LeetcodeApi
+        articleId,
+      );
 
       if (data == null) {
         return Failure(Exception("No data found"));
       }
 
       final discussionArticleDetail =
-          ArticleNode.fromJson(data); // Assuming this entity exists
+          ArticleNode.fromJson(data['ugcArticleDiscussionArticle']); // Assuming this entity exists
       return Success(
           DiscussionArticle.fromArticleNode(discussionArticleDetail));
     } on ApiException catch (e) {
