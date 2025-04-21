@@ -219,6 +219,21 @@ class LeetcodeApi {
     return _executeGraphQLQuery(request);
   }
 
+  Future<Map<String, dynamic>?> getArticleComments({
+    required int numPerPage,
+    required String orderBy,
+    required int pageNo,
+    required int topicId,
+  }) async {
+    final request = LeetCodeRequests.getArticleComments(
+      numPerPage: numPerPage,
+      orderBy: orderBy,
+      pageNo: pageNo,
+      topicId: topicId,
+    );
+    return _executeGraphQLQuery(request);
+  }
+
   Future<Map<String, dynamic>?> _executeGraphQLQuery(
     LeetCodeRequests request, {
     bool useCache = true, // Default to using cache
@@ -238,7 +253,8 @@ class LeetcodeApi {
             'Cookie': CookieEncoder.encode(
               leetcodeCreds ?? {},
             ),
-           if(leetcodeCreds != null) 'x-csrftoken': leetcodeCreds?['csrftoken'],
+            if (leetcodeCreds != null)
+              'x-csrftoken': leetcodeCreds?['csrftoken'],
             'referer': LeetcodeConstants.leetcodeUrl,
           })
         ]),
