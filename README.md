@@ -71,3 +71,10 @@ Features of Coders Gym
 
 ## 🤝 Contributing
 We welcome contributions to make Coders Gym even better! Please fork the repository and submit a pull request with your improvements.
+
+## 📌 Disclaimer
+
+**Coders Gym** is an **unofficial client for LeetCode** and is not affiliated with or endorsed by LeetCode or its parent company.  
+All content such as problems, discussions, and contests are sourced from [LeetCode](https://leetcode.com) and belong to their respective owners.  
+This app is developed solely for educational purposes and to enhance the user experience for LeetCode users on mobile.
+
