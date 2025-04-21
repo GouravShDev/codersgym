@@ -1002,6 +1002,88 @@ class LeetCodeRequests {
     """,
     );
   }
+
+  static getArticleComments({
+    required int numPerPage,
+    required String orderBy,
+    required int pageNo,
+    required int topicId,
+  }) {
+    return LeetCodeRequests(
+      operationName: "questionDiscussComments",
+      variables: Variables(
+        topicId: topicId,
+        orderBy: orderBy,
+        numPerPage: numPerPage,
+        pageNo: pageNo,
+      ),
+      query: """
+        query questionDiscussComments(\$topicId: Int!, \$orderBy: String = "newest_to_oldest", \$pageNo: Int = 1, \$numPerPage: Int = 10) {
+            topicComments(
+              topicId: \$topicId
+              orderBy: \$orderBy
+              pageNo: \$pageNo
+              numPerPage: \$numPerPage
+            ) {
+              data {
+                id
+                pinned
+                pinnedBy {
+                  username
+                }
+                post {
+                  ...DiscussPost
+                }
+                intentionTag {
+                  slug
+                }
+                numChildren
+              }
+              totalNum
+            }
+          }
+              
+              fragment DiscussPost on PostNode {
+            id
+            voteCount
+            voteUpCount
+            voteStatus
+            content
+            updationDate
+            creationDate
+            status
+            isHidden
+            anonymous
+            coinRewards {
+              id
+              score
+              description
+              date
+            }
+            author {
+              isDiscussAdmin
+              isDiscussStaff
+              username
+              nameColor
+              activeBadge {
+                displayName
+                icon
+              }
+              profile {
+                userAvatar
+                reputation
+                realName
+                certificationLevel
+              }
+              isActive
+            }
+            authorIsModerator
+            isOwnPost
+          }
+            
+    """,
+    );
+  }
 }
 
 class Variables {
@@ -1027,6 +1109,8 @@ class Variables {
   final SortBy? sortBy;
   final ProblemFilterV2? filtersV2;
   final List<String>? keywords;
+  final int? numPerPage;
+  final int? pageNo;
   Variables({
     this.username,
     this.titleSlug,
@@ -1050,6 +1134,8 @@ class Variables {
     this.sortBy,
     this.filtersV2,
     this.keywords,
+    this.numPerPage,
+    this.pageNo,
   });
 
   Map<String, dynamic> toJson() {
@@ -1076,6 +1162,8 @@ class Variables {
       'sortBy': sortBy?.toJson(),
       'filtersV2': filtersV2?.toJson(),
       'keywords': keywords,
+      'numPerPage': numPerPage,
+      'pageNo': pageNo,
     };
   }
 }

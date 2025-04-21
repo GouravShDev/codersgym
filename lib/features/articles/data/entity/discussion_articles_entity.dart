@@ -1,3 +1,5 @@
+import 'package:codersgym/features/question/data/entity/community_post_entity.dart';
+
 class DiscussionArticlesEntity {
   final int? totalNum;
   final bool? hasNextPage;
@@ -215,6 +217,14 @@ class Author {
       'realName': realName,
       'userAvatar': userAvatar,
     };
+  }
+
+  factory Author.fromAuthorEntity(AuthorEntity authorEntity) {
+    return Author(
+      userName: authorEntity.username,
+      userAvatar: authorEntity.profile?.userAvatar,
+      realName: authorEntity.profile?.realName,
+    );
   }
 }
 

@@ -14,18 +14,24 @@ class LeetcodeMarkdownWidget extends StatelessWidget {
     super.key,
     this.controller,
     this.assetsBaseUrl,
+    this.shrinkWrap,
+    this.physics,
     required this.data,
   });
 
   final ScrollController? controller;
   final String? assetsBaseUrl;
   final String data;
+  final bool? shrinkWrap;
+  final ScrollPhysics? physics;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Markdown(
       selectable: true,
+      physics: physics,
+      shrinkWrap: shrinkWrap ?? false,
       imageBuilder: (uri, title, alt) {
         final normalizedUri = uri.replace(
           pathSegments: uri.pathSegments.where((e) => e != '..').toList(),

@@ -1,4 +1,3 @@
-
 import 'package:codersgym/features/profile/domain/model/user_profile.dart';
 
 class UserProfileEntity {
