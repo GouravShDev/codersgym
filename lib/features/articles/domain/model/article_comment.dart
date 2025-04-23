@@ -19,21 +19,21 @@ class ArticleComment {
   final bool? isOwnPost;
 
   ArticleComment({
-    required this.id,
-    required this.replyCount,
-    required this.postId,
-    required this.voteCount,
-    required this.voteUpCount,
-    required this.voteStatus,
-    required this.content,
-    required this.updationDate,
-    required this.creationDate,
-    required this.status,
-    required this.isHidden,
-    required this.anonymous,
-    required this.author,
-    required this.authorIsModerator,
-    required this.isOwnPost,
+     this.id,
+     this.replyCount,
+     this.postId,
+     this.voteCount,
+     this.voteUpCount,
+     this.voteStatus,
+     this.content,
+     this.updationDate,
+     this.creationDate,
+     this.status,
+     this.isHidden,
+     this.anonymous,
+     this.author,
+     this.authorIsModerator,
+     this.isOwnPost,
   });
 
   factory ArticleComment.fromArticleCommentEntity(

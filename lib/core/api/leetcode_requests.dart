@@ -1084,6 +1084,70 @@ class LeetCodeRequests {
     """,
     );
   }
+
+  static getArticleReplies(
+    int commentId,
+  ) {
+    return LeetCodeRequests(
+      operationName: "commentReplies",
+      variables: Variables(
+        commentId: commentId,
+      ),
+      query: """          
+        query commentReplies(\$commentId: Int!) {
+            commentReplies(commentId: \$commentId) {
+              id
+              pinned
+              pinnedBy {
+                username
+              }
+              post {
+                ...DiscussPost
+              }
+            }
+          }
+              
+              fragment DiscussPost on PostNode {
+            id
+            voteCount
+            voteUpCount
+            voteStatus
+            content
+            updationDate
+            creationDate
+            status
+            isHidden
+            anonymous
+            coinRewards {
+              id
+              score
+              description
+              date
+            }
+            author {
+              isDiscussAdmin
+              isDiscussStaff
+              username
+              nameColor
+              activeBadge {
+                displayName
+                icon
+              }
+              profile {
+                userAvatar
+                reputation
+                realName
+                certificationLevel
+              }
+              isActive
+            }
+            authorIsModerator
+            isOwnPost
+          }
+    
+    """,
+    );
+  }
 }
 
 class Variables {
@@ -1111,6 +1175,7 @@ class Variables {
   final List<String>? keywords;
   final int? numPerPage;
   final int? pageNo;
+  final int? commentId;
   Variables({
     this.username,
     this.titleSlug,
@@ -1136,6 +1201,7 @@ class Variables {
     this.keywords,
     this.numPerPage,
     this.pageNo,
+    this.commentId,
   });
 
   Map<String, dynamic> toJson() {
@@ -1164,6 +1230,7 @@ class Variables {
       'keywords': keywords,
       'numPerPage': numPerPage,
       'pageNo': pageNo,
+      'commentId': commentId,
     };
   }
 }

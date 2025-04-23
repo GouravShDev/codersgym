@@ -17,6 +17,10 @@ abstract class DiscussionArticleRepository {
   Future<Result<({List<ArticleComment> comments, int totalComments}), Exception>> getArticleComments(
     ArticleCommentInput input,
   );
+
+  Future<Result<List<ArticleComment>, Exception>> getArticleReplies(
+    int commentId,
+  );
 }
 
 class DiscussionArticlesInput {

@@ -137,4 +137,34 @@ class DiscussionArticleRepositoryImp implements DiscussionArticleRepository {
       return Failure(Exception(e.message));
     }
   }
+
+  @override
+  Future<Result<List<ArticleComment>, Exception>> getArticleReplies(
+      int commentId) async {
+    try {
+      final response = await leetcodeApi.getArticleReplies(commentId);
+
+      if (response == null || response['commentReplies'] == null) {
+        return Failure(Exception("No replies found"));
+      }
+
+      final List<dynamic> repliesData = response['commentReplies'];
+
+      final List<ArticleCommentEntity> replyEntities = repliesData
+          .map((json) => ArticleCommentEntity.fromJson(json))
+          .toList();
+
+      final List<ArticleComment> articleReplies = replyEntities
+          .map((entity) => ArticleComment.fromArticleCommentEntity(entity))
+          .toList();
+
+      return Success(articleReplies);
+
+    } on ApiException catch (e) {
+      return Failure(Exception(e.message));
+    } catch (e) {
+      return Failure(Exception(e.toString()));
+    }
+  }
 }
+

@@ -11,6 +11,7 @@ import 'package:codersgym/core/utils/storage/storage_manager.dart';
 import 'package:codersgym/features/articles/data/repository/discussion_article_repository.dart';
 import 'package:codersgym/features/articles/domain/repository/discussion_article_repository.dart';
 import 'package:codersgym/features/articles/presentation/blocs/article_comments/article_comments_bloc.dart';
+import 'package:codersgym/features/articles/presentation/blocs/comment_replies/comment_replies_cubit.dart';
 import 'package:codersgym/features/articles/presentation/blocs/discussion/discussion_bloc.dart';
 import 'package:codersgym/features/articles/presentation/blocs/discussion_article_detail/discussion_article_detail_cubit.dart';
 import 'package:codersgym/features/articles/presentation/blocs/discussion_tags/discussion_tags_cubit.dart';
@@ -359,6 +360,12 @@ Future<void> initializeDependencies() async {
   getIt.registerFactory(
     () => ArticleCommentsBloc(
       getIt.get(),
+    ),
+  );
+  getIt.registerFactoryParam<CommentRepliesCubit, int, void>(
+    (articleCommentId, _) => CommentRepliesCubit(
+      articleCommentId: articleCommentId,
+      discussionArticleRepository: getIt.get(),
     ),
   );
 }
