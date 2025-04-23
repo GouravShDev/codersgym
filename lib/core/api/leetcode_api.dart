@@ -234,6 +234,15 @@ class LeetcodeApi {
     return _executeGraphQLQuery(request);
   }
 
+  Future<Map<String, dynamic>?> getArticleReplies(
+    int commentId,
+  ) async {
+    final request = LeetCodeRequests.getArticleReplies(
+      commentId,
+    );
+    return _executeGraphQLQuery(request);
+  }
+
   Future<Map<String, dynamic>?> _executeGraphQLQuery(
     LeetCodeRequests request, {
     bool useCache = true, // Default to using cache
