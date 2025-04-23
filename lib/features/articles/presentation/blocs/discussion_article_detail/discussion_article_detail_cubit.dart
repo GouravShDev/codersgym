@@ -28,6 +28,7 @@ class DiscussionArticleDetailCubit extends Cubit<DiscussionArticleDetailState> {
 
     final parsedContentResult = postDetail?.content
         ?.replaceAll('\\n', "  \n")
+        .replaceAll('\\t', "  \t")
         .replaceAll('<br>', "  \n");
 
     emit(
