@@ -5,18 +5,23 @@ import 'package:codersgym/features/question/domain/repository/question_repositor
 
 typedef OfficialSolutionAvailableState = ApiState<bool, Exception>;
 
-class OfficialSolutionAvailableCubit extends Cubit<OfficialSolutionAvailableState> {
+class OfficialSolutionAvailableCubit
+    extends Cubit<OfficialSolutionAvailableState> {
   final QuestionRepository _questionRepository;
-  OfficialSolutionAvailableCubit(this._questionRepository) : super(ApiState.initial());
+  OfficialSolutionAvailableCubit(this._questionRepository)
+      : super(ApiState.initial());
 
   Future<void> checkOfficialSolutionAvailable(Question question) async {
-      if (question.titleSlug == null) {
+    if (question.titleSlug == null) {
       emit(ApiError(Exception('Question Title is null')));
       return;
     }
-    emit(ApiLoading());
+    emit(const ApiLoading());
     final result =
         await _questionRepository.hasOfficialSolution(question.titleSlug!);
+    if (isClosed) {
+      return;
+    }
     result.when(
       onSuccess: (isAvailable) {
         emit(ApiLoaded(isAvailable));
@@ -25,6 +30,5 @@ class OfficialSolutionAvailableCubit extends Cubit<OfficialSolutionAvailableStat
         emit(ApiError(exception));
       },
     );
-
   }
 }
