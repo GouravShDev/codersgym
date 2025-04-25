@@ -1,3 +1,4 @@
+import 'package:codersgym/core/utils/custom_scroll_physics.dart';
 import 'package:flutter/material.dart';
 
 class AppScrollBehavior extends ScrollBehavior {
@@ -9,6 +10,8 @@ class AppScrollBehavior extends ScrollBehavior {
 
   @override
   ScrollPhysics getScrollPhysics(BuildContext context) {
-    return const ClampingScrollPhysics();
+    return const CustomPageViewScrollPhysics(
+      parent: ClampingScrollPhysics(),
+    );
   }
 }
