@@ -4,8 +4,18 @@ import 'package:highlight/languages/java.dart';
 import 'package:highlight/languages/python.dart';
 import 'package:highlight/languages/cs.dart';
 import 'package:highlight/languages/kotlin.dart';
+import 'package:highlight/languages/javascript.dart';
 
-enum ProgrammingLanguage { c, cpp, java, python, python3, csharp, kotlin }
+enum ProgrammingLanguage {
+  c,
+  cpp,
+  java,
+  python,
+  python3,
+  csharp,
+  kotlin,
+  javascript,
+}
 
 extension ProgrammingLanguageExt on ProgrammingLanguage {
   Mode get mode {
@@ -17,6 +27,7 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
       ProgrammingLanguage.python3 => python,
       ProgrammingLanguage.csharp => cs,
       ProgrammingLanguage.kotlin => kotlin,
+      ProgrammingLanguage.javascript => javascript,
     };
   }
 
@@ -36,6 +47,8 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
         return 'C';
       case ProgrammingLanguage.kotlin:
         return 'Kotlin';
+      case ProgrammingLanguage.javascript:
+        return 'Javascript';
     }
   }
 
@@ -66,6 +79,8 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
         return 'c';
       case ProgrammingLanguage.kotlin:
         return 'kotlin';
+      case ProgrammingLanguage.javascript:
+        return 'Javascript';
     }
   }
 }
@@ -74,4 +89,5 @@ extension ProgrammingLanguageExt on ProgrammingLanguage {
 final List<ProgrammingLanguage> formatUnSupportedLanguages = [
   ProgrammingLanguage.csharp,
   ProgrammingLanguage.kotlin,
+  ProgrammingLanguage.javascript,
 ];
