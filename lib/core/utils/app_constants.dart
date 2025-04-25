@@ -24,4 +24,6 @@ class LeetcodeConstants {
 
   static const onlineUserSocket =
       "wss://collaboration-ws.leetcode.com/problems/{slug}";
+  static const defaultAvatarImg =
+      "https://assets.leetcode.com/users/default_avatar.jpg";
 }

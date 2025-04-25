@@ -210,7 +210,7 @@ class LeetcodeApi {
             'Cookie': CookieEncoder.encode(
               leetcodeCreds ?? {},
             ),
-            'x-csrftoken': leetcodeCreds?['csrftoken'],
+           if(leetcodeCreds != null) 'x-csrftoken': leetcodeCreds?['csrftoken'],
             'referer': LeetcodeConstants.leetcodeUrl,
           })
         ]),

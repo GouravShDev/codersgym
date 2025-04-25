@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:codersgym/core/utils/app_constants.dart';
 import 'package:codersgym/features/common/widgets/app_network_image.dart';
 import 'package:codersgym/features/profile/domain/model/user_profile.dart';
 import 'package:flutter/material.dart';
@@ -23,16 +24,17 @@ class UserGreetingCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        AppNetworkImage.avatar(
-          imageUrl: avatarUrl,
-          size: 60,
-        ),
-        // CircleAvatar(
-        //   radius: 30.0,
-        //   backgroundImage: (avatarUrl.isNotEmpty)
-        //       ? CachedNetworkImageProvider(avatarUrl)
-        //       : null,
-        // ),
+        (avatarUrl.isEmpty)
+            ? const CircleAvatar(
+                radius: 30,
+                foregroundImage: CachedNetworkImageProvider(
+                  LeetcodeConstants.defaultAvatarImg,
+                ),
+              )
+            : AppNetworkImage.avatar(
+                imageUrl: avatarUrl,
+                size: 60,
+              ),
         const SizedBox(width: 16.0),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,7 +68,7 @@ class UserGreetingCard extends StatelessWidget {
   factory UserGreetingCard.loading() {
     return const UserGreetingCard(
       userName: "Coder",
-      avatarUrl: "",
+      avatarUrl: '',
       streak: null,
     );
   }

@@ -146,7 +146,7 @@ class LeetCodeRequests {
 
   static LeetCodeRequests getDailyQuestion() {
     return LeetCodeRequests(
-      operationName: "",
+      operationName: "questionOfToday",
       variables: Variables(),
       query: """
           query questionOfToday {
