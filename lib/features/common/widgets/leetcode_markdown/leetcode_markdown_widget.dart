@@ -3,6 +3,7 @@ import 'package:codersgym/features/common/widgets/leetcode_markdown/iframe_block
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:markdown/markdown.dart' as md;
 import 'package:markdown/src/extension_set.dart' as md;
 import 'package:flutter_markdown_latex/flutter_markdown_latex.dart';
@@ -33,6 +34,21 @@ class LeetcodeMarkdownWidget extends StatelessWidget {
         final String imageUrl = normalizedUri.hasScheme
             ? normalizedUri.toString()
             : '$assetsBaseUrl/${normalizedUri.path}';
+
+        if (imageUrl.endsWith('.svg')) {
+          return Container(
+            constraints: const BoxConstraints(maxWidth: 800),
+            color: Theme.of(context).colorScheme.onSurface,
+            child: SvgPicture.network(
+              imageUrl,
+              placeholderBuilder: (context) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            ),
+          );
+        }
 
         return Container(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -152,7 +168,6 @@ class LeetcodeMarkdownWidget extends StatelessWidget {
         'latex': LatexElementBuilder(),
         'video-container': VideoContainerBuilder(),
         'iframe': IframeElementBuilder(),
-
       },
       extensionSet: md.ExtensionSet(
         [
