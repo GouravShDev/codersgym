@@ -18,7 +18,10 @@ import 'package:codersgym/features/common/bloc/app_file_downloader/app_file_down
 import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
 import 'package:codersgym/features/common/services/recent_question_manager.dart';
 import 'package:codersgym/features/common/widgets/app_error_notifier.dart';
+import 'package:codersgym/features/dashboard/data/repository/daily_checkin_repository.dart';
+import 'package:codersgym/features/dashboard/domain/repository/daily_checkin_repository.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/contest_reminder_cubit.dart';
+import 'package:codersgym/features/dashboard/presentation/blocs/daily_checkin/daily_checkin_cubit.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/recent_question/recent_question_cubit.dart';
 import 'package:codersgym/features/profile/data/repository/profile_repository.dart';
 import 'package:codersgym/features/profile/presentation/blocs/contest_ranking_info/contest_ranking_info_cubit.dart';
@@ -177,6 +180,11 @@ Future<void> initializeDependencies() async {
       getIt.get(),
     ),
   );
+  getIt.registerSingleton<DailyCheckinRepository>(
+    DailyCheckinRepositoryImp(
+      getIt.get(),
+    ),
+  );
 
   // BLOC/CUBIT
   getIt.registerFactory(
@@ -314,6 +322,11 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerFactory(
     () => RecentQuestionCubit(
+      getIt.get(),
+    ),
+  );
+  getIt.registerFactory(
+    () => DailyCheckinCubit(
       getIt.get(),
     ),
   );

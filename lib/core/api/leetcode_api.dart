@@ -186,6 +186,11 @@ class LeetcodeApi {
     return _executeGraphQLQuery(request);
   }
 
+  Future<Map<String, dynamic>?> dailyCheckin() async {
+    final request = LeetCodeRequests.dailyCheckin();
+    return _executeGraphQLQuery(request);
+  }
+
   Future<Map<String, dynamic>?> _executeGraphQLQuery(
     LeetCodeRequests request, {
     bool useCache = true, // Default to using cache
@@ -196,6 +201,7 @@ class LeetcodeApi {
 
       final queryOptions = QueryOptions(
         document: gql(request.query),
+        operationName: request.operationName,
         variables: request.variables.toJson(),
         fetchPolicy:
             useCache ? FetchPolicy.cacheAndNetwork : FetchPolicy.networkOnly,
@@ -204,6 +210,8 @@ class LeetcodeApi {
             'Cookie': CookieEncoder.encode(
               leetcodeCreds ?? {},
             ),
+            'x-csrftoken': leetcodeCreds?['csrftoken'],
+            'referer': LeetcodeConstants.leetcodeUrl,
           })
         ]),
       );

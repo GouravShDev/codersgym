@@ -7,6 +7,7 @@ import 'package:codersgym/features/common/bloc/app_file_downloader/app_file_down
 import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
 import 'package:codersgym/features/common/dialog/leetcode_session_expired_dialog.dart';
 import 'package:codersgym/features/common/widgets/app_updater.dart';
+import 'package:codersgym/features/dashboard/presentation/blocs/daily_checkin/daily_checkin_cubit.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/recent_question/recent_question_cubit.dart';
 import 'package:codersgym/features/profile/domain/model/user_profile.dart';
 import 'package:codersgym/features/profile/domain/repository/profile_repository.dart';
@@ -26,11 +27,11 @@ class DashboardPage extends HookWidget {
     final dailyChallengeCubit = context.read<DailyChallengeCubit>();
     final profileCubit = context.read<UserProfileCubit>();
     final authBloc = context.read<AuthBloc>();
+    final dailyCheckinCubit = context.read<DailyCheckinCubit>();
     useEffect(
       () {
         dailyChallengeCubit.getTodayChallenge();
         context.read<TimestampCubit>().getCurrentTimestamp();
-
         context.read<RecentQuestionCubit>().getRecentQuestions();
         final authState = authBloc.state;
         if (authState is Authenticated) {
@@ -43,6 +44,9 @@ class DashboardPage extends HookWidget {
               LeetcodeSessionExpiredDialog.show(context);
             },
           );
+        }
+        if (authState is AuthenticatedWithLeetcodeAccount) {
+          dailyCheckinCubit.checkIn();
         }
         final subscription = profileCubit.stream.listen(
           (profileState) {
@@ -85,58 +89,58 @@ class DashboardPage extends HookWidget {
                 ),
               );
             }
-          },
-          child: AutoTabsRouter.pageView(
-            routes: const [
-              HomeRoute(),
-              ExploreRoute(),
-              MyProfileRoute(),
-              SettingRoute(),
-            ],
-            builder: (context, child, _) {
-              final tabsRouter = AutoTabsRouter.of(context);
-              return Scaffold(
-                body: child,
-                bottomNavigationBar: Container(
-                  decoration: BoxDecoration(
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
+                      },
+            child: AutoTabsRouter.pageView(
+              routes: const [
+                HomeRoute(),
+                ExploreRoute(),
+                MyProfileRoute(),
+                SettingRoute(),
+              ],
+              builder: (context, child, _) {
+                final tabsRouter = AutoTabsRouter.of(context);
+                return Scaffold(
+                  body: child,
+                  bottomNavigationBar: Container(
+                    decoration: BoxDecoration(
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
                         color:
                             Theme.of(context).primaryColorDark.withOpacity(0.8),
-                        blurRadius: 15.0,
-                        offset: const Offset(
-                          0.0,
-                          0.75,
+                          blurRadius: 15.0,
+                          offset: const Offset(
+                            0.0,
+                            0.75,
+                          ),
+                        )
+                      ],
+                    ),
+                    child: BottomNavigationBar(
+                      currentIndex: tabsRouter.activeIndex,
+                      elevation: 18,
+                      onTap: tabsRouter.setActiveIndex, // Update selected index
+                      items: const [
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.home),
+                          label: 'Home',
                         ),
-                      )
-                    ],
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.explore_rounded),
+                          label: 'Explore',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.person),
+                          label: 'Profile',
+                        ),
+                        BottomNavigationBarItem(
+                          icon: Icon(Icons.settings),
+                          label: 'Settings',
+                        ),
+                      ],
+                    ),
                   ),
-                  child: BottomNavigationBar(
-                    currentIndex: tabsRouter.activeIndex,
-                    elevation: 18,
-                    onTap: tabsRouter.setActiveIndex, // Update selected index
-                    items: const [
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.home),
-                        label: 'Home',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.explore_rounded),
-                        label: 'Explore',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.person),
-                        label: 'Profile',
-                      ),
-                      BottomNavigationBarItem(
-                        icon: Icon(Icons.settings),
-                        label: 'Settings',
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+                );
+              },
           ),
         ),
       ),

@@ -814,6 +814,23 @@ class LeetCodeRequests {
     """,
     );
   }
+
+  static LeetCodeRequests dailyCheckin() {
+    return LeetCodeRequests(
+      operationName: "dailyCheckin",
+      variables: Variables(),
+      query: """
+          mutation dailyCheckin {
+              checkin {
+                checkedIn
+                ok
+                error
+              }
+            }
+        """
+          ,
+    );
+  }
 }
 
 class Variables {
