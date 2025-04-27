@@ -145,12 +145,19 @@ class DiscussPage extends HookWidget implements AutoRouteWrapper {
                   return AppPaginationSliverList(
                     itemBuilder: (context, index) => DiscussionPostTile(
                       article: state.articles[index],
-                      onCardTap: () {
-                        context.pushRoute(
+                      onCardTap: () async {
+                        // Temporary workaround for
+                        // unexpectedly keyboard open when navigating back from
+                        // page with textfield
+                        // issue : https://github.com/flutter/flutter/issues/95656
+                        FocusManager.instance.primaryFocus?.unfocus();
+                        await context.pushRoute(
                           ArticleDetailRoute(
                             article: state.articles[index],
                           ),
                         );
+
+                        FocusManager.instance.primaryFocus?.unfocus();
                       },
                     ),
                     itemCount: state.articles.length,

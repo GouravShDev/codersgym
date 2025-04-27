@@ -44,6 +44,7 @@ class ArticleCommentCard extends HookWidget {
     return Container(
       margin: EdgeInsets.only(
         bottom: 8.0,
+        top: 8.0,
         left: isReply ? 0 : 4.0,
         right: isReply ? 0 : 4.0,
       ),
