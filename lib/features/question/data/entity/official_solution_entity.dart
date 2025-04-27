@@ -11,13 +11,6 @@ class OfficialSolutionEntity {
         : null;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (question != null) {
-      data['question'] = question!.toJson();
-    }
-    return data;
-  }
 }
 
 class QuestionWithSolutionEntity {
@@ -31,11 +24,5 @@ class QuestionWithSolutionEntity {
         : null;
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    if (solution != null) {
-      data['solution'] = solution!.toJson();
-    }
-    return data;
-  }
+
 }

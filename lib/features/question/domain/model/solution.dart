@@ -7,6 +7,7 @@ class Solution {
   final bool? hasVideoSolution;
   final bool? paidOnlyVideo;
   final bool? canSeeDetail;
+  final int? topicId;
 
   Solution({
     this.id,
@@ -17,6 +18,7 @@ class Solution {
     this.hasVideoSolution,
     this.paidOnlyVideo,
     this.canSeeDetail,
+    this.topicId,
   });
   Solution copyWith({
     String? id,
@@ -27,6 +29,7 @@ class Solution {
     bool? hasVideoSolution,
     bool? paidOnlyVideo,
     bool? canSeeDetail,
+    int? topicId,
   }) {
     return Solution(
       id: id ?? this.id,
@@ -37,6 +40,7 @@ class Solution {
       hasVideoSolution: hasVideoSolution ?? this.hasVideoSolution,
       paidOnlyVideo: paidOnlyVideo ?? this.paidOnlyVideo,
       canSeeDetail: canSeeDetail ?? this.canSeeDetail,
+      topicId: topicId ?? this.topicId,
     );
   }
 }
