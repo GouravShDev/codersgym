@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:auto_route/auto_route.dart';
 import 'package:codersgym/core/api/api_state.dart';
 import 'package:codersgym/core/routes/app_router.gr.dart';
@@ -7,6 +8,7 @@ import 'package:codersgym/features/common/bloc/app_file_downloader/app_file_down
 import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
 import 'package:codersgym/features/common/dialog/leetcode_session_expired_dialog.dart';
 import 'package:codersgym/features/common/widgets/app_updater.dart';
+import 'package:codersgym/features/common/widgets/app_coin_reward_animation_widget.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/daily_checkin/daily_checkin_cubit.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/recent_question/recent_question_cubit.dart';
 import 'package:codersgym/features/profile/domain/model/user_profile.dart';
@@ -14,6 +16,7 @@ import 'package:codersgym/features/profile/domain/repository/profile_repository.
 import 'package:codersgym/features/profile/presentation/blocs/user_profile/user_profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 import '../../../question/presentation/blocs/daily_challenge/daily_challenge_cubit.dart';
@@ -68,80 +71,102 @@ class DashboardPage extends HookWidget {
     );
 
     return AppUpdater(
-      child: BlocListener<AuthBloc, AuthState>(
-        listener: (context, state) {
-          if (state is UnAuthenticated) {
-            context.router.root.pushAndPopUntil(
-              const LoginRoute(),
-              predicate: (route) => false,
-            );
-          }
-        },
-        child: BlocListener<AppFileDownloaderBloc, AppFileDownloaderState>(
-          listener: (context, state) {
-            final messenger = ScaffoldMessenger.of(context);
-            if (state is AppFileIntiatingDownload) {
-              messenger.showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    "Exciting updates are on the way!",
-                  ),
-                ),
-              );
-            }
-                      },
-            child: AutoTabsRouter.pageView(
-              routes: const [
-                HomeRoute(),
-                ExploreRoute(),
-                MyProfileRoute(),
-                SettingRoute(),
-              ],
-              builder: (context, child, _) {
-                final tabsRouter = AutoTabsRouter.of(context);
-                return Scaffold(
-                  body: child,
-                  bottomNavigationBar: Container(
-                    decoration: BoxDecoration(
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                        color:
-                            Theme.of(context).primaryColorDark.withOpacity(0.8),
-                          blurRadius: 15.0,
-                          offset: const Offset(
-                            0.0,
-                            0.75,
-                          ),
-                        )
-                      ],
-                    ),
-                    child: BottomNavigationBar(
-                      currentIndex: tabsRouter.activeIndex,
-                      elevation: 18,
-                      onTap: tabsRouter.setActiveIndex, // Update selected index
-                      items: const [
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.home),
-                          label: 'Home',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.explore_rounded),
-                          label: 'Explore',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.person),
-                          label: 'Profile',
-                        ),
-                        BottomNavigationBarItem(
-                          icon: Icon(Icons.settings),
-                          label: 'Settings',
-                        ),
-                      ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is UnAuthenticated) {
+                context.router.root.pushAndPopUntil(
+                  const LoginRoute(),
+                  predicate: (route) => false,
+                );
+              }
+            },
+          ),
+          BlocListener<AppFileDownloaderBloc, AppFileDownloaderState>(
+            listener: (context, state) {
+              final messenger = ScaffoldMessenger.of(context);
+              if (state is AppFileIntiatingDownload) {
+                messenger.showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      "Exciting updates are on the way!",
                     ),
                   ),
                 );
-              },
+              }
+            },
           ),
+          BlocListener<DailyCheckinCubit, DailyCheckinState>(
+            listener: (context, state) {
+              state.mayBeWhen(
+                onLoaded: (isDailyCheckin) {
+                  if (isDailyCheckin) {
+                    Flushbar(
+                      flushbarPosition: FlushbarPosition.TOP,
+                      messageText: AppCoinRewardAnimationWidget.dailyCheckin(),
+                      backgroundColor: Colors.transparent,
+                      padding: const EdgeInsets.all(0),
+                      duration: const Duration(seconds: 2),
+                    ).show(context);
+                  }
+                },
+                orElse: () {},
+              );
+            },
+          ),
+        ],
+        child: AutoTabsRouter.pageView(
+          routes: const [
+            HomeRoute(),
+            ExploreRoute(),
+            MyProfileRoute(),
+            SettingRoute(),
+          ],
+          builder: (context, child, _) {
+            final tabsRouter = AutoTabsRouter.of(context);
+            return Scaffold(
+              body: child,
+              bottomNavigationBar: Container(
+                decoration: BoxDecoration(
+                  boxShadow: <BoxShadow>[
+                    BoxShadow(
+                      color:
+                          Theme.of(context).primaryColorDark.withOpacity(0.8),
+                      blurRadius: 15.0,
+                      offset: const Offset(
+                        0.0,
+                        0.75,
+                      ),
+                    )
+                  ],
+                ),
+                child: BottomNavigationBar(
+                  currentIndex: tabsRouter.activeIndex,
+                  elevation: 18,
+                  onTap: tabsRouter.setActiveIndex, // Update selected index
+                  items: const [
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.home),
+                      label: 'Home',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.explore_rounded),
+                      label: 'Explore',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.person),
+                      label: 'Profile',
+                    ),
+                    BottomNavigationBarItem(
+                      icon: Icon(Icons.settings),
+                      label: 'Settings',
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
       ),
     );

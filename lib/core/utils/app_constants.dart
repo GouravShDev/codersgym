@@ -26,4 +26,6 @@ class LeetcodeConstants {
       "wss://collaboration-ws.leetcode.com/problems/{slug}";
   static const defaultAvatarImg =
       "https://assets.leetcode.com/users/default_avatar.jpg";
+  static const coinGif =
+      'https://assets.leetcode.com/static_assets/public/images/coin.gif';
 }

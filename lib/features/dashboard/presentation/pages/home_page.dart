@@ -3,7 +3,6 @@ import 'package:codersgym/core/theme/app_theme.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
 import 'package:codersgym/features/common/widgets/app_loading.dart';
-import 'package:codersgym/features/dashboard/presentation/blocs/contest_reminder_cubit.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/recent_question/recent_question_cubit.dart';
 import 'package:codersgym/features/dashboard/presentation/widgets/feature_card.dart';
 import 'package:codersgym/features/profile/domain/model/user_profile.dart';
@@ -270,7 +269,7 @@ class HomePageBody extends StatelessWidget {
                               height: 8,
                             ),
                             ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemBuilder: (context, index) {
                                 final problem = questions[index];

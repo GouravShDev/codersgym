@@ -86,6 +86,7 @@ dependencies:
   flutter_markdown_latex: ^0.3.4
   firebase_remote_config: ^5.4.2
   hive: ^2.2.3
+  another_flushbar: ^1.12.30
 
 dev_dependencies:
   flutter_test:
