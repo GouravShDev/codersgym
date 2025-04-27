@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class DiscussionTags extends StatefulWidget {
   final List<Tag> initialTags;
-  final ValueChanged<Tag> onTagSelected;
+  final ValueChanged<Tag?> onTagSelected;
 
   const DiscussionTags({
     super.key,
@@ -36,9 +36,7 @@ class _DiscussionTagsState extends State<DiscussionTags> {
               setState(() {
                 _selectedTag = selected ? tag : null;
               });
-              if (selected) {
-                widget.onTagSelected(tag);
-              }
+              widget.onTagSelected(_selectedTag);
             },
             // You can customize the appearance here
           );

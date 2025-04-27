@@ -22,6 +22,15 @@ extension DateTimeExtension on DateTime {
 
   String formatTimeAgo() => timeago.format(this);
 
+  String formatDate() {
+    final now = DateTime.now();
+    final difference = now.difference(this);
+    if (difference.inDays > 1) {
+      return DateFormat('MMM dd, yyyy').format(this);
+    } else {
+      return formatTimeAgo();
+    }
+  }
 }
 
 String formatTime(int o) {
