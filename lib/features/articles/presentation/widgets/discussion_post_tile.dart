@@ -71,7 +71,11 @@ class DiscussionPostTile extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                article.summary ?? 'N/A',
+                article.summary
+                        ?.replaceAll('\\n', "  \n")
+                        .replaceAll('\\t', "  \t")
+                        .replaceAll('<br>', "  \n") ??
+                    'N/A',
                 style: theme.textTheme.bodyMedium,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,

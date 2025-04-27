@@ -1,3 +1,4 @@
+import 'package:codersgym/core/utils/app_constants.dart';
 import 'package:codersgym/features/question/data/entity/community_post_entity.dart';
 
 class DiscussionArticlesEntity {
@@ -224,6 +225,13 @@ class Author {
       userName: authorEntity.username,
       userAvatar: authorEntity.profile?.userAvatar,
       realName: authorEntity.profile?.realName,
+    );
+  }
+  factory Author.anonymous() {
+    return Author(
+      userName: "Anonymous",
+      userAvatar: LeetcodeConstants.defaultAvatarImg,
+      realName: "Anonymous",
     );
   }
 }
