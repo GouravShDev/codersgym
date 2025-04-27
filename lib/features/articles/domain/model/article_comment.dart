@@ -19,21 +19,21 @@ class ArticleComment {
   final bool? isOwnPost;
 
   ArticleComment({
-     this.id,
-     this.replyCount,
-     this.postId,
-     this.voteCount,
-     this.voteUpCount,
-     this.voteStatus,
-     this.content,
-     this.updationDate,
-     this.creationDate,
-     this.status,
-     this.isHidden,
-     this.anonymous,
-     this.author,
-     this.authorIsModerator,
-     this.isOwnPost,
+    this.id,
+    this.replyCount,
+    this.postId,
+    this.voteCount,
+    this.voteUpCount,
+    this.voteStatus,
+    this.content,
+    this.updationDate,
+    this.creationDate,
+    this.status,
+    this.isHidden,
+    this.anonymous,
+    this.author,
+    this.authorIsModerator,
+    this.isOwnPost,
   });
 
   factory ArticleComment.fromArticleCommentEntity(
@@ -51,13 +51,16 @@ class ArticleComment {
       status: article.post?.status,
       isHidden: article.post?.isHidden,
       anonymous: article.post?.anonymous,
-      author: article.post?.author != null ? Author.fromAuthorEntity(article.post!.author!) : null,
+      author: (article.post?.anonymous ?? false)
+          ? Author.anonymous()
+          : article.post?.author != null
+              ? Author.fromAuthorEntity(article.post!.author!)
+              : null,
       authorIsModerator: article.post?.authorIsModerator,
       isOwnPost: article.post?.isOwnPost,
     );
   }
 
-  
   ArticleComment copyWith({
     String? id,
     int? replyCount,
