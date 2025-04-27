@@ -7,13 +7,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 
 class ArticleCommentSection extends HookWidget {
-  ArticleCommentSection({
+  const ArticleCommentSection({
     super.key,
-    required this.article,
+    required this.topicId,
     this.onPageNumberChange,
   });
 
-  final DiscussionArticle article;
+  final int? topicId;
   final Function()? onPageNumberChange;
 
   static const int commentsPerPage =
@@ -28,7 +28,7 @@ class ArticleCommentSection extends HookWidget {
         context.read<ArticleCommentsBloc>().add(
               FetchArticleCommentsEvent(
                 pageNo: 1,
-                topicId: article.topicId ?? 0,
+                topicId: topicId ?? 0,
               ),
             );
         currentPage.addListener(
@@ -36,7 +36,7 @@ class ArticleCommentSection extends HookWidget {
             context.read<ArticleCommentsBloc>().add(
                   FetchArticleCommentsEvent(
                     pageNo: currentPage.value,
-                    topicId: article.topicId ?? 0,
+                    topicId: topicId ?? 0,
                   ),
                 );
           },

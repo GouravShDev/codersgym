@@ -55,7 +55,7 @@ class ArticleDetailPage extends HookWidget implements AutoRouteWrapper {
                           padding: const EdgeInsets.symmetric(vertical: 8),
                           child: ArticleCommentSection(
                             key: commentListKey.value,
-                            article: updatedArticleDetail,
+                            topicId: updatedArticleDetail.topicId,
                             onPageNumberChange: () {
                               if (commentListKey.value.currentContext != null) {
                                 Scrollable.ensureVisible(

@@ -9,6 +9,7 @@ class SolutionEntity {
   bool? hasVideoSolution;
   bool? paidOnlyVideo;
   bool? canSeeDetail;
+  int? topicId;
 
   SolutionEntity({
     this.id,
@@ -19,6 +20,7 @@ class SolutionEntity {
     this.hasVideoSolution,
     this.paidOnlyVideo,
     this.canSeeDetail,
+    this.topicId,
   });
 
   SolutionEntity.fromJson(Map<String, dynamic> json) {
@@ -30,21 +32,9 @@ class SolutionEntity {
     hasVideoSolution = json['hasVideoSolution'];
     paidOnlyVideo = json['paidOnlyVideo'];
     canSeeDetail = json['canSeeDetail'];
+    topicId = json['topic']?['id'];
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['id'] = this.id;
-    data['title'] = this.title;
-    data['content'] = this.content;
-    data['contentTypeId'] = this.contentTypeId;
-    data['paidOnly'] = this.paidOnly;
-    data['hasVideoSolution'] = this.hasVideoSolution;
-    data['paidOnlyVideo'] = this.paidOnlyVideo;
-    data['canSeeDetail'] = this.canSeeDetail;
-
-    return data;
-  }
 }
 
 extension SolutionEntityExt on SolutionEntity {
@@ -58,6 +48,7 @@ extension SolutionEntityExt on SolutionEntity {
       hasVideoSolution: hasVideoSolution,
       paidOnlyVideo: paidOnlyVideo,
       canSeeDetail: canSeeDetail,
+      topicId: topicId,
     );
   }
 }
