@@ -19,10 +19,10 @@ import 'package:codersgym/features/auth/data/service/auth_service.dart';
 import 'package:codersgym/features/auth/domain/service/auth_service.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:codersgym/features/code_editor/data/repository/code_editor_repository.dart';
-import 'package:codersgym/features/code_editor/data/services/coding_key_configuration_service.dart';
+import 'package:codersgym/features/code_editor/data/services/coding_configuration_service.dart';
 import 'package:codersgym/features/code_editor/data/services/editor_theme_configuration_service.dart';
 import 'package:codersgym/features/code_editor/domain/repository/code_editor_repository.dart';
-import 'package:codersgym/features/code_editor/domain/services/coding_key_configuration_service.dart';
+import 'package:codersgym/features/code_editor/domain/services/coding_configuration_service.dart';
 import 'package:codersgym/features/code_editor/domain/services/editor_theme_configuration_service.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/coding_configuration/coding_configuration_cubit.dart';
@@ -148,8 +148,8 @@ Future<void> initializeDependencies() async {
     ),
   );
 
-  getIt.registerLazySingleton<CodingKeyConfigurationService>(
-    () => CodingKeyConfigurationServiceImp(
+  getIt.registerLazySingleton<CodingConfigurationService>(
+    () => CodingConfigurationServiceImp(
       storageManager: getIt.get(),
     ),
   );
@@ -393,7 +393,6 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerFactory(
     () => CustomizeCodingExperienceBloc(
-      getIt.get(),
       getIt.get(),
     ),
   );

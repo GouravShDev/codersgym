@@ -1,5 +1,6 @@
 import 'package:animated_reorderable_list/animated_reorderable_list.dart';
 import 'package:auto_route/auto_route.dart';
+import 'package:codersgym/core/theme/app_code_editor_theme.dart';
 import 'package:codersgym/core/utils/string_extension.dart';
 import 'package:codersgym/features/code_editor/domain/model/coding_key_config.dart';
 import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
@@ -228,10 +229,10 @@ void showThemePickerBottomSheet(
             Expanded(
               child: ListView.separated(
                 shrinkWrap: true,
-                itemCount: AppCodeEditorField.codeEditorThemes.length,
+                itemCount: AppCodeEditorTheme.allCodeEditorThemes.length,
                 separatorBuilder: (context, index) => const SizedBox(height: 8),
                 itemBuilder: (context, index) {
-                  final theme = AppCodeEditorField.codeEditorThemes[index];
+                  final theme = AppCodeEditorTheme.allCodeEditorThemes[index];
                   return InkWell(
                     onTap: () {
                       onThemeSelected(theme);
