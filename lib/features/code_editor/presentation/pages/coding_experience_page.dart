@@ -5,7 +5,11 @@ import 'package:codersgym/core/utils/string_extension.dart';
 import 'package:codersgym/features/code_editor/domain/model/coding_key_config.dart';
 import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/customize_coding_experience/customize_coding_experience_bloc.dart';
+import 'package:codersgym/features/code_editor/presentation/widgets/code_editor_theme_picker_bottomsheet.dart';
+import 'package:codersgym/features/code_editor/presentation/widgets/coding_key_replacement_dialog.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/coding_keys.dart';
+import 'package:codersgym/features/code_editor/presentation/widgets/save_configuration_dialog.dart';
+import 'package:codersgym/features/common/widgets/app_animated_text_widget.dart';
 import 'package:codersgym/features/common/widgets/app_code_editor_field.dart';
 import 'package:codersgym/injection.dart';
 import 'package:collection/collection.dart';
@@ -54,15 +58,45 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
                 title: const Text("Themes"),
                 onTap: () {
                   Navigator.pop(context);
-                  showThemePickerBottomSheet(
-                    context,
-                    (selectedThemeId) {
-                      codeExpBloc.add(
-                        CustomizeCodingExperienceOnThemeChanged(
-                          selectedThemeId.id,
-                        ),
-                      );
-                    },
+
+                  showModalBottomSheet(
+                    context: context,
+                    barrierColor: Colors.black.withValues(alpha: 0.2),
+                    isScrollControlled: true,
+                    showDragHandle: true,
+                    enableDrag: true,
+                    builder: (context) => BlocBuilder<
+                        CustomizeCodingExperienceBloc,
+                        CustomizeCodingExperienceState>(
+                      bloc: codeExpBloc,
+                      builder: (context, state) {
+                        return DraggableScrollableSheet(
+                          expand: false,
+                          initialChildSize: 0.65,
+                          maxChildSize: 0.65,
+                          builder: (context, controller) =>
+                              CodeEditorThemePickerBottomsheet(
+                            scrollController: controller,
+                            onThemeSelected: (selectedThemeId) {
+                              codeExpBloc.add(
+                                CustomizeCodingExperienceOnThemeChanged(
+                                  selectedThemeId.id,
+                                ),
+                              );
+                            },
+                            currentThemeId: codeExpBloc.state.editorThemeId ??
+                                AppCodeEditorTheme.defaultThemeId,
+                            isDarkBackgroundEnabled:
+                                codeExpBloc.state.darkEditorBackground,
+                            onDarkBackgroundToggle: () {
+                              codeExpBloc.add(
+                                CustomizeCodingExperienceOnDarkEditorBackgroundToggle(),
+                              );
+                            },
+                          ),
+                        );
+                      },
+                    ),
                   );
                 }
                 //   showModalBottomSheet(
@@ -207,72 +241,6 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
   }
 }
 
-void showThemePickerBottomSheet(
-    BuildContext context, Function(AppCodeEditorTheme) onThemeSelected) {
-  showModalBottomSheet(
-    context: context,
-    barrierColor: Colors.black.withOpacity(0.1),
-    builder: (context) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Choose a Theme',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Expanded(
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: AppCodeEditorTheme.allCodeEditorThemes.length,
-                separatorBuilder: (context, index) => const SizedBox(height: 8),
-                itemBuilder: (context, index) {
-                  final theme = AppCodeEditorTheme.allCodeEditorThemes[index];
-                  return InkWell(
-                    onTap: () {
-                      onThemeSelected(theme);
-                      //  Navigator.pop(context);
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: theme.data['title']?.color ??
-                              Theme.of(context).primaryColor,
-                        ),
-                      ),
-                      padding: const EdgeInsets.all(8),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            theme.id.convertToTitleCase(),
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      );
-    },
-  );
-}
-
 class CustomizableKeyboard extends StatefulWidget {
   final CodeController codeController;
 
@@ -295,6 +263,7 @@ class _CustomizableKeyboardState extends State<CustomizableKeyboard> {
               CustomizeCodingExperienceState>(
             buildWhen: (previous, current) =>
                 previous.isCustomizing != current.isCustomizing ||
+                previous.darkEditorBackground != current.darkEditorBackground ||
                 previous.editorThemeId != current.editorThemeId,
             builder: (context, state) {
               // return HighlightView(
@@ -306,6 +275,7 @@ class _CustomizableKeyboardState extends State<CustomizableKeyboard> {
                 codeController: widget.codeController,
                 enabled: !state.isCustomizing,
                 editorThemeId: state.editorThemeId,
+                pickBackgroundFromTheme: !state.darkEditorBackground,
               );
             },
           ),
@@ -347,44 +317,49 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
       ({CodingKeyConfig key, String keyId}) keyPair, int index) {
     final key = keyPair.key;
     final codingExpBloc = context.read<CustomizeCodingExperienceBloc>();
-    return LayoutBuilder(builder: (context, constraints) {
-      return SizedBox(
-        width: constraints.maxWidth / 7,
-        height: 40,
-        key: ValueKey(keyPair.keyId),
-        child: _buildBasicKeyButton(
-          onPressed: () async {
-            // show dialog where there is dialog which allow user to select coding key to replace current key
-            final replacedKey = await CodingKeyReplacementDialog.show(
-              context,
-              key.id,
-              CodingKeyConfig.defaultCodingKeyConfiguration,
-            );
-            if (replacedKey != null) {
-              codingExpBloc.add(
-                CustomizeCodingExperienceOnReplaceKeyConfig(
-                  keyIndex: index,
-                  replaceKeyId: replacedKey,
-                ),
-              );
-            }
-          },
-          child: switch (key) {
-            CodingTextKeyConfig() => Text(
-                key.label,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+    return Container(
+      width: double.maxFinite,
+      height: 40,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Theme.of(context).indicatorColor.withValues(alpha: 0.05),
+      ),
+      key: ValueKey(keyPair.keyId),
+      child: _buildBasicKeyButton(
+        onPressed: () async {
+          // show dialog where there is dialog which allow user to select coding key to replace current key
+          final replacedKey = await CodingKeyReplacementDialog.show(
+            context,
+            key.id,
+            CodingKeyConfig.defaultCodingKeyConfiguration,
+          );
+          if (replacedKey != null) {
+            codingExpBloc.add(
+              CustomizeCodingExperienceOnReplaceKeyConfig(
+                keyIndex: index,
+                replaceKeyId: replacedKey,
               ),
-            CodingIconKeyConfig() => Icon(key.icon),
-          },
-        ),
-      );
-    });
+            );
+          }
+        },
+        child: switch (key) {
+          CodingTextKeyConfig() => Text(
+              key.label,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          CodingIconKeyConfig() => Icon(key.icon),
+        },
+      ),
+    );
+    ;
   }
 
   Widget _buildReorderableWrap() {
     // Used for adding separator between keys rows
-    const secondRowStartIndex = 6;
-    const secondRowEndIndex = 13;
+    // const secondRowStartIndex = 6;
+    // const secondRowEndIndex = 13;
     return BlocBuilder<CustomizeCodingExperienceBloc,
         CustomizeCodingExperienceState>(
       buildWhen: (previous, current) =>
@@ -408,29 +383,28 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
         }
 
         return Container(
-          width: 400,
-          height: 200,
+          height: 240,
           child: AnimatedReorderableGridView(
             items: codingExpState.keyConfiguration,
             itemBuilder: (BuildContext context, int index) {
               final keyPair = codingExpState.keyConfiguration[index];
               final key = _buildKeyButton(keyPair, index);
 
-              if (index > secondRowStartIndex &&
-                  index <= secondRowEndIndex &&
-                  !codingExpState.isReordering) {
-                return Container(
-                  key: ValueKey(keyPair),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(
-                        color: Theme.of(context).hintColor,
-                      ),
-                    ),
-                  ),
-                  child: key,
-                );
-              }
+              // if (index > secondRowStartIndex &&
+              //     index <= secondRowEndIndex &&
+              //     !codingExpState.isReordering) {
+              //   return Container(
+              //     key: ValueKey(keyPair),
+              //     decoration: BoxDecoration(
+              //       border: Border(
+              //         bottom: BorderSide(
+              //           color: Theme.of(context).hintColor,
+              //         ),
+              //       ),
+              //     ),
+              //     child: key,
+              //   );
+              // }
               return Container(
                 key: ValueKey(keyPair),
                 child: key,
@@ -439,7 +413,7 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
 
             sliverGridDelegate:
                 SliverReorderableGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
+              crossAxisCount: 7,
               mainAxisSpacing: 4.0,
               crossAxisSpacing: 4.0,
             ),
@@ -513,6 +487,8 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: BlocConsumer<CustomizeCodingExperienceBloc,
                 CustomizeCodingExperienceState>(
+              listenWhen: (previous, current) =>
+                  previous.modificationStatus != current.modificationStatus,
               listener: (context, state) {
                 if (state.modificationStatus ==
                     ConfigurationModificationStatus.saved) {
@@ -529,14 +505,26 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
                 return Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      state.isCustomizing
-                          ? "Hold Keys To Rearrange"
-                          : "Current Coding Keys Layout",
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                    ),
+                    if (state.isCustomizing)
+                      AppAnimatedTextWidget(
+                        texts: const [
+                          "Hold keys to rearrange",
+                          "Tap to replace keys",
+                        ],
+                        textStyle:
+                            Theme.of(context).textTheme.labelMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                        animationType: AnimatedTextType.typer,
+                        repeatCount: 2,
+                        speed: const Duration(milliseconds: 80),
+                        repeatForever: false,
+                      )
+                    else
+                      Text(
+                        "Current Coding Keys Layout",
+                        style: Theme.of(context).textTheme.labelMedium,
+                      ),
                     TextButton.icon(
                       icon:
                           Icon(state.isCustomizing ? Icons.check : Icons.edit),
@@ -562,160 +550,6 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
           // ),
         ],
       ),
-    );
-  }
-}
-
-class CodingKeyReplacementDialog extends StatefulWidget {
-  final String currentKey;
-
-  const CodingKeyReplacementDialog({
-    Key? key,
-    required this.currentKey,
-  }) : super(key: key);
-
-  @override
-  _CodingKeyReplacementDialogState createState() =>
-      _CodingKeyReplacementDialogState();
-
-  // Method to show the dialog
-  static Future<String?> show(BuildContext context, String currentKey,
-      List<String> currentConfiguration) {
-    return showDialog<String>(
-      context: context,
-      builder: (context) => CodingKeyReplacementDialog(
-        currentKey: currentKey,
-      ),
-    );
-  }
-}
-
-class _CodingKeyReplacementDialogState
-    extends State<CodingKeyReplacementDialog> {
-  CodingKeyConfig? _selectedKey;
-  late List<CodingKeyConfig> _availableKeys;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // Get all available keys that are not already in the current configuration
-    _availableKeys = CodingKeyConfig.lookupMap.values
-        .map(
-          (e) => e.call(),
-        )
-        .toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text('Replace ${_getKeyLabel(widget.currentKey)}'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          DropdownButtonFormField<CodingKeyConfig>(
-            decoration: const InputDecoration(
-              labelText: 'Select Replacement Key',
-              border: OutlineInputBorder(),
-            ),
-            value: _selectedKey,
-            isExpanded: true,
-            hint: const Text('Choose a key'),
-            items: _availableKeys.map((CodingKeyConfig item) {
-              return DropdownMenuItem<CodingKeyConfig>(
-                value: item,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      switch (item) {
-                        CodingTextKeyConfig() => Text(
-                            item.label,
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        CodingIconKeyConfig() => Icon(item.icon),
-                      },
-                      Text(item.id.capitalizeFirstLetter()),
-                    ],
-                  ),
-                ),
-              );
-            }).toList(),
-            onChanged: (CodingKeyConfig? newValue) {
-              setState(() {
-                _selectedKey = newValue;
-              });
-            },
-          ),
-          if (_selectedKey != null) ...[
-            const SizedBox(height: 16),
-            Text(
-              _selectedKey!.description,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-          ],
-        ],
-      ),
-      actions: [
-        TextButton(
-          child: const Text('Cancel'),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        ElevatedButton(
-          onPressed: _selectedKey != null
-              ? () => Navigator.of(context).pop(_selectedKey!.id)
-              : null,
-          child: const Text('Replace'),
-        ),
-      ],
-    );
-  }
-
-  // Helper method to get a more readable label for each key
-  String _getKeyLabel(String key) {
-    // Remove 'CodingKeyConfig' from the end of the key name
-    return key.replaceAll('CodingKeyConfig', '');
-  }
-}
-
-class SaveConfigurationDialog extends StatelessWidget {
-  const SaveConfigurationDialog({super.key});
-
-  static Future<bool?> show(BuildContext context) async {
-    return await showDialog(
-      context: context,
-      builder: (context) => const SaveConfigurationDialog(),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: const Text('Warning'),
-      content: const Text(
-          'You have unsaved changes. Do you want to save your configuration before proceeding?'),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Cancel'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(true),
-          child: const Text('Discard'),
-        ),
-        TextButton(
-          onPressed: () {
-            context.read<CustomizeCodingExperienceBloc>().add(
-                  CustomizeCodingExperienceOnSaveConfiguration(),
-                );
-            Navigator.of(context).pop(true);
-          },
-          child: const Text('Save'),
-        ),
-      ],
     );
   }
 }

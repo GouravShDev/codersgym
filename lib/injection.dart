@@ -328,7 +328,7 @@ Future<void> initializeDependencies() async {
     ),
   );
   getIt.registerFactory(
-    () => CodingKeyConfigurationCubit(
+    () => CodingConfigurationCubit(
       getIt.get(),
     ),
   );

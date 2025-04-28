@@ -1,20 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_highlight/theme_map.dart';
-import 'package:flutter_highlight/themes/atom-one-dark.dart';
-import 'package:flutter_highlight/themes/atom-one-light.dart';
-import 'package:flutter_highlight/themes/darcula.dart';
-import 'package:flutter_highlight/themes/dracula.dart';
-import 'package:flutter_highlight/themes/github.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
-import 'package:flutter_highlight/themes/monokai.dart';
-import 'package:flutter_highlight/themes/night-owl.dart';
-import 'package:flutter_highlight/themes/nord.dart';
-import 'package:flutter_highlight/themes/solarized-dark.dart';
-import 'package:flutter_highlight/themes/solarized-light.dart';
-import 'package:flutter_highlight/themes/vs.dart';
-import 'package:flutter_highlight/themes/vs2015.dart';
-import 'package:flutter_highlight/themes/xcode.dart';
 
 class AppCodeEditorField extends StatelessWidget {
   const AppCodeEditorField({
@@ -22,12 +9,14 @@ class AppCodeEditorField extends StatelessWidget {
     required this.codeController,
     this.enabled,
     required this.editorThemeId,
+    this.focusNode,
+    this.pickBackgroundFromTheme = false,
   });
   final CodeController codeController;
   final String? editorThemeId;
   final bool? enabled;
-
-
+  final FocusNode? focusNode;
+  final bool pickBackgroundFromTheme;
 
   @override
   Widget build(BuildContext context) {
@@ -38,22 +27,23 @@ class AppCodeEditorField extends StatelessWidget {
       child: Theme(
         data: theme.copyWith(
           inputDecorationTheme: theme.inputDecorationTheme.copyWith(
-            fillColor:
-                //  themeMap[editorThemeId]?['root']?.backgroundColor ??
-                theme.scaffoldBackgroundColor,
+            fillColor: pickBackgroundFromTheme
+                ? (themeMap[editorThemeId]?['root']?.backgroundColor)
+                : theme.scaffoldBackgroundColor,
             border: InputBorder.none,
             enabledBorder: InputBorder.none,
           ),
         ),
         child: CodeField(
           controller: codeController,
+          focusNode: focusNode,
           expands: false,
           wrap: true,
           enabled: enabled,
           textStyle: Theme.of(context).textTheme.bodyMedium,
-          background:
-              // themeMap[editorThemeId]?['root']?.backgroundColor ??
-              theme.scaffoldBackgroundColor,
+          background: pickBackgroundFromTheme
+              ? (themeMap[editorThemeId]?['root']?.backgroundColor)
+              : theme.scaffoldBackgroundColor,
           gutterStyle: GutterStyle(
             width: 44,
             showFoldingHandles: true,
@@ -64,13 +54,12 @@ class AppCodeEditorField extends StatelessWidget {
                   height: 1.46,
                 ),
             margin: 2,
-            background:
-                // themeMap[editorThemeId]?['root']?.backgroundColor ??
-                theme.scaffoldBackgroundColor,
+            background: pickBackgroundFromTheme
+                ? (themeMap[editorThemeId]?['root']?.backgroundColor)
+                : theme.scaffoldBackgroundColor,
           ),
         ),
       ),
     );
   }
 }
-
