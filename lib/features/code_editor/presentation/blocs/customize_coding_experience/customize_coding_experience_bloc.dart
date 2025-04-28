@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:codersgym/features/code_editor/domain/model/coding_configuration.dart';
 import 'package:codersgym/features/code_editor/domain/model/coding_key_config.dart';
 import 'package:codersgym/features/code_editor/domain/services/coding_configuration_service.dart';
 import 'package:codersgym/features/code_editor/domain/services/editor_theme_configuration_service.dart';
@@ -17,7 +18,12 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
     on<CustomizeCodingExperienceEvent>((event, emit) async {
       switch (event) {
         case CustomizeCodingExperienceLoadConfiguration():
-          final configuaration = await _service.loadConfiguration();
+          final configuaration = await _service.loadConfiguration() ??
+              CodingConfiguration(
+                themeId: '',
+                keysConfigs: CodingKeyConfig.defaultCodingKeyConfiguration,
+                darkEditorBackground: false,
+              );
           final configurationIds = configuaration.keysConfigs;
           final themeId = configuaration.themeId;
           final configuration = configurationIds
@@ -90,9 +96,11 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
               modificationStatus: ConfigurationModificationStatus.saving,
             ),
           );
-          await _service.saveConfiguration(
-            state.keyConfiguration.map((e) => e.key.id).toList(),
-          );
+          await _service.saveConfiguration(CodingConfiguration(
+            themeId: state.editorThemeId ?? '',
+            keysConfigs: state.keyConfiguration.map((e) => e.key.id).toList(),
+            darkEditorBackground: false,
+          ));
           emit(
             state.copyWith(
               modificationStatus: ConfigurationModificationStatus.saved,

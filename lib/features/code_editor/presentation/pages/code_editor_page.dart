@@ -347,8 +347,8 @@ class CodeEditorPageBody extends HookWidget {
           BlocBuilder<CodingKeyConfigurationCubit, CodingConfigurationState>(
             builder: (context, state) {
               final configuration = switch (state) {
-                CodingKeyConfigurationLoaded() => state.keysConfiguration,
-                CodingKeyNoUserConfiguration() =>
+                CodingConfigurationLoaded() => state.configuration.keysConfigs,
+                CodingNoUserConfiguration() =>
                   CodingKeyConfig.defaultCodingKeyConfiguration,
                 _ => <String>[],
               };
