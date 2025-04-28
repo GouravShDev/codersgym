@@ -7,6 +7,7 @@ class CustomizeCodingExperienceState extends Equatable {
   final bool configurationLoaded;
   final ConfigurationModificationStatus modificationStatus;
   final String? editorThemeId;
+  final bool darkEditorBackground;
 
   const CustomizeCodingExperienceState({
     required this.keyConfiguration,
@@ -14,6 +15,7 @@ class CustomizeCodingExperienceState extends Equatable {
     required this.isReordering,
     required this.configurationLoaded,
     required this.modificationStatus,
+    required this.darkEditorBackground,
     this.editorThemeId,
   });
 
@@ -28,6 +30,7 @@ class CustomizeCodingExperienceState extends Equatable {
       isReordering: false,
       configurationLoaded: false,
       modificationStatus: ConfigurationModificationStatus.none,
+      darkEditorBackground: true,
     );
   }
 
@@ -38,6 +41,7 @@ class CustomizeCodingExperienceState extends Equatable {
     bool? configurationLoaded,
     ConfigurationModificationStatus? modificationStatus,
     String? editorThemeId,
+    bool? darkEditorBackground,
   }) {
     return CustomizeCodingExperienceState(
       keyConfiguration: configuration ?? this.keyConfiguration,
@@ -46,6 +50,7 @@ class CustomizeCodingExperienceState extends Equatable {
       configurationLoaded: configurationLoaded ?? this.configurationLoaded,
       modificationStatus: modificationStatus ?? this.modificationStatus,
       editorThemeId: editorThemeId ?? this.editorThemeId,
+      darkEditorBackground: darkEditorBackground ?? this.darkEditorBackground,
     );
   }
 
@@ -57,6 +62,7 @@ class CustomizeCodingExperienceState extends Equatable {
         configurationLoaded,
         modificationStatus,
         editorThemeId,
+        darkEditorBackground,
       ];
 }
 

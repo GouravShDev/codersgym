@@ -232,9 +232,10 @@ class HomePageBody extends StatelessWidget {
                       icon: Icons.terminal,
                       title: "CodingEXP",
                       color: theme.colorScheme.successColor,
-                      isComingSoon: true,
+                      isComingSoon: false,
                       onTap: () {
                         // Navigate to practice section
+                        context.pushRoute(const CodingExperienceRoute());
                       },
                     ),
                   ],

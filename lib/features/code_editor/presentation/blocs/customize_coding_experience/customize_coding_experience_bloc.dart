@@ -65,6 +65,7 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
           emit(
             state.copyWith(
               isCustomizing: !state.isCustomizing,
+              modificationStatus: ConfigurationModificationStatus.none,
             ),
           );
           if (savedMode) {
@@ -111,6 +112,12 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
           emit(
             state.copyWith(
               editorThemeId: event.themeId,
+            ),
+          );
+        case CustomizeCodingExperienceOnDarkEditorBackgroundToggle():
+          emit(
+            state.copyWith(
+              darkEditorBackground: !state.darkEditorBackground,
             ),
           );
       }

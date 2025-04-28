@@ -5,9 +5,8 @@ import 'package:equatable/equatable.dart';
 
 part 'coding_configuration_state.dart';
 
-class CodingKeyConfigurationCubit extends Cubit<CodingConfigurationState> {
-  CodingKeyConfigurationCubit(this._service)
-      : super(CodingConfigurationInitial());
+class CodingConfigurationCubit extends Cubit<CodingConfigurationState> {
+  CodingConfigurationCubit(this._service) : super(CodingConfigurationInitial());
   final CodingConfigurationService _service;
 
   Future<void> loadConfiguration() async {

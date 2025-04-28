@@ -50,7 +50,7 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
           _onCodeEditorSubmitCodeResultUpdateEvent(event, emit);
           break;
         case CodeEditorCodeLoadConfig():
-          _onCodeEditorCodeLoadConfig(event, emit);
+          await _onCodeEditorCodeLoadConfig(event, emit);
           break;
         case CodeEditorLanguageUpdateEvent():
           _onCodeEditorLanguageUpdateEvent(event, emit);

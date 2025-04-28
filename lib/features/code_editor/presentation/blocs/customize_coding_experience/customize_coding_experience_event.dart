@@ -51,3 +51,6 @@ class CustomizeCodingExperienceOnThemeChanged
     this.themeId,
   );
 }
+
+class CustomizeCodingExperienceOnDarkEditorBackgroundToggle
+    extends CustomizeCodingExperienceEvent {}
