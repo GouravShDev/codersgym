@@ -24,7 +24,6 @@ class CodeEditorThemePickerBottomsheet extends StatelessWidget {
         horizontal: 20,
         // vertical: 24,
       ),
-
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
