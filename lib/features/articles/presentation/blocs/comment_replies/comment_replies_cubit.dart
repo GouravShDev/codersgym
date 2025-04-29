@@ -22,6 +22,9 @@ class CommentRepliesCubit extends Cubit<CommentRepliesState> {
 
     final result =
         await _discussionArticleRepository.getArticleReplies(_articleCommentId);
+    if (isClosed) {
+      return;
+    }
     result.when(
       onSuccess: (value) {
         emit(

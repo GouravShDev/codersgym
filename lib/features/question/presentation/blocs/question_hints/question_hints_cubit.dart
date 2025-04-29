@@ -17,6 +17,9 @@ class QuestionHintsCubit extends Cubit<QuestionHintsState> {
     emit(ApiLoading());
     final result =
         await _questionRepository.getQuestionHints(question.titleSlug!);
+    if (isClosed) {
+      return;
+    }
     result.when(
       onSuccess: (content) {
         emit(ApiLoaded(content));

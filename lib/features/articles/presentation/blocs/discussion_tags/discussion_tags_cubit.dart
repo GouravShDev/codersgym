@@ -13,6 +13,9 @@ class DiscussionTagsCubit extends Cubit<DiscussionTagsState> {
   Future<void> fetchTags() async {
     emit(const ApiLoading());
     final result = await _discussionArticleRepository.getDiscussionTags();
+    if (isClosed) {
+      return;
+    }
     result.when(
       onSuccess: (tags) {
         emit(ApiLoaded(tags));

@@ -12,6 +12,9 @@ class DailyCheckinCubit extends Cubit<DailyCheckinState> {
   Future<void> checkIn() async {
     emit(const ApiLoading());
     final result = await _dailyCheckinRepository.dailyCheckin();
+    if (isClosed) {
+      return;
+    }
     result.when(
       onSuccess: (dailyCheckIn) {
         emit(ApiLoaded(dailyCheckIn));

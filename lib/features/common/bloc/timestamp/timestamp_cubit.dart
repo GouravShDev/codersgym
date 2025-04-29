@@ -12,6 +12,9 @@ class TimestampCubit extends Cubit<TimestampState> {
     emit(const ApiLoading());
     try {
       final timestamp = await _leetcodeApi.getCurrentTimestamp();
+      if (isClosed) {
+        return;
+      }
       emit(ApiLoaded(timestamp?['currentTimestamp']));
     } catch (e) {
       emit(ApiError(Exception(e)));

@@ -105,6 +105,9 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
               .join('\n') ??
           '',
     );
+    if (isClosed) {
+      return;
+    }
     if (runCodeResult.isFailure) {
       emit(state.copyWith(executionState: CodeExecutionError()));
       return;
@@ -199,7 +202,7 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
 
     _timer = Timer.periodic(const Duration(seconds: 2), (timer) async {
       if (elapsedSeconds >= timeoutInSeconds) {
-        if(isClosed) return;
+        if (isClosed) return;
         onCodeExecutionResultRecieved(CodeExecutionError());
 
         _timer?.cancel();

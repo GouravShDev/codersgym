@@ -14,6 +14,9 @@ class SimilarQuestionCubit extends Cubit<SimilarQuestionState> {
     final result = await _questionRepository.getSimilarQuestions(
       question.titleSlug ?? '',
     );
+    if (isClosed) {
+      return;
+    }
     result.when(
       onSuccess: (questionList) {
         emit(ApiLoaded(questionList));

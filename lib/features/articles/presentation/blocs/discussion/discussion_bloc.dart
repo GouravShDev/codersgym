@@ -60,7 +60,9 @@ class DiscussionBloc extends Bloc<DiscussionEvent, DiscussionState> {
         tagSlugs: event.tagSlugs,
       ),
     );
-
+    if (isClosed) {
+      return;
+    }
     result.when(onSuccess: (value) {
       final updatedList = List<DiscussionArticle>.from(state.articles)
         ..addAll(value.articleList);

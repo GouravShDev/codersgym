@@ -19,6 +19,9 @@ class QuestionContentCubit extends Cubit<ApiState<Question, Exception>> {
     emit(const ApiLoading());
     final result =
         await _questionRepository.getQuestionContent(question.titleSlug!);
+    if (isClosed) {
+      return;
+    }
     result.when(
       onSuccess: (content) {
         _recentQuestionManager.addOrUpdateQuestion(

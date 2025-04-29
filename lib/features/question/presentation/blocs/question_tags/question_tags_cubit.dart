@@ -17,6 +17,9 @@ class QuestionTagsCubit extends Cubit<QuestionTagsState> {
     emit(ApiLoading());
     final result =
         await _questionRepository.getQuestionTags(question.titleSlug!);
+    if (isClosed) {
+      return;
+    }
     result.when(
       onSuccess: (content) {
         emit(ApiLoaded(content));
