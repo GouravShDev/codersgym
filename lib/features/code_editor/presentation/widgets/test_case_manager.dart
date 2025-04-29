@@ -152,9 +152,9 @@ class TestCaseManager extends HookWidget {
             if (currentTestcases.value.length < 5 && !readonly)
               IconButton(
                 onPressed: () {
-                    AnalyticsService().logCustomEvent(
-                                name: AnalyticsEvents.addTestCase,
-                              );
+                  AnalyticsService().logCustomEvent(
+                    name: AnalyticsEvents.addTestCase,
+                  );
                   currentTestcases.value = currentTestcases.value
                       .map(
                         (e) => e.copy(),
@@ -226,7 +226,9 @@ class TestCaseManager extends HookWidget {
         const SizedBox(
           height: 12,
         ),
-        if (stdOutput != null && stdOutput!.isNotEmpty) ...[
+        if (stdOutput != null &&
+            stdOutput!.isNotEmpty &&
+            stdOutput![selectedTestcaseIndex.value].isNotEmpty) ...[
           const Text("StdOutput"),
           const SizedBox(
             height: 8,

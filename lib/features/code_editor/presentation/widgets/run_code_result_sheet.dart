@@ -92,10 +92,12 @@ class RunCodeResultSheet extends StatelessWidget {
                     readonly: true,
                     codeOutput: isCodeSubmitted
                         ? [executionResult.lastCodeOutput ?? '']
-                        : executionResult.codeAnswers,
+                        : executionResult.codeAnswers
+                            ?.sublist(0, executionResult.totalTestcases),
                     expectedOutput: isCodeSubmitted
                         ? [(executionResult.lastExpectedOutput ?? '')]
-                        : executionResult.expectedCodeAnswer,
+                        : executionResult.expectedCodeAnswer
+                            ?.sublist(0, executionResult.totalTestcases),
                     stdOutput: executionResult.codePrintOutputs,
                   )
               ],

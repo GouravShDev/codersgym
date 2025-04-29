@@ -1,4 +1,3 @@
-
 import 'package:codersgym/features/code_editor/domain/model/code_execution_result.dart';
 
 class CodeExecutionResultEntity {
@@ -174,18 +173,9 @@ extension CodeExecutionResultEntityExt on CodeExecutionResultEntity {
       lastTestCasesInputs: lastTestcase?.split('\n'),
       lastExpectedOutput: expectedOutput,
       // Leetcode gives empty string in each of the list in the response
-      codeAnswers: codeAnswer
-        ?..removeWhere(
-          (element) => element.isEmpty,
-        ),
-      codePrintOutputs: stdOutputList
-        ?..removeWhere(
-          (element) => element.isEmpty,
-        ),
-      expectedCodeAnswer: expectedCodeAnswer
-        ?..removeWhere(
-          (element) => element.isEmpty,
-        ),
+      codeAnswers: codeAnswer,
+      codePrintOutputs: stdOutputList,
+      expectedCodeAnswer: expectedCodeAnswer,
       complieError: compileError,
       fullCompileError: fullCompileError,
       runtimeError: runtimeError,
