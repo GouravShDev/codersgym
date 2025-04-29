@@ -58,8 +58,8 @@ class LeetcodeUserProfileCard extends StatelessWidget {
                     return const SizedBox.shrink();
                   }
 
-                  return Image.network(
-                    activeBadge.icon!,
+                  return AppNetworkImage(
+                    imageUrl: activeBadge.icon!,
                     height: 20,
                   );
                 }),

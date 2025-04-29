@@ -1,6 +1,7 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:codersgym/core/routes/app_router.gr.dart';
 import 'package:codersgym/features/common/widgets/app_error_widget.dart';
+import 'package:codersgym/features/common/widgets/app_network_image.dart';
 import 'package:codersgym/features/question/domain/model/favorite_problemset.dart';
 import 'package:codersgym/features/question/presentation/blocs/my_favorite_list/my_favorite_list_cubit.dart';
 import 'package:codersgym/injection.dart';
@@ -143,18 +144,15 @@ class MyListPage extends HookWidget implements AutoRouteWrapper {
 
   Widget _buildFavoriteImage(
       BuildContext context, FavoriteProblemset favorite) {
-
     if (favorite.coverUrl != null) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(8),
-        child: Image.network(
-          favorite.coverUrl!,
+        child: AppNetworkImage.standard(
+          imageUrl: favorite.coverUrl!,
           width: 60,
           height: 60,
           fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) {
-            return _buildFallbackImage(context, favorite);
-          },
+          errorWidget: _buildFallbackImage(context, favorite),
         ),
       );
     } else {

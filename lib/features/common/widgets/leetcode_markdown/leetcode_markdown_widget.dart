@@ -1,3 +1,5 @@
+import 'package:codersgym/features/common/widgets/app_loading.dart';
+import 'package:codersgym/features/common/widgets/app_network_image.dart';
 import 'package:codersgym/features/common/widgets/leetcode_markdown/element_builders.dart';
 import 'package:codersgym/features/common/widgets/leetcode_markdown/iframe_block_syntax.dart';
 import 'package:flutter/material.dart';
@@ -58,22 +60,16 @@ class LeetcodeMarkdownWidget extends StatelessWidget {
 
         return Container(
           constraints: const BoxConstraints(maxWidth: 800),
-          child: Image.network(
-            imageUrl,
-            loadingBuilder: (context, child, progress) {
-              if (progress == null) return child;
-              return Center(
-                child: CircularProgressIndicator(
-                  value: progress.expectedTotalBytes != null
-                      ? progress.cumulativeBytesLoaded /
-                          progress.expectedTotalBytes!
-                      : null,
-                ),
-              );
-            },
-            errorBuilder: (context, error, stackTrace) {
-              return const Icon(Icons.broken_image, size: 50);
-            },
+          child: AppNetworkImage(
+            imageUrl: imageUrl,
+            errorWidget: const Icon(Icons.broken_image, size: 50),
+            useCachedImage: false,
+            placeholder: AppWidgetLoading(
+              child: SizedBox(
+                height: 300,
+                width: double.maxFinite,
+              ),
+            ),
           ),
         );
       },
@@ -179,7 +175,7 @@ class LeetcodeMarkdownWidget extends StatelessWidget {
         [
           LatexBlockSyntax(),
           IframeBlockSyntax(),
-          md.FencedCodeBlockSyntax(),
+          const md.FencedCodeBlockSyntax(),
           const md.TableSyntax(),
         ],
         [
