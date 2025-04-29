@@ -26,7 +26,7 @@ class CustomizeCodingExperienceKeySwap extends CustomizeCodingExperienceEvent {
 class CustomizeCodingExperienceOnReorrderingStart
     extends CustomizeCodingExperienceEvent {}
 
-class CustomizeCodingExperienceOnKeysEditSaveModeToggle
+class CustomizeCodingExperienceOnKeysModifyPreviewModeToggle
     extends CustomizeCodingExperienceEvent {}
 
 class CustomizeCodingExperienceOnSaveConfiguration

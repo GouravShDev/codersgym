@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:codersgym/core/theme/app_code_editor_theme.dart';
 import 'package:codersgym/features/code_editor/domain/model/coding_configuration.dart';
 import 'package:codersgym/features/code_editor/domain/model/coding_key_config.dart';
 import 'package:codersgym/features/code_editor/domain/services/coding_configuration_service.dart';
@@ -20,9 +21,9 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
         case CustomizeCodingExperienceLoadConfiguration():
           final configuaration = await _service.loadConfiguration() ??
               CodingConfiguration(
-                themeId: '',
+                themeId: AppCodeEditorTheme.defaultThemeId,
                 keysConfigs: CodingKeyConfig.defaultCodingKeyConfiguration,
-                darkEditorBackground: false,
+                darkEditorBackground: true,
               );
           final configurationIds = configuaration.keysConfigs;
           final themeId = configuaration.themeId;
@@ -60,17 +61,12 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
               modificationStatus: ConfigurationModificationStatus.unsaved,
             ),
           );
-        case CustomizeCodingExperienceOnKeysEditSaveModeToggle():
-          final savedMode = state.isCustomizing;
+        case CustomizeCodingExperienceOnKeysModifyPreviewModeToggle():
           emit(
             state.copyWith(
               isCustomizing: !state.isCustomizing,
-              modificationStatus: ConfigurationModificationStatus.none,
             ),
           );
-          if (savedMode) {
-            add(CustomizeCodingExperienceOnSaveConfiguration());
-          }
 
         case CustomizeCodingExperienceOnReplaceKeyConfig():
           final currentConfig =
