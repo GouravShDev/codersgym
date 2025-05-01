@@ -213,6 +213,9 @@ class CodeEditorPageBody extends HookWidget {
 
     // Run code function
     final onCodeRun = useCallback(() {
+      if (context.read<CodeEditorBloc>().state.isExecutionPending) {
+        return;
+      }
       context.read<CodeEditorBloc>().add(
             CodeEditorRunCodeEvent(question: question),
           );
@@ -254,14 +257,17 @@ class CodeEditorPageBody extends HookWidget {
               icon: const Icon(Icons.bug_report),
             ),
 
-            Row(
-              children: [
-                CodeRunButton(runCode: onCodeRun),
-                const SizedBox(
-                  width: 4,
-                ),
-                CodeSubmitButton(question: question),
-              ],
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6.0),
+              child: Row(
+                children: [
+                  CodeRunButton(runCode: onCodeRun),
+                  const SizedBox(
+                    width: 4,
+                  ),
+                  CodeSubmitButton(question: question),
+                ],
+              ),
             ),
           ],
         ),

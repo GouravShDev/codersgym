@@ -54,6 +54,12 @@ class CodeSubmitButton extends StatelessWidget {
                       ),
                       icon: const Icon(Icons.upload_file_outlined),
                       onPressed: () {
+                        if (context
+                            .read<CodeEditorBloc>()
+                            .state
+                            .isExecutionPending) {
+                          return;
+                        }
                         onSubmit?.call();
                         context.read<CodeEditorBloc>().add(
                               CodeEditorSubmitCodeEvent(question: question),

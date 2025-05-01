@@ -72,6 +72,11 @@ class CodeEditorState extends Equatable {
   String toString() {
     return 'CodeEditorState { code: $code, language: $language, executionState: $executionState, codeSubmissionState: $codeSubmissionState, testCases: $testCases , isStateInitialized $isStateInitialized}';
   }
+
+  bool get isExecutionPending {
+    return executionState is CodeExecutionPending ||
+        codeSubmissionState is CodeExecutionPending;
+  }
 }
 
 sealed class CodeExecutionState extends Equatable {
