@@ -111,6 +111,14 @@ Future<NetworkResponse<Model>> executeRequest<Model>(
     );
   } on DioException catch (error) {
     final errorBody = error.response?.data;
+    if (error.response?.statusCode == 429) {
+      return NetworkResponse.error(
+        NetworkUserVisibleError(
+          code: NetworkErrorCode.tooManyRequest,
+          message: 'Too many requests',
+        ),
+      );
+    }
     if (kReleaseMode) {
       FirebaseCrashlytics.instance.recordError(
         error.response,

@@ -109,7 +109,12 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
       return;
     }
     if (runCodeResult.isFailure) {
-      emit(state.copyWith(executionState: CodeExecutionError()));
+      emit(
+        state.copyWith(
+          executionState:
+              CodeExecutionError("Code Excecution failed. Please Try again"),
+        ),
+      );
       return;
     }
 
@@ -174,7 +179,8 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
     if (runSubmitCodeResult.isFailure) {
       emit(
         state.copyWith(
-          codeSubmissionState: CodeExecutionError(),
+          executionState:
+              CodeExecutionError("Code Excecution failed. Please Try again"),
         ),
       );
       return;
@@ -203,7 +209,10 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
     _timer = Timer.periodic(const Duration(seconds: 2), (timer) async {
       if (elapsedSeconds >= timeoutInSeconds) {
         if (isClosed) return;
-        onCodeExecutionResultRecieved(CodeExecutionError());
+        if (!(_timer?.isActive ?? false)) return;
+        onCodeExecutionResultRecieved(
+          CodeExecutionError("Code Excecution failed. Please Try again"),
+        );
 
         _timer?.cancel();
         return;
@@ -215,7 +224,7 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
       );
       if (executionResult.isFailure) {
         onCodeExecutionResultRecieved(
-          CodeExecutionError(),
+          CodeExecutionError("Code Excecution failed. Please Try again"),
         );
         _timer?.cancel();
         return;

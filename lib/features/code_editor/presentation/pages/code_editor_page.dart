@@ -113,7 +113,13 @@ class CodeEditorPageBody extends HookWidget {
           );
           break;
         case CodeExecutionError():
-          // TODO: Handle this case.
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                executionState.message,
+              ),
+            ),
+          );
           break;
         default:
           break; // Ignore other states

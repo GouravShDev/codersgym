@@ -145,7 +145,8 @@ class NetworkUnknownError extends NetworkError {
 enum NetworkErrorCode {
   socketException,
   forbidden,
-  uncategorized;
+  uncategorized,
+  tooManyRequest;
 
   String toJson() => name;
 

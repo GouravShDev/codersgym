@@ -92,4 +92,8 @@ class CodeExecutionSuccess extends CodeExecutionState {
   List<Object> get props => [result];
 }
 
-class CodeExecutionError extends CodeExecutionState {}
+class CodeExecutionError extends CodeExecutionState {
+  final String message;
+
+  CodeExecutionError(this.message);
+}
