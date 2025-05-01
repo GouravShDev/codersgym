@@ -7,6 +7,7 @@ import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/co
 import 'package:codersgym/features/code_editor/presentation/widgets/code_editor_language_dropdown.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/code_editor_top_action_bar.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/code_run_button.dart';
+import 'package:codersgym/features/code_editor/presentation/widgets/code_submit_button.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/code_successful_submission_dialog.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/coding_keys.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/run_code_result_sheet.dart';
@@ -16,7 +17,6 @@ import 'package:codersgym/features/profile/presentation/blocs/user_profile/user_
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:codersgym/injection.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_highlight/themes/monokai-sublime.dart';
@@ -226,6 +226,9 @@ class CodeEditorPageBody extends HookWidget {
           children: [
             // Test Results
             TextButton.icon(
+              style: TextButton.styleFrom(
+                foregroundColor: Theme.of(context).dividerColor,
+              ),
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
@@ -245,7 +248,15 @@ class CodeEditorPageBody extends HookWidget {
               icon: const Icon(Icons.bug_report),
             ),
 
-            CodeRunButton(runCode: onCodeRun),
+            Row(
+              children: [
+                CodeRunButton(runCode: onCodeRun),
+                const SizedBox(
+                  width: 4,
+                ),
+                CodeSubmitButton(question: question),
+              ],
+            ),
           ],
         ),
       ),

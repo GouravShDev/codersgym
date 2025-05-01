@@ -1,18 +1,21 @@
 import 'dart:ui';
 
+import 'package:codersgym/core/theme/app_theme.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/leetcode_login_dialog.dart';
+import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class CodeRunButton extends StatelessWidget {
-  const CodeRunButton({
+class CodeSubmitButton extends StatelessWidget {
+  const CodeSubmitButton({
     super.key,
-    required this.runCode,
+    required this.question,
+    this.onSubmit,
   });
-
-  final Null Function() runCode;
+  final Question question;
+  final Function()? onSubmit;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +23,7 @@ class CodeRunButton extends StatelessWidget {
     final allowCodeRun = authBloc.isUserAuthenticatedWithLeetcodeAccount;
     return BlocBuilder<CodeEditorBloc, CodeEditorState>(
       builder: (context, state) {
-        final isRunning = state.executionState == CodeExecutionPending();
+        final isRunning = state.codeSubmissionState == CodeExecutionPending();
 
         return Stack(
           alignment: Alignment.center,
@@ -34,16 +37,13 @@ class CodeRunButton extends StatelessWidget {
               maintainState: true,
               maintainSize: true,
               visible: !isRunning,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  if (allowCodeRun)
-                    ElevatedButton.icon(
-                      onPressed: runCode,
+              child: (allowCodeRun)
+                  ? ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Theme.of(context).focusColor,
-                        foregroundColor: Theme.of(context).primaryColor,
-                        iconColor: Theme.of(context).primaryColor,
+                        foregroundColor:
+                            Theme.of(context).colorScheme.successColor,
+                        iconColor: Theme.of(context).colorScheme.successColor,
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 2,
@@ -52,27 +52,16 @@ class CodeRunButton extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8.0),
                         ),
                       ),
-                      icon: const Icon(Icons.play_arrow),
-                      label: const Text('Run Code'),
+                      icon: const Icon(Icons.upload_file_outlined),
+                      onPressed: () {
+                        onSubmit?.call();
+                        context.read<CodeEditorBloc>().add(
+                              CodeEditorSubmitCodeEvent(question: question),
+                            );
+                      },
+                      label: const Text('Submit'),
                     )
-                  else
-                    ClipRRect(
-                      borderRadius:
-                          BorderRadius.circular(8.0), // Match button shape
-                      child: BackdropFilter(
-                        filter: ImageFilter.blur(
-                            sigmaX: 10.0, sigmaY: 10.0), // Blur intensity
-                        child: OutlinedButton.icon(
-                          onPressed: () => LeetcodeLoginDialog.show(context),
-                          icon: const Icon(
-                            Icons.lock,
-                          ), // Change to lock icon for clarity
-                          label: const Text('Locked'),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+                  : SizedBox.shrink(),
             ),
           ],
         );
