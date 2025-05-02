@@ -4,6 +4,7 @@ import 'package:codersgym/features/code_editor/domain/model/programming_language
 import 'package:codersgym/features/code_editor/presentation/blocs/customize_coding_experience/customize_coding_experience_bloc.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/code_editor_theme_picker_bottomsheet.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/customizable_coding_keys.dart';
+import 'package:codersgym/features/code_editor/presentation/widgets/preference_bottomsheet.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/save_configuration_dialog.dart';
 import 'package:codersgym/features/common/widgets/app_code_editor_field.dart';
 import 'package:codersgym/injection.dart';
@@ -75,7 +76,18 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
                   label: 'Preference',
                   iconColor: Colors.amberAccent,
                   onTap: () {
-                    debugPrint('Preference option selected');
+                    showEditorPreferences(
+                      context,
+                      onPreferenceChanged: ({
+                        bool? hideKeyboard,
+                        int? tabSize,
+                        bool? showSuggestions,
+                        int? fontSize,
+                      }) {},
+                      initialHideKeyboard: false,
+                      initialShowSuggestions: false,
+                      initialTabSize: 4,
+                    );
                   },
                 ),
                 buildSpeedDialChild(
@@ -208,6 +220,39 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
             ),
           );
         },
+      ),
+    );
+  }
+
+  void showEditorPreferences(
+    BuildContext context, {
+    required void Function({
+      bool? hideKeyboard,
+      int? tabSize,
+      bool? showSuggestions,
+      int? fontSize,
+    }) onPreferenceChanged,
+    bool initialHideKeyboard = false,
+    int initialTabSize = 2,
+    bool initialShowSuggestions = true,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.2),
+      isScrollControlled: true,
+      showDragHandle: true,
+      enableDrag: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
+        ),
+      ),
+      builder: (context) => PreferencesBottomSheet(
+        onPreferenceChanged: onPreferenceChanged,
+        hideKeyboard: initialHideKeyboard,
+        tabSize: initialTabSize,
+        showSuggestions: initialShowSuggestions,
       ),
     );
   }
