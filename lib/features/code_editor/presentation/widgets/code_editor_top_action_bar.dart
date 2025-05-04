@@ -41,6 +41,22 @@ class CodeEditorTopActionBar extends StatelessWidget {
     final codeEditorBloc = context.read<CodeEditorBloc>();
     context.read<AuthBloc>();
 
+    Widget iconButtonWithShadow({required Widget child}) {
+      return Container(
+        decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).shadowColor.withValues(alpha: 0.1),
+              blurRadius: 1,
+              offset: const Offset(0, 1),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(100),
+        ),
+        child: child,
+      );
+    }
+
     final iconStyle = IconButton.styleFrom(
       backgroundColor: Colors.grey[850],
       padding: const EdgeInsets.all(
@@ -49,23 +65,27 @@ class CodeEditorTopActionBar extends StatelessWidget {
     );
     return Row(
       children: [
-        IconButton(
-          onPressed: () => showProblemDescriptionBottomSheet(context),
-          icon: const Icon(Icons.description_outlined),
-          style: iconStyle,
+        iconButtonWithShadow(
+          child: IconButton(
+            onPressed: () => showProblemDescriptionBottomSheet(context),
+            icon: const Icon(Icons.description_outlined),
+            style: iconStyle,
+          ),
         ),
-        IconButton(
-          icon: const Icon(Icons.copy),
-          onPressed: () {
-            AnalyticsService().logCustomEvent(name: AnalyticsEvents.copyCode);
-            Clipboard.setData(
-              ClipboardData(text: codeController.text),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Code copied to clipboard')),
-            );
-          },
-          style: iconStyle,
+        iconButtonWithShadow(
+          child: IconButton(
+            icon: const Icon(Icons.copy),
+            onPressed: () {
+              AnalyticsService().logCustomEvent(name: AnalyticsEvents.copyCode);
+              Clipboard.setData(
+                ClipboardData(text: codeController.text),
+              );
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Code copied to clipboard')),
+              );
+            },
+            style: iconStyle,
+          ),
         ),
         BlocBuilder<CodeEditorBloc, CodeEditorState>(
           buildWhen: (previous, current) =>
@@ -75,84 +95,90 @@ class CodeEditorTopActionBar extends StatelessWidget {
             if (formatUnSupportedLanguages.contains(state.language)) {
               return const SizedBox.shrink();
             }
-            return IconButton(
-              onPressed: () {
-                final isAuthenticated = context
-                    .read<AuthBloc>()
-                    .isUserAuthenticatedWithLeetcodeAccount;
-                if (isAuthenticated) {
-                  codeEditorBloc.add(
-                    CodeEditorFormatCodeEvent(),
-                  );
-                } else {
-                  AnalyticsService().logError(
-                    error:
-                        "User tried to use code formatting feature with leetcode account",
-                  );
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        "Please login via leetcode account to use this feature",
+            return iconButtonWithShadow(
+              child: IconButton(
+                onPressed: () {
+                  final isAuthenticated = context
+                      .read<AuthBloc>()
+                      .isUserAuthenticatedWithLeetcodeAccount;
+                  if (isAuthenticated) {
+                    codeEditorBloc.add(
+                      CodeEditorFormatCodeEvent(),
+                    );
+                  } else {
+                    AnalyticsService().logError(
+                      error:
+                          "User tried to use code formatting feature with leetcode account",
+                    );
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text(
+                          "Please login via leetcode account to use this feature",
+                        ),
                       ),
-                    ),
+                    );
+                  }
+                },
+                icon: state.isCodeFormatting
+                    ? const SizedBox(
+                        height: 18,
+                        width: 18,
+                        child: CircularProgressIndicator(),
+                      )
+                    : const Icon(Icons.format_align_left),
+                style: iconStyle,
+              ),
+            );
+          },
+        ),
+        iconButtonWithShadow(
+          child: IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Warning'),
+                    content: const Text(
+                        'Are you sure you want to reset the code? This action cannot be undone.'),
+                    actions: <Widget>[
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(); // Dismiss the dialog
+                        },
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          // Reset the code and dismiss the dialog
+                          codeEditorBloc.add(CodeEditorResetCodeEvent());
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text('Reset'),
+                      ),
+                    ],
                   );
-                }
-              },
-              icon: state.isCodeFormatting
-                  ? const SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(),
-                    )
-                  : const Icon(Icons.format_align_left),
-              style: iconStyle,
-            );
-          },
-        ),
-        IconButton(
-          onPressed: () {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: const Text('Warning'),
-                  content: const Text(
-                      'Are you sure you want to reset the code? This action cannot be undone.'),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Dismiss the dialog
-                      },
-                      child: const Text('Cancel'),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        // Reset the code and dismiss the dialog
-                        codeEditorBloc.add(CodeEditorResetCodeEvent());
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text('Reset'),
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-          icon: Transform(
-            transform: Matrix4.identity()..rotateY(pi), // Flips horizontally
-            alignment: Alignment.center,
-            child: const Icon(
-              Icons.refresh_rounded,
+                },
+              );
+            },
+            icon: Transform(
+              transform: Matrix4.identity()..rotateY(pi), // Flips horizontally
+              alignment: Alignment.center,
+              child: const Icon(
+                Icons.refresh_rounded,
+              ),
             ),
+            style: iconStyle,
           ),
-          style: iconStyle,
         ),
-        IconButton(
-          onPressed: onToggleFullScreen,
-          icon: !isFullScreen
-              ? const Icon(Icons.fullscreen_outlined)
-              : const Icon(Icons.fullscreen_exit_outlined),
-          style: iconStyle,
+        iconButtonWithShadow(
+          child: IconButton(
+            onPressed: onToggleFullScreen,
+            icon: !isFullScreen
+                ? const Icon(Icons.fullscreen_outlined)
+                : const Icon(Icons.fullscreen_exit_outlined),
+            style: iconStyle,
+          ),
         ),
         // const Spacer(),
         // CodeSubmitButton(

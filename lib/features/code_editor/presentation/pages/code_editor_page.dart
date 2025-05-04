@@ -3,6 +3,7 @@ import 'package:codersgym/core/services/analytics.dart';
 import 'package:codersgym/core/theme/app_code_editor_theme.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:codersgym/features/code_editor/domain/model/code_execution_result.dart';
+import 'package:codersgym/features/code_editor/domain/model/coding_configuration.dart';
 import 'package:codersgym/features/code_editor/domain/model/coding_key_config.dart';
 import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
@@ -22,8 +23,8 @@ import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:codersgym/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_highlight/theme_map.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:flutter_highlight/themes/monokai-sublime.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:in_app_review/in_app_review.dart';
 
@@ -235,75 +236,104 @@ class CodeEditorPageBody extends HookWidget {
     }, []);
 
     // Build the main scaffold
-    return Scaffold(
-      bottomNavigationBar: // Action Buttons and Run Results
-          Container(
-        padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          color: Theme.of(context).canvasColor,
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Test Results
-            TextButton.icon(
-              style: TextButton.styleFrom(
-                foregroundColor: Theme.of(context).dividerColor,
-              ),
-              onPressed: () {
-                showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  builder: (context) {
-                    return BlocProvider.value(
-                      value: codeEditorBloc,
-                      child: TestCaseBottomSheet(
-                        testcases: codeEditorBloc.state.testCases ?? [],
-                        onRunCode: onCodeRun,
-                      ),
+    return BlocBuilder<CodingConfigurationCubit, CodingConfigurationState>(
+      builder: (context, state) {
+        final config = switch (state) {
+          CodingConfigurationLoaded() => state.configuration,
+          _ => null,
+        };
+        final currentThemeId =
+            config?.themeId ?? AppCodeEditorTheme.defaultThemeId;
+        return Scaffold(
+          backgroundColor: !(config?.darkEditorBackground ?? true)
+              ? (themeMap[currentThemeId]?['root']?.backgroundColor)
+              : Theme.of(context).scaffoldBackgroundColor,
+          bottomNavigationBar: // Action Buttons and Run Results
+              Container(
+            padding: const EdgeInsets.all(8.0),
+            decoration: BoxDecoration(
+              color: Theme.of(context).canvasColor,
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Test Results
+                TextButton.icon(
+                  style: TextButton.styleFrom(
+                    foregroundColor: Theme.of(context).dividerColor,
+                  ),
+                  onPressed: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      builder: (context) {
+                        return BlocProvider.value(
+                          value: codeEditorBloc,
+                          child: TestCaseBottomSheet(
+                            testcases: codeEditorBloc.state.testCases ?? [],
+                            onRunCode: onCodeRun,
+                          ),
+                        );
+                      },
                     );
                   },
-                );
-              },
-              label: const Text("Test Cases"),
-              icon: const Icon(Icons.bug_report),
-            ),
+                  label: const Text("Test Cases"),
+                  icon: const Icon(Icons.bug_report),
+                ),
 
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 6.0),
-              child: Row(
-                children: [
-                  CodeRunButton(runCode: onCodeRun),
-                  const SizedBox(
-                    width: 4,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                  child: Row(
+                    children: [
+                      CodeRunButton(runCode: onCodeRun),
+                      const SizedBox(
+                        width: 4,
+                      ),
+                      CodeSubmitButton(question: question),
+                    ],
                   ),
-                  CodeSubmitButton(question: question),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-      appBar: isFullScreen.value
-          ? null
-          : AppBar(
-              title: Text(
-                question.title ?? '',
-              ),
-              actions: [
-                // Language Dropdown
-                CodeEditorLanguageDropDown(
-                  question: question,
                 ),
               ],
             ),
-      body: _buildEditorLayout(
-        context,
-        codeController,
-        isFullScreen,
-        onCodeRun,
-        focusNode,
-      ),
+          ),
+          appBar: isFullScreen.value
+              ? null
+              : AppBar(
+                  title: Text(
+                    question.title ?? '',
+                  ),
+                  actions: [
+                    // Language Dropdown
+                    BlocBuilder<CodeEditorBloc, CodeEditorState>(
+                      buildWhen: (previous, current) =>
+                          current.language != previous.language,
+                      builder: (context, state) {
+                        return CodeEditorLanguageDropDown(
+                          onLanguageChange: (language) {
+                            codeEditorBloc.add(
+                              CodeEditorLanguageUpdateEvent(
+                                language: language,
+                                question: question,
+                              ),
+                            );
+                          },
+                          currentLanguage:
+                              state.language ?? ProgrammingLanguage.cpp,
+                        );
+                      },
+                    ),
+                  ],
+                ),
+          body: _buildEditorLayout(
+            context,
+            codeController,
+            isFullScreen,
+            onCodeRun,
+            config,
+            focusNode,
+          ),
+        );
+      },
     );
   }
 
@@ -312,6 +342,7 @@ class CodeEditorPageBody extends HookWidget {
     CodeController codeController,
     ValueNotifier<bool> isFullScreen,
     VoidCallback runCode,
+    CodingConfiguration? config,
     FocusNode focusNode,
   ) {
     final theme = Theme.of(context);
@@ -337,22 +368,19 @@ class CodeEditorPageBody extends HookWidget {
             child: Stack(
               children: [
                 SingleChildScrollView(
-                  child: BlocBuilder<CodingConfigurationCubit,
-                      CodingConfigurationState>(
-                    builder: (context, state) {
-                      final themeId = switch (state) {
-                        CodingConfigurationLoaded() =>
-                          state.configuration.themeId,
-                        _ => AppCodeEditorTheme.defaultThemeId,
-                      };
-                      return AppCodeEditorField(
-                        codeController: codeController,
-                        focusNode: focusNode,
-                        editorThemeId: themeId,
-                      );
-                    },
-                  ),
-                ),
+                    child: AppCodeEditorField(
+                  codeController: codeController,
+                  focusNode: focusNode,
+                  keyboardType: (config?.hideKeyboard ?? false)
+                      ? TextInputType.none
+                      : null,
+                  editorThemeId:
+                      config?.themeId ?? AppCodeEditorTheme.defaultThemeId,
+                  pickBackgroundFromTheme:
+                      !(config?.darkEditorBackground ?? false),
+                  fontSize: config?.fontSize.toDouble() ??
+                      CodingConfiguration.defaultFontSize.toDouble(),
+                )),
               ],
             ),
           ),
@@ -364,6 +392,10 @@ class CodeEditorPageBody extends HookWidget {
                   CodingKeyConfig.defaultCodingKeyConfiguration,
                 _ => <String>[],
               };
+              if (state is CodingConfigurationLoaded &&
+                  state.configuration.hideKeyboard) {
+                return const SizedBox.shrink();
+              }
               return BlocBuilder<CodeEditorBloc, CodeEditorState>(
                 buildWhen: (previous, current) =>
                     previous.isCodeEditorFocused != current.isCodeEditorFocused,

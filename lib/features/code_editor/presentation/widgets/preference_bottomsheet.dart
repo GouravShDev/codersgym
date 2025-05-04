@@ -1,3 +1,5 @@
+import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
+import 'package:codersgym/features/code_editor/presentation/widgets/code_editor_language_dropdown.dart';
 import 'package:flutter/material.dart';
 
 class PreferencesBottomSheet extends StatefulWidget {
@@ -8,17 +10,20 @@ class PreferencesBottomSheet extends StatefulWidget {
     this.tabSize = 2,
     this.showSuggestions = true,
     this.fontSize = 16,
+    required this.language,
   });
 
   final bool hideKeyboard;
   final int tabSize;
   final bool showSuggestions;
   final int fontSize;
+  final ProgrammingLanguage language;
   final Function({
     bool? hideKeyboard,
     int? tabSize,
     bool? showSuggestions,
     int? fontSize,
+    ProgrammingLanguage? language,
   }) onPreferenceChanged;
 
   @override
@@ -30,7 +35,7 @@ class _PreferencesBottomSheetState extends State<PreferencesBottomSheet> {
   late int _tabSize;
   late bool _showSuggestions;
   late int _fontSize;
-
+  late ProgrammingLanguage _language;
   @override
   void initState() {
     super.initState();
@@ -38,6 +43,7 @@ class _PreferencesBottomSheetState extends State<PreferencesBottomSheet> {
     _tabSize = widget.tabSize;
     _showSuggestions = widget.showSuggestions;
     _fontSize = widget.fontSize;
+    _language = widget.language;
   }
 
   @override
@@ -46,117 +52,136 @@ class _PreferencesBottomSheetState extends State<PreferencesBottomSheet> {
     final textTheme = theme.textTheme;
 
     return DraggableScrollableSheet(
-      initialChildSize: 0.65,
-      maxChildSize: 0.65,
+      initialChildSize: 0.74,
+      maxChildSize: 0.74,
       expand: false,
       builder: (context, scrollController) {
-        return Container(
-          decoration: BoxDecoration(
-            color: theme.cardColor,
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(16),
-              topRight: Radius.circular(16),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.1),
-                blurRadius: 8,
-                spreadRadius: 1,
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Text(
-                  "Editor Preferences",
-                  style: textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    "Preferences",
+                    style: textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-              ),
-              Divider(
-                color: Theme.of(context).dividerColor.withOpacity(0.3),
-              ),
-              SizedBox(
-                height: 4,
-              ),
-              Expanded(
-                child: ListView(
-                  controller: scrollController,
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  Flexible(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Flexible(
-                          child: Text(
-                            "Font Size",
-                            style: textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
                         Text(
-                          "$_fontSize",
-                          style: textTheme.titleMedium,
+                          "Language: ",
+                          style: textTheme.titleSmall?.copyWith(),
+                        ),
+                        const SizedBox(
+                          width: 8,
+                        ),
+                        Flexible(
+                          child: CodeEditorLanguageDropDown(
+                            currentLanguage: _language,
+                            showWarning: false,
+                            onLanguageChange: (language) {
+                              setState(() {
+                                _language = language;
+                              });
+                              widget.onPreferenceChanged(
+                                language: _language,
+                              );
+                            },
+                          ),
                         ),
                       ],
                     ),
-                    Slider(
-                      value: _fontSize.toDouble(),
-                      min: 10,
-                      max: 30,
-                      divisions: 20,
-                      label: _fontSize.toStringAsFixed(0),
-                      onChanged: (val) {
-                        setState(
-                          () => _fontSize = val.toInt(),
-                        );
-
-                        widget.onPreferenceChanged(fontSize: _fontSize);
-                      },
-                    ),
-                    // Hide Keyboard Option
-                    _buildSwitchTile(
-                      title: "Hide Keyboard",
-                      subtitle:
-                          "Hide keyboard (useful when using external keyboards)",
-                      value: _hideKeyboard,
-                      onChanged: (value) {
-                        setState(() {
-                          _hideKeyboard = value;
-                          widget.onPreferenceChanged(hideKeyboard: value);
-                        });
-                      },
-                    ),
-
-                    const SizedBox(height: 8),
-
-                    // Tab Size Option
-                    _buildTabSizeSelector(theme),
-
-                    const SizedBox(height: 8),
-
-                    // Show Suggestions Option
-                    _buildSwitchTile(
-                      title: "Show Suggestions",
-                      subtitle: "Display code completion suggestions",
-                      value: _showSuggestions,
-                      onChanged: (value) {
-                        setState(() {
-                          _showSuggestions = value;
-                          widget.onPreferenceChanged(showSuggestions: value);
-                        });
-                      },
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            Divider(
+              color: Theme.of(context).dividerColor.withOpacity(0.3),
+            ),
+            const SizedBox(
+              height: 4,
+            ),
+            Expanded(
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          "Font Size",
+                          style: textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                      Text(
+                        "$_fontSize",
+                        style: textTheme.titleMedium,
+                      ),
+                    ],
+                  ),
+                  Slider(
+                    value: _fontSize.toDouble(),
+                    min: 10,
+                    max: 30,
+                    divisions: 20,
+                    label: _fontSize.toStringAsFixed(0),
+                    onChanged: (val) {
+                      setState(
+                        () => _fontSize = val.toInt(),
+                      );
+
+                      widget.onPreferenceChanged(fontSize: _fontSize);
+                    },
+                  ),
+                  // Hide Keyboard Option
+                  _buildSwitchTile(
+                    title: "Hide Keyboard",
+                    subtitle:
+                        "Hide keyboard (useful when using external keyboards)",
+                    value: _hideKeyboard,
+                    onChanged: (value) {
+                      setState(() {
+                        _hideKeyboard = value;
+                        widget.onPreferenceChanged(hideKeyboard: value);
+                      });
+                    },
+                  ),
+
+                  const SizedBox(height: 8),
+
+                  // Tab Size Option
+                  _buildTabSizeSelector(theme),
+
+                  const SizedBox(height: 8),
+
+                  // Show Suggestions Option
+                  _buildSwitchTile(
+                    title: "Show Suggestions",
+                    subtitle: "Display code completion suggestions",
+                    value: _showSuggestions,
+                    onChanged: (value) {
+                      setState(() {
+                        _showSuggestions = value;
+                        widget.onPreferenceChanged(showSuggestions: value);
+                      });
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                ],
+              ),
+            ),
+          ],
         );
       },
     );

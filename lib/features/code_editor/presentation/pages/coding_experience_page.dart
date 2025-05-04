@@ -1,24 +1,23 @@
 import 'package:auto_route/auto_route.dart';
 import 'package:codersgym/core/theme/app_code_editor_theme.dart';
+import 'package:codersgym/features/code_editor/data/services/app_config_service.dart';
+import 'package:codersgym/features/code_editor/domain/model/code_experience_sample_code.dart';
 import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
+import 'package:codersgym/features/code_editor/domain/services/coding_configuration_validator.dart';
+import 'package:codersgym/features/code_editor/presentation/blocs/code_configuration_exporter/code_configuration_exporter_cubit.dart';
+import 'package:codersgym/features/code_editor/presentation/blocs/code_configuration_importer_cubit/code_configuration_importer_cubit.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/customize_coding_experience/customize_coding_experience_bloc.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/code_editor_theme_picker_bottomsheet.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/customizable_coding_keys.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/preference_bottomsheet.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/save_configuration_dialog.dart';
 import 'package:codersgym/features/common/widgets/app_code_editor_field.dart';
+import 'package:codersgym/features/common/widgets/app_snackbar.dart';
 import 'package:codersgym/injection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_code_editor/flutter_code_editor.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-
-const String sampleCode = """class Solution {
-public:
-    bool twoSum(string s, int k) {
-        
-    }
-};""";
 
 @RoutePage()
 class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
@@ -37,10 +36,14 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
               return ElevatedButton.icon(
                 onPressed: state.modificationStatus ==
                         ConfigurationModificationStatus.unsaved
-                    ? () {}
+                    ? () {
+                        codeExpBloc.add(
+                          CustomizeCodingExperienceOnSaveConfiguration(),
+                        );
+                      }
                     : null,
-                icon: Icon(Icons.save_rounded),
-                label: Text("Save"),
+                icon: const Icon(Icons.save_rounded),
+                label: const Text("Save"),
               );
             },
           ),
@@ -48,16 +51,23 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
       ),
       floatingActionButton: BlocBuilder<CustomizeCodingExperienceBloc,
           CustomizeCodingExperienceState>(
+        buildWhen: (prev, next) =>
+            prev.isCustomizing != next.isCustomizing ||
+            prev.hideKeyboard != next.hideKeyboard,
         builder: (context, state) {
           return AnimatedPadding(
             padding: EdgeInsets.only(
-              bottom: (state.isCustomizing ? 280 : 120),
+              bottom:
+                  (state.hideKeyboard) ? 0 : (state.isCustomizing ? 280 : 120),
             ),
             duration: const Duration(milliseconds: 400),
             curve: Curves.elasticInOut,
             child: SpeedDial(
               animatedIcon: AnimatedIcons.menu_close,
               overlayOpacity: 0.4,
+              onOpen: () {
+                FocusScope.of(context).unfocus();
+              },
               spacing: 12,
               spaceBetweenChildren: 8,
               children: [
@@ -76,6 +86,8 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
                   label: 'Preference',
                   iconColor: Colors.amberAccent,
                   onTap: () {
+                    final state =
+                        context.read<CustomizeCodingExperienceBloc>().state;
                     showEditorPreferences(
                       context,
                       onPreferenceChanged: ({
@@ -83,10 +95,23 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
                         int? tabSize,
                         bool? showSuggestions,
                         int? fontSize,
-                      }) {},
-                      initialHideKeyboard: false,
-                      initialShowSuggestions: false,
-                      initialTabSize: 4,
+                        ProgrammingLanguage? language,
+                      }) {
+                        context.read<CustomizeCodingExperienceBloc>().add(
+                              CustomizeCodingExperienceOnPreferenceChanged(
+                                fontSize: fontSize,
+                                hideKeyboard: hideKeyboard,
+                                tabSize: tabSize,
+                                showSuggestions: showSuggestions,
+                                language: language,
+                              ),
+                            );
+                      },
+                      initialHideKeyboard: state.hideKeyboard,
+                      initialShowSuggestions: state.showSuggestions,
+                      initialTabSize: state.tabSize,
+                      fontSize: state.fontSize,
+                      language: state.language,
                     );
                   },
                 ),
@@ -97,6 +122,11 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
                   iconColor: Colors.green,
                   onTap: () {
                     debugPrint('Export Configuration selected');
+                    context
+                        .read<CodeConfigurationExporterCubit>()
+                        .exportConfiguration(
+                          codeExpBloc.state.toConfiguration(),
+                        );
                   },
                 ),
                 buildSpeedDialChild(
@@ -106,6 +136,9 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
                   iconColor: Colors.lightBlue,
                   onTap: () {
                     debugPrint('Import Configuration selected');
+                    context
+                        .read<CodeConfigurationImporterCubit>()
+                        .importConfiguration();
                   },
                 ),
               ],
@@ -113,32 +146,100 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
           );
         },
       ),
-      body: PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (bool didPop, __) async {
-          if (didPop) {
-            return;
-          }
-          if (codeExpBloc.state.modificationStatus !=
-              ConfigurationModificationStatus.unsaved) {
-            Navigator.pop(context);
-            return;
-          }
-          final shouldGoBack = await SaveConfigurationDialog.show(context) ??
-              false; // Default to staying on the page if the dialog is dismissed
-          if (!shouldGoBack) {
-            return;
-          }
-          if (context.mounted) {
-            Navigator.pop(context);
-          }
-        },
-        child: SafeArea(
-          child: Center(
-            child: CustomizableKeyboard(
-              codeController: CodeController(
-                text: sampleCode,
-                language: ProgrammingLanguage.cpp.mode,
+      body: MultiBlocListener(
+        listeners: [
+          BlocListener<CodeConfigurationImporterCubit,
+              CodeConfigurationImporterState>(
+            listener: (context, state) {
+              if (state is CodeConfigurationImportSuccess) {
+                codeExpBloc.add(
+                  CustomizeCodingExperienceOnConfigurationImport(
+                    state.configuration,
+                  ),
+                );
+              }
+              final (message, status) = switch (state) {
+                CodeConfigurationImportSuccess() => (
+                    "Configuration imported successfully!",
+                    SnackbarType.success
+                  ),
+                CodeConfigurationImportFailed() => (
+                    state.message,
+                    SnackbarType.error
+                  ),
+                _ => (null, null),
+              };
+              if (message != null && status != null) {
+                AppSnackbar.show(
+                  context: context,
+                  message: message,
+                  type: status,
+                );
+              }
+            },
+          ),
+          BlocListener<CodeConfigurationExporterCubit,
+              CodeConfigurationExporterState>(
+            listener: (context, state) {
+              final (message, status) = switch (state) {
+                CodeConfigurationExported() => (
+                    "Configuration exported successfully!",
+                    SnackbarType.success
+                  ),
+                CodeConfigurationExportFailed() => (
+                    "${state.message}. Please try again.",
+                    SnackbarType.error
+                  ),
+                _ => (null, null),
+              };
+              if (message != null && status != null) {
+                AppSnackbar.show(
+                  context: context,
+                  message: message,
+                  type: status,
+                );
+              }
+            },
+          ),
+        ],
+        child: PopScope(
+          canPop: false,
+          onPopInvokedWithResult: (bool didPop, __) async {
+            if (didPop) {
+              return;
+            }
+            if (codeExpBloc.state.modificationStatus !=
+                ConfigurationModificationStatus.unsaved) {
+              Navigator.pop(context);
+              return;
+            }
+            final shouldGoBack = await SaveConfigurationDialog.show(context) ??
+                false; // Default to staying on the page if the dialog is dismissed
+            if (!shouldGoBack) {
+              return;
+            }
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          },
+          child: SafeArea(
+            child: Center(
+              child: BlocBuilder<CustomizeCodingExperienceBloc,
+                  CustomizeCodingExperienceState>(
+                buildWhen: (prev, next) =>
+                    next.tabSize != prev.tabSize ||
+                    next.language != prev.language,
+                builder: (context, state) {
+                  return CustomizableKeyboard(
+                    codeController: CodeController(
+                      text: state.language.sampleCode,
+                      language: state.language.mode,
+                      params: EditorParams(
+                        tabSpaces: state.tabSize,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
@@ -149,11 +250,28 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
 
   @override
   Widget wrappedRoute(BuildContext context) {
-    return BlocProvider(
-      create: (context) => getIt.get<CustomizeCodingExperienceBloc>()
-        ..add(
-          CustomizeCodingExperienceLoadConfiguration(),
+    final AppConfigService configService = getIt.get(
+      param1: CodingConfigurationValidator(),
+    );
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt.get<CustomizeCodingExperienceBloc>()
+            ..add(
+              CustomizeCodingExperienceLoadConfiguration(),
+            ),
         ),
+        BlocProvider(
+          create: (context) => CodeConfigurationImporterCubit(
+            configService,
+          ),
+        ),
+        BlocProvider(
+          create: (context) => CodeConfigurationExporterCubit(
+            configService,
+          ),
+        ),
+      ],
       child: this,
     );
   }
@@ -173,7 +291,7 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
         BoxShadow(
           color: Theme.of(context).primaryColorDark.withValues(alpha: 0.2),
           blurRadius: 4,
-          offset: Offset(4, 8), // Shadow position
+          offset: const Offset(4, 8), // Shadow position
         ),
       ],
       backgroundColor: Theme.of(context).cardColor,
@@ -231,10 +349,13 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
       int? tabSize,
       bool? showSuggestions,
       int? fontSize,
+      ProgrammingLanguage? language,
     }) onPreferenceChanged,
-    bool initialHideKeyboard = false,
-    int initialTabSize = 2,
-    bool initialShowSuggestions = true,
+    required bool initialHideKeyboard,
+    required int initialTabSize,
+    required bool initialShowSuggestions,
+    required int fontSize,
+    required ProgrammingLanguage language,
   }) {
     showModalBottomSheet(
       context: context,
@@ -242,17 +363,13 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
       isScrollControlled: true,
       showDragHandle: true,
       enableDrag: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
-        ),
-      ),
       builder: (context) => PreferencesBottomSheet(
         onPreferenceChanged: onPreferenceChanged,
         hideKeyboard: initialHideKeyboard,
         tabSize: initialTabSize,
         showSuggestions: initialShowSuggestions,
+        fontSize: fontSize,
+        language: language,
       ),
     );
   }
@@ -276,29 +393,43 @@ class _CustomizableKeyboardState extends State<CustomizableKeyboard> {
     return Column(
       children: [
         Expanded(
-          child: BlocBuilder<CustomizeCodingExperienceBloc,
+          child: BlocConsumer<CustomizeCodingExperienceBloc,
               CustomizeCodingExperienceState>(
+            listenWhen: (prev, cur) =>
+                prev.showSuggestions != cur.showSuggestions,
+            listener: (context, state) {
+              widget.codeController.popupController.enabled =
+                  state.showSuggestions;
+            },
             buildWhen: (previous, current) =>
                 previous.isCustomizing != current.isCustomizing ||
+                previous.hideKeyboard != current.hideKeyboard ||
                 previous.darkEditorBackground != current.darkEditorBackground ||
-                previous.editorThemeId != current.editorThemeId,
+                previous.editorThemeId != current.editorThemeId ||
+                previous.fontSize != current.fontSize,
             builder: (context, state) {
-              // return HighlightView(
-              //   sampleCode,
-              //   language: "cpp",
-              //   theme: themeMap[state.editorThemeId]!,
-              // );
               return AppCodeEditorField(
                 codeController: widget.codeController,
                 enabled: !state.isCustomizing,
                 editorThemeId: state.editorThemeId,
                 pickBackgroundFromTheme: !state.darkEditorBackground,
+                keyboardType: (state.hideKeyboard) ? TextInputType.none : null,
+                fontSize: state.fontSize.toDouble(),
               );
             },
           ),
         ),
-        CustomizableCodingKeys(
-          codeController: widget.codeController,
+        BlocBuilder<CustomizeCodingExperienceBloc,
+            CustomizeCodingExperienceState>(
+          buildWhen: (prev, next) => prev.hideKeyboard != next.hideKeyboard,
+          builder: (context, state) {
+            if (state.hideKeyboard) {
+              return const SizedBox.shrink();
+            }
+            return CustomizableCodingKeys(
+              codeController: widget.codeController,
+            );
+          },
         ),
       ],
     );

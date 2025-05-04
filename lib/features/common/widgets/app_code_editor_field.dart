@@ -10,20 +10,25 @@ class AppCodeEditorField extends StatelessWidget {
     this.enabled,
     required this.editorThemeId,
     this.focusNode,
+    this.keyboardType,
     this.pickBackgroundFromTheme = false,
+    required this.fontSize,
   });
   final CodeController codeController;
   final String? editorThemeId;
   final bool? enabled;
   final FocusNode? focusNode;
   final bool pickBackgroundFromTheme;
+  final double fontSize;
+  final TextInputType? keyboardType;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return CodeTheme(
-      data:
-          CodeThemeData(styles: themeMap[editorThemeId] ?? monokaiSublimeTheme),
+      data: CodeThemeData(
+        styles: themeMap[editorThemeId] ?? monokaiSublimeTheme,
+      ),
       child: Theme(
         data: theme.copyWith(
           inputDecorationTheme: theme.inputDecorationTheme.copyWith(
@@ -40,7 +45,10 @@ class AppCodeEditorField extends StatelessWidget {
           expands: false,
           wrap: true,
           enabled: enabled,
-          textStyle: Theme.of(context).textTheme.bodyMedium,
+          keyboardType: keyboardType,
+          textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                fontSize: fontSize,
+              ),
           background: pickBackgroundFromTheme
               ? (themeMap[editorThemeId]?['root']?.backgroundColor)
               : theme.scaffoldBackgroundColor,

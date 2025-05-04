@@ -54,3 +54,27 @@ class CustomizeCodingExperienceOnThemeChanged
 
 class CustomizeCodingExperienceOnDarkEditorBackgroundToggle
     extends CustomizeCodingExperienceEvent {}
+
+class CustomizeCodingExperienceOnPreferenceChanged
+    extends CustomizeCodingExperienceEvent {
+  final bool? hideKeyboard;
+  final int? tabSize;
+  final bool? showSuggestions;
+  final int? fontSize;
+  final ProgrammingLanguage? language;
+
+  const CustomizeCodingExperienceOnPreferenceChanged({
+    this.hideKeyboard,
+    this.tabSize,
+    this.showSuggestions,
+    this.fontSize,
+    this.language,
+  });
+}
+
+class CustomizeCodingExperienceOnConfigurationImport
+    extends CustomizeCodingExperienceEvent {
+  final CodingConfiguration configuration;
+
+  const CustomizeCodingExperienceOnConfigurationImport(this.configuration);
+}
