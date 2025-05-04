@@ -96,12 +96,18 @@ class CodeEditorPageBody extends HookWidget {
     ValueNotifier<CodeController> codeController,
     CodeEditorState prevState,
     CodeEditorState newState,
+    CodingConfiguration? config,
   ) {
     if (prevState.language != newState.language) {
       codeController.value = CodeController(
         text: newState.code,
         language: (newState.language ?? ProgrammingLanguage.cpp).mode,
         modifiers: modifiers,
+        params: (config != null)
+            ? EditorParams(
+                tabSpaces: config.tabSize,
+              )
+            : const EditorParams(),
       );
       return;
     }
@@ -176,6 +182,7 @@ class CodeEditorPageBody extends HookWidget {
     final isFullScreen = useState(false);
     final codeEditorBloc = context.read<CodeEditorBloc>();
     final focusNode = useFocusNode();
+    final codingConfigurationCubit = context.read<CodingConfigurationCubit>();
 
     // Create a code controller using useRef to persist across rebuilds
     final codeControllerState = useState(
@@ -208,10 +215,16 @@ class CodeEditorPageBody extends HookWidget {
       final stateListner = codeEditorBloc.stream.listen(
         (newState) {
           final prevState = codeEditorBloc.previousState;
+          final state = codingConfigurationCubit.state;
+          final config = switch (state) {
+            CodingConfigurationLoaded() => state.configuration,
+            _ => null,
+          };
           _handleCodeAndLanguageChanges(
             codeControllerState,
             prevState,
             newState,
+            config,
           );
           if (!context.mounted) return;
           _handleExecutionStateChanges(context, prevState, newState);
@@ -236,7 +249,23 @@ class CodeEditorPageBody extends HookWidget {
     }, []);
 
     // Build the main scaffold
-    return BlocBuilder<CodingConfigurationCubit, CodingConfigurationState>(
+    return BlocConsumer<CodingConfigurationCubit, CodingConfigurationState>(
+      listener: (context, state) {
+        final config = switch (state) {
+          CodingConfigurationLoaded() => state.configuration,
+          _ => null,
+        };
+        if (config == null) return;
+        codeControllerState.value = CodeController(
+          text: codeEditorBloc.state.code,
+          language:
+              (codeEditorBloc.state.language ?? ProgrammingLanguage.cpp).mode,
+          modifiers: modifiers,
+          params: EditorParams(
+            tabSpaces: config.tabSize,
+          ),
+        );
+      },
       builder: (context, state) {
         if (state is CodingConfigurationLoading) {
           return const Center(
