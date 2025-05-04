@@ -1,3 +1,4 @@
+import 'package:codersgym/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:another_flushbar/flushbar.dart';
 
@@ -34,7 +35,7 @@ class AppSnackbar {
     switch (type) {
       case SnackbarType.success:
         icon = Icons.check_circle_outline;
-        borderColor = theme.colorScheme.primary;
+        borderColor = theme.colorScheme.successColorAccent;
         title ??= 'Success';
         break;
       case SnackbarType.error:
@@ -48,9 +49,8 @@ class AppSnackbar {
         title ??= 'Warning';
         break;
       case SnackbarType.info:
-      default:
         icon = Icons.info_outline;
-        borderColor = theme.colorScheme.tertiary;
+        borderColor = theme.colorScheme.onSurface.withValues(alpha: 0.4);
         title ??= 'Information';
         break;
     }
@@ -106,9 +106,9 @@ class AppSnackbar {
     required BuildContext context,
     required String message,
     String? title,
-    Duration duration = const Duration(seconds: 3),
+    Duration duration = const Duration(seconds: 2),
     VoidCallback? onTap,
-    SnackbarPosition position = SnackbarPosition.bottom,
+    SnackbarPosition position = SnackbarPosition.top,
   }) {
     show(
       context: context,
@@ -127,7 +127,7 @@ class AppSnackbar {
     String? title,
     Duration duration = const Duration(seconds: 4),
     VoidCallback? onTap,
-    SnackbarPosition position = SnackbarPosition.bottom,
+    SnackbarPosition position = SnackbarPosition.top,
   }) {
     show(
       context: context,
@@ -146,7 +146,7 @@ class AppSnackbar {
     String? title,
     Duration duration = const Duration(seconds: 3),
     VoidCallback? onTap,
-    SnackbarPosition position = SnackbarPosition.bottom,
+    SnackbarPosition position = SnackbarPosition.top,
   }) {
     show(
       context: context,
@@ -165,7 +165,7 @@ class AppSnackbar {
     String? title,
     Duration duration = const Duration(seconds: 3),
     VoidCallback? onTap,
-    SnackbarPosition position = SnackbarPosition.bottom,
+    SnackbarPosition position = SnackbarPosition.top,
   }) {
     show(
       context: context,

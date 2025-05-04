@@ -6,6 +6,7 @@ import 'package:codersgym/features/code_editor/domain/model/programming_language
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/question_description_bottomsheet.dart';
 import 'package:codersgym/features/common/data/models/analytics_events.dart';
+import 'package:codersgym/features/common/widgets/app_snackbar.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -80,9 +81,6 @@ class CodeEditorTopActionBar extends StatelessWidget {
               Clipboard.setData(
                 ClipboardData(text: codeController.text),
               );
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Code copied to clipboard')),
-              );
             },
             style: iconStyle,
           ),
@@ -110,12 +108,11 @@ class CodeEditorTopActionBar extends StatelessWidget {
                       error:
                           "User tried to use code formatting feature with leetcode account",
                     );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
+                    AppSnackbar.showInfo(
+                      context: context,
+                      message:
                           "Please login via leetcode account to use this feature",
-                        ),
-                      ),
+                      position: SnackbarPosition.bottom,
                     );
                   }
                 },
