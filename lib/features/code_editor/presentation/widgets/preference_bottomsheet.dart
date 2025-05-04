@@ -132,9 +132,9 @@ class _PreferencesBottomSheetState extends State<PreferencesBottomSheet> {
                   ),
                   Slider(
                     value: _fontSize.toDouble(),
-                    min: 10,
-                    max: 30,
-                    divisions: 20,
+                    min: 12,
+                    max: 20,
+                    divisions: 8,
                     label: _fontSize.toStringAsFixed(0),
                     onChanged: (val) {
                       setState(
@@ -147,8 +147,7 @@ class _PreferencesBottomSheetState extends State<PreferencesBottomSheet> {
                   // Hide Keyboard Option
                   _buildSwitchTile(
                     title: "Hide Keyboard",
-                    subtitle:
-                        "Hide keyboard (useful when using external keyboards)",
+                    subtitle: "Useful when using external keyboard",
                     value: _hideKeyboard,
                     onChanged: (value) {
                       setState(() {

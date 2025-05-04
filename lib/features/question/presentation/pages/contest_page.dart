@@ -2,6 +2,7 @@ import 'package:auto_route/auto_route.dart';
 import 'package:codersgym/core/api/api_state.dart';
 import 'package:codersgym/features/common/widgets/app_error_widget.dart';
 import 'package:codersgym/features/common/widgets/app_loading.dart';
+import 'package:codersgym/features/common/widgets/app_snackbar.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/contest_reminder_cubit.dart';
 import 'package:codersgym/features/dashboard/presentation/widgets/upcoming_contest_card.dart';
 import 'package:codersgym/features/question/domain/model/contest.dart';
@@ -147,8 +148,9 @@ class ContestPage extends HookWidget implements AutoRouteWrapper {
       case SetReminderError.notificationPermissionDeniedPermanently:
         _showSettingsDialog(context);
       case SetReminderError.alarmNotificationPermissionDenied:
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please allow alarm permission')),
+        AppSnackbar.showInfo(
+          context: context,
+          message: 'Please allow alarm permission',
         );
     }
   }

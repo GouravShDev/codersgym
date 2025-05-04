@@ -4,6 +4,7 @@ import 'package:codersgym/features/code_editor/presentation/blocs/customize_codi
 import 'package:codersgym/features/code_editor/presentation/widgets/coding_key_replacement_dialog.dart';
 import 'package:codersgym/features/code_editor/presentation/widgets/coding_keys.dart';
 import 'package:codersgym/features/common/widgets/app_animated_text_widget.dart';
+import 'package:codersgym/features/common/widgets/app_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -214,10 +215,9 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
               listener: (context, state) {
                 if (state.modificationStatus ==
                     ConfigurationModificationStatus.saved) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Configuration saved successfully'),
-                    ),
+                  AppSnackbar.showSuccess(
+                    context: context,
+                    message: 'Configuration saved successfully',
                   );
                 }
               },
@@ -267,8 +267,8 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
           ),
 
           AnimatedSize(
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.elasticInOut,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.fastEaseInToSlowEaseOut,
             child: _buildReorderableWrap(),
           ),
           // ],

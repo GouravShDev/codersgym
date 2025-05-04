@@ -238,6 +238,11 @@ class CodeEditorPageBody extends HookWidget {
     // Build the main scaffold
     return BlocBuilder<CodingConfigurationCubit, CodingConfigurationState>(
       builder: (context, state) {
+        if (state is CodingConfigurationLoading) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
         final config = switch (state) {
           CodingConfigurationLoaded() => state.configuration,
           _ => null,
@@ -377,7 +382,7 @@ class CodeEditorPageBody extends HookWidget {
                   editorThemeId:
                       config?.themeId ?? AppCodeEditorTheme.defaultThemeId,
                   pickBackgroundFromTheme:
-                      !(config?.darkEditorBackground ?? false),
+                      !(config?.darkEditorBackground ?? true),
                   fontSize: config?.fontSize.toDouble() ??
                       CodingConfiguration.defaultFontSize.toDouble(),
                 )),

@@ -1,5 +1,6 @@
 import 'package:codersgym/core/theme/app_code_editor_theme.dart';
 import 'package:codersgym/core/utils/string_extension.dart';
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 class CodeEditorThemePickerBottomsheet extends StatelessWidget {
@@ -48,7 +49,13 @@ class CodeEditorThemePickerBottomsheet extends StatelessWidget {
                 onChanged: (value) => onDarkBackgroundToggle(),
               ),
               TextButton.icon(
-                onPressed: () {},
+                onPressed: () {
+                  final defaultTheme = AppCodeEditorTheme.allCodeEditorThemes
+                      .firstWhereOrNull(
+                          (e) => e.id == AppCodeEditorTheme.defaultThemeId);
+                  if (defaultTheme != null) onThemeSelected(defaultTheme);
+                  if (!isDarkBackgroundEnabled) onDarkBackgroundToggle();
+                },
                 icon: const Icon(Icons.refresh, size: 18),
                 label: const Text("Reset"),
               ),

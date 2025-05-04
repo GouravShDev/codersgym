@@ -33,17 +33,20 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
           BlocBuilder<CustomizeCodingExperienceBloc,
               CustomizeCodingExperienceState>(
             builder: (context, state) {
-              return ElevatedButton.icon(
-                onPressed: state.modificationStatus ==
-                        ConfigurationModificationStatus.unsaved
-                    ? () {
-                        codeExpBloc.add(
-                          CustomizeCodingExperienceOnSaveConfiguration(),
-                        );
-                      }
-                    : null,
-                icon: const Icon(Icons.save_rounded),
-                label: const Text("Save"),
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: ElevatedButton.icon(
+                  onPressed: state.modificationStatus ==
+                          ConfigurationModificationStatus.unsaved
+                      ? () {
+                          codeExpBloc.add(
+                            CustomizeCodingExperienceOnSaveConfiguration(),
+                          );
+                        }
+                      : null,
+                  icon: const Icon(Icons.save_rounded),
+                  label: const Text("Save"),
+                ),
               );
             },
           ),

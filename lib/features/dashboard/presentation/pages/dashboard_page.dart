@@ -7,6 +7,7 @@ import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:codersgym/features/common/bloc/app_file_downloader/app_file_downloader_bloc.dart';
 import 'package:codersgym/features/common/bloc/timestamp/timestamp_cubit.dart';
 import 'package:codersgym/features/common/dialog/leetcode_session_expired_dialog.dart';
+import 'package:codersgym/features/common/widgets/app_snackbar.dart';
 import 'package:codersgym/features/common/widgets/app_updater.dart';
 import 'package:codersgym/features/common/widgets/app_coin_reward_animation_widget.dart';
 import 'package:codersgym/features/dashboard/presentation/blocs/daily_checkin/daily_checkin_cubit.dart';
@@ -85,14 +86,10 @@ class DashboardPage extends HookWidget {
           ),
           BlocListener<AppFileDownloaderBloc, AppFileDownloaderState>(
             listener: (context, state) {
-              final messenger = ScaffoldMessenger.of(context);
               if (state is AppFileIntiatingDownload) {
-                messenger.showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      "Exciting updates are on the way!",
-                    ),
-                  ),
+                AppSnackbar.showInfo(
+                  context: context,
+                  message: "Exciting updates are on the way!",
                 );
               }
             },
