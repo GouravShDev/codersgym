@@ -1,6 +1,9 @@
 import 'package:codersgym/core/network/app_dio_logger.dart';
 import 'package:codersgym/core/network/dio_network_service.dart';
 import 'package:codersgym/core/network/network_service.dart';
+import 'package:codersgym/core/services/app_config_validator.dart';
+import 'package:codersgym/core/services/app_file_reader.dart';
+import 'package:codersgym/core/services/app_file_writer.dart';
 import 'package:codersgym/core/services/firebase_remote_config_service.dart';
 import 'package:codersgym/core/services/github_updater.dart';
 import 'package:codersgym/core/services/local_notification_service.dart';
@@ -19,11 +22,10 @@ import 'package:codersgym/features/auth/data/service/auth_service.dart';
 import 'package:codersgym/features/auth/domain/service/auth_service.dart';
 import 'package:codersgym/features/auth/presentation/blocs/auth/auth_bloc.dart';
 import 'package:codersgym/features/code_editor/data/repository/code_editor_repository.dart';
+import 'package:codersgym/features/code_editor/data/services/app_config_service.dart';
 import 'package:codersgym/features/code_editor/data/services/coding_configuration_service.dart';
-import 'package:codersgym/features/code_editor/data/services/editor_theme_configuration_service.dart';
 import 'package:codersgym/features/code_editor/domain/repository/code_editor_repository.dart';
 import 'package:codersgym/features/code_editor/domain/services/coding_configuration_service.dart';
-import 'package:codersgym/features/code_editor/domain/services/editor_theme_configuration_service.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/code_editor/code_editor_bloc.dart';
 import 'package:codersgym/features/code_editor/presentation/blocs/coding_configuration/coding_configuration_cubit.dart';
 import 'package:codersgym/features/common/bloc/app_file_downloader/app_file_downloader_bloc.dart';
@@ -164,9 +166,20 @@ Future<void> initializeDependencies() async {
     () => RecentQuestionManager(),
   );
 
-  getIt.registerLazySingleton<EditorThemeConfigurationService>(
-    () => EditorThemeConfigurationServiceImp(
-      storageManager: getIt.get(),
+  getIt.registerFactory<AppFileWriter>(
+    () => AppFileWriter(),
+  );
+  getIt.registerFactoryParam<AppFileReader, AppConfigValidator, void>(
+    (validator, _) => AppFileReader(
+      validator,
+    ),
+  );
+  getIt.registerFactoryParam<AppConfigService, AppConfigValidator, void>(
+    (validator, _) => AppConfigService(
+      reader: getIt.get(
+        param1: validator,
+      ),
+      writer: getIt.get(),
     ),
   );
 
@@ -297,7 +310,6 @@ Future<void> initializeDependencies() async {
   );
   getIt.registerFactoryParam<CodeEditorBloc, String, void>(
     (questionId, _) => CodeEditorBloc(
-      getIt.get(),
       getIt.get(),
       questionId,
       getIt.get(),

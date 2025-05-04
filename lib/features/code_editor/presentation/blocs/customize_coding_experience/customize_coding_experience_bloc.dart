@@ -2,8 +2,8 @@ import 'package:bloc/bloc.dart';
 import 'package:codersgym/core/theme/app_code_editor_theme.dart';
 import 'package:codersgym/features/code_editor/domain/model/coding_configuration.dart';
 import 'package:codersgym/features/code_editor/domain/model/coding_key_config.dart';
+import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
 import 'package:codersgym/features/code_editor/domain/services/coding_configuration_service.dart';
-import 'package:codersgym/features/code_editor/domain/services/editor_theme_configuration_service.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -19,25 +19,16 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
     on<CustomizeCodingExperienceEvent>((event, emit) async {
       switch (event) {
         case CustomizeCodingExperienceLoadConfiguration():
-          final configuaration = await _service.loadConfiguration() ??
+          final codingConfiguration = await _service.loadConfiguration() ??
               CodingConfiguration(
                 themeId: AppCodeEditorTheme.defaultThemeId,
                 keysConfigs: CodingKeyConfig.defaultCodingKeyConfiguration,
-                darkEditorBackground: true,
+                darkEditorBackground:
+                    CodingConfiguration.defaultDarkEditorBackground,
               );
-          final configurationIds = configuaration.keysConfigs;
-          final themeId = configuaration.themeId;
-          final configuration = configurationIds
-              .map((e) => CodingKeyConfig.lookupMap[e]?.call())
-              .whereType<CodingKeyConfig>()
-              .map((config) => (keyId: UniqueKey().toString(), key: config))
-              .toList();
-          emit(
-            state.copyWith(
-              configuration: configuration,
-              configurationLoaded: true,
-              editorThemeId: themeId,
-            ),
+          _loadingConfiguration(
+            codingConfiguration: codingConfiguration,
+            emit: emit,
           );
 
         case CustomizeCodingExperienceKeySwap():
@@ -49,7 +40,7 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
           currentConfig.insert(event.newIndex, item);
           emit(
             state.copyWith(
-              configuration: currentConfig,
+              keysConfiguration: currentConfig,
               isReordering: false,
               modificationStatus: ConfigurationModificationStatus.unsaved,
             ),
@@ -83,7 +74,7 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
           );
           emit(
             state.copyWith(
-              configuration: currentConfig,
+              keysConfiguration: currentConfig,
               modificationStatus: ConfigurationModificationStatus.unsaved,
             ),
           );
@@ -93,11 +84,9 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
               modificationStatus: ConfigurationModificationStatus.saving,
             ),
           );
-          await _service.saveConfiguration(CodingConfiguration(
-            themeId: state.editorThemeId ?? '',
-            keysConfigs: state.keyConfiguration.map((e) => e.key.id).toList(),
-            darkEditorBackground: false,
-          ));
+          await _service.saveConfiguration(
+            state.toConfiguration(),
+          );
           emit(
             state.copyWith(
               modificationStatus: ConfigurationModificationStatus.saved,
@@ -108,15 +97,77 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
           emit(
             state.copyWith(
               editorThemeId: event.themeId,
+              modificationStatus: ConfigurationModificationStatus.unsaved,
             ),
           );
         case CustomizeCodingExperienceOnDarkEditorBackgroundToggle():
           emit(
             state.copyWith(
               darkEditorBackground: !state.darkEditorBackground,
+              modificationStatus: ConfigurationModificationStatus.unsaved,
             ),
+          );
+        case CustomizeCodingExperienceOnPreferenceChanged():
+          emit(
+            state.copyWith(
+              fontSize: event.fontSize,
+              hideKeyboard: event.hideKeyboard,
+              showSuggestions: event.showSuggestions,
+              tabSize: event.tabSize,
+              modificationStatus: ConfigurationModificationStatus.unsaved,
+              language: event.language,
+            ),
+          );
+        case CustomizeCodingExperienceOnConfigurationImport():
+          _loadingConfiguration(
+            codingConfiguration: event.configuration,
+            status: ConfigurationModificationStatus.unsaved,
+            emit: emit,
           );
       }
     });
+  }
+
+  void _loadingConfiguration({
+    required CodingConfiguration codingConfiguration,
+    ConfigurationModificationStatus? status,
+    required Emitter<CustomizeCodingExperienceState> emit,
+  }) {
+    final configurationIds = codingConfiguration.keysConfigs;
+    final themeId = codingConfiguration.themeId;
+    final keyConfiguration = configurationIds
+        .map((e) => CodingKeyConfig.lookupMap[e]?.call())
+        .whereType<CodingKeyConfig>()
+        .map((config) => (keyId: UniqueKey().toString(), key: config))
+        .toList();
+    emit(
+      state.copyWith(
+        keysConfiguration: keyConfiguration,
+        configurationLoaded: true,
+        editorThemeId: themeId,
+        darkEditorBackground: codingConfiguration.darkEditorBackground,
+        fontSize: codingConfiguration.fontSize,
+        hideKeyboard: codingConfiguration.hideKeyboard,
+        showSuggestions: codingConfiguration.showSuggestions,
+        tabSize: codingConfiguration.tabSize,
+        language: codingConfiguration.language,
+        modificationStatus: status,
+      ),
+    );
+  }
+}
+
+extension CodingConfigurationExt on CustomizeCodingExperienceState {
+  CodingConfiguration toConfiguration() {
+    return CodingConfiguration(
+      themeId: editorThemeId ?? '',
+      keysConfigs: keyConfiguration.map((e) => e.key.id).toList(),
+      darkEditorBackground: darkEditorBackground,
+      fontSize: fontSize,
+      hideKeyboard: hideKeyboard,
+      showSuggestions: showSuggestions,
+      tabSize: tabSize,
+      language: language,
+    );
   }
 }

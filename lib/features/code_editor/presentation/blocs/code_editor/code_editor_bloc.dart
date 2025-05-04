@@ -1,10 +1,9 @@
 import 'package:codersgym/core/services/analytics.dart';
-import 'package:codersgym/core/utils/storage/storage_manager.dart';
 import 'package:codersgym/core/utils/track_analytic_mixin.dart';
 import 'package:codersgym/features/code_editor/domain/model/code_execution_result.dart';
 import 'package:codersgym/features/code_editor/domain/model/programming_language.dart';
 import 'package:codersgym/features/code_editor/domain/repository/code_editor_repository.dart';
-import 'package:codersgym/features/code_editor/domain/services/editor_theme_configuration_service.dart';
+import 'package:codersgym/features/code_editor/domain/services/coding_configuration_service.dart';
 import 'package:codersgym/features/common/data/models/analytics_events.dart';
 import 'package:codersgym/features/question/domain/model/question.dart';
 import 'package:equatable/equatable.dart';
@@ -17,20 +16,17 @@ part 'code_editor_state.dart';
 
 class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
   final CodeEditorRepository _codeEdtiorRepository;
-  final EditorThemeConfigurationService _editorThemeConfigurationService;
-  final StorageManager _localStorageManager;
+  final CodingConfigurationService _codeConfigurationService;
   final String _questionId;
 
   final AnalyticsService _analyticsService = AnalyticsService();
 
-  static const _preferedCodingLanguageKey = 'preferedCodingLang';
   Timer? _timer;
   CodeEditorState previousState = CodeEditorState.initial();
   CodeEditorBloc(
     this._codeEdtiorRepository,
-    this._localStorageManager,
     this._questionId,
-    this._editorThemeConfigurationService,
+    this._codeConfigurationService,
   ) : super(CodeEditorState.initial()) {
     on<CodeEditorEvent>((event, emit) async {
       switch (event) {
@@ -260,13 +256,8 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
     CodeEditorCodeLoadConfig event,
     Emitter<CodeEditorState> emit,
   ) async {
-    final lastSelectedLanguage =
-        await _localStorageManager.getString(_preferedCodingLanguageKey);
-    final editorThemeId =
-        await _editorThemeConfigurationService.loadThemeConfiguration();
-    final language = lastSelectedLanguage != null
-        ? ProgrammingLanguage.values.byName(lastSelectedLanguage)
-        : ProgrammingLanguage.cpp;
+    final configs = await _codeConfigurationService.loadConfiguration();
+    final language = configs?.language ?? ProgrammingLanguage.cpp;
     final defaultCode = event.question.codeSnippets
         ?.firstWhereOrNull(
           (element) => element.langSlug == language.name,
@@ -284,7 +275,6 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
         // Used the cached code if present
         code: currentCode ?? defaultCode,
         question: event.question,
-        editorThemeId: editorThemeId,
         testCases: event.question.exampleTestCases,
       ),
     );
@@ -292,10 +282,17 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
 
   void _onCodeEditorLanguageUpdateEvent(
       CodeEditorLanguageUpdateEvent event, Emitter<CodeEditorState> emit) {
-    _localStorageManager.putString(
-      _preferedCodingLanguageKey,
-      event.language.name,
-    );
+    _codeConfigurationService.loadConfiguration().then((config) {
+      if (config == null) {
+        throw Exception("code config is null on language update");
+      }
+      _codeConfigurationService.saveConfiguration(
+        config.copyWith(
+          language: ProgrammingLanguage.values.byName(event.language.name),
+        ),
+      );
+    });
+
     _analyticsService.setUserProperties(
       name: AnalyticsEvents.programmingLanguage,
       value: event.language.displayText,

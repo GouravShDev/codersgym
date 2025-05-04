@@ -7,13 +7,20 @@ class CodingConfigurationServiceImp implements CodingConfigurationService {
 
   final String _key = "coding_keys_configuration";
 
+  /// This needs to be migrate to configuration
+  final String _preferedCodingLanguageOldKey = 'preferedCodingLang';
+
   CodingConfigurationServiceImp({required StorageManager storageManager})
       : _storageManager = storageManager;
 
   @override
   Future<CodingConfiguration?> loadConfiguration() async {
+    final lastSelectedLanguage =
+        await _storageManager.getString(_preferedCodingLanguageOldKey);
     final config = await _storageManager.getObjectMap(_key);
     if (config == null) return null;
+    // Migrating old language to coding config json
+    if (config['language'] == null) config['language'] = lastSelectedLanguage;
     return CodingConfiguration.fromJson(config);
   }
 

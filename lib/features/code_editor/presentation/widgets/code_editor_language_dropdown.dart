@@ -7,70 +7,69 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 class CodeEditorLanguageDropDown extends StatelessWidget {
   const CodeEditorLanguageDropDown({
     super.key,
-    required this.question,
+    required this.currentLanguage,
+    required this.onLanguageChange,
+    this.showWarning = true,
   });
-
-  final Question question;
+  final ProgrammingLanguage currentLanguage;
+  final Function(ProgrammingLanguage language) onLanguageChange;
+  final bool showWarning;
 
   @override
   Widget build(BuildContext context) {
-    final codeEditorBloc = context.read<CodeEditorBloc>();
-    return BlocBuilder<CodeEditorBloc, CodeEditorState>(
-      buildWhen: (previous, current) => current.language != previous.language,
-      builder: (context, state) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            splashColor: Colors.transparent,
-            highlightColor: Colors.transparent,
-            hoverColor: Colors.transparent,
-          ),
-          child: DropdownButton<ProgrammingLanguage>(
-            value: codeEditorBloc.state.language,
-            items: ProgrammingLanguage.values
-                .map((lang) => DropdownMenuItem(
-                      value: lang,
-                      child: Text(
-                        lang.displayText,
-                        // style: TextStyle(
-                        //   fontSize: 12,
-                        // ),
-                      ),
-                    ))
-                .toList(),
-            onChanged: (language) {
-              if (language != null &&
-                  language != codeEditorBloc.state.language) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AlertDialog(
-                    title: const Text('Warning'),
-                    content: const Text(
-                        'Changing the language will override the current code. Do you want to continue?'),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          codeEditorBloc.add(
-                            CodeEditorLanguageUpdateEvent(
-                              language: language,
-                              question: question,
-                            ),
-                          );
-                        },
-                        child: const Text('Confirm'),
-                      ),
-                    ],
+    return Theme(
+      data: Theme.of(context).copyWith(
+        splashColor: Colors.transparent,
+        highlightColor: Colors.transparent,
+        hoverColor: Colors.transparent,
+      ),
+      child: DropdownButton<ProgrammingLanguage>(
+        value: currentLanguage,
+        underline: const SizedBox.shrink(),
+        items: ProgrammingLanguage.values
+            .map((lang) => DropdownMenuItem(
+                  value: lang,
+                  child: Text(
+                    lang.displayText,
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                    // style: TextStyle(
+                    //   fontSize: 12,
+                    // ),
                   ),
-                );
-              }
-            },
-          ),
-        );
-      },
+                ))
+            .toList(),
+        onChanged: (language) {
+          if (language != null && language != currentLanguage) {
+            if (!showWarning) {
+              onLanguageChange(language);
+              return;
+            }
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Warning'),
+                content: const Text(
+                    'Changing the language will override the current code. Do you want to continue?'),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      onLanguageChange(language);
+                    },
+                    child: const Text('Confirm'),
+                  ),
+                ],
+              ),
+            );
+          }
+        },
+      ),
     );
   }
 }

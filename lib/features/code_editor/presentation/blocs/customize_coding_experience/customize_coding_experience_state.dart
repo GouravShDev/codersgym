@@ -8,6 +8,11 @@ class CustomizeCodingExperienceState extends Equatable {
   final ConfigurationModificationStatus modificationStatus;
   final String? editorThemeId;
   final bool darkEditorBackground;
+  final bool hideKeyboard;
+  final int tabSize;
+  final bool showSuggestions;
+  final int fontSize;
+  final ProgrammingLanguage language;
 
   const CustomizeCodingExperienceState({
     required this.keyConfiguration,
@@ -16,6 +21,11 @@ class CustomizeCodingExperienceState extends Equatable {
     required this.configurationLoaded,
     required this.modificationStatus,
     required this.darkEditorBackground,
+    required this.hideKeyboard,
+    required this.tabSize,
+    required this.showSuggestions,
+    required this.fontSize,
+    required this.language,
     this.editorThemeId,
   });
 
@@ -30,27 +40,42 @@ class CustomizeCodingExperienceState extends Equatable {
       isReordering: false,
       configurationLoaded: false,
       modificationStatus: ConfigurationModificationStatus.none,
-      darkEditorBackground: true,
+      darkEditorBackground: CodingConfiguration.defaultDarkEditorBackground,
+      hideKeyboard: CodingConfiguration.defaultHideKeyboard,
+      tabSize: CodingConfiguration.defaultTabSize,
+      showSuggestions: CodingConfiguration.defaultShowSuggestions,
+      fontSize: CodingConfiguration.defaultFontSize,
+      language: CodingConfiguration.defaultProgrammingLanguage,
     );
   }
 
   CustomizeCodingExperienceState copyWith({
-    List<({String keyId, CodingKeyConfig key})>? configuration,
+    List<({String keyId, CodingKeyConfig key})>? keysConfiguration,
     bool? isCustomizing,
     bool? isReordering,
     bool? configurationLoaded,
     ConfigurationModificationStatus? modificationStatus,
     String? editorThemeId,
     bool? darkEditorBackground,
+    bool? hideKeyboard,
+    int? tabSize,
+    bool? showSuggestions,
+    int? fontSize,
+    ProgrammingLanguage? language,
   }) {
     return CustomizeCodingExperienceState(
-      keyConfiguration: configuration ?? this.keyConfiguration,
+      keyConfiguration: keysConfiguration ?? this.keyConfiguration,
       isCustomizing: isCustomizing ?? this.isCustomizing,
       isReordering: isReordering ?? this.isReordering,
       configurationLoaded: configurationLoaded ?? this.configurationLoaded,
       modificationStatus: modificationStatus ?? this.modificationStatus,
       editorThemeId: editorThemeId ?? this.editorThemeId,
       darkEditorBackground: darkEditorBackground ?? this.darkEditorBackground,
+      hideKeyboard: hideKeyboard ?? this.hideKeyboard,
+      tabSize: tabSize ?? this.tabSize,
+      showSuggestions: showSuggestions ?? this.showSuggestions,
+      fontSize: fontSize ?? this.fontSize,
+      language: language ?? this.language,
     );
   }
 
@@ -63,6 +88,11 @@ class CustomizeCodingExperienceState extends Equatable {
         modificationStatus,
         editorThemeId,
         darkEditorBackground,
+        hideKeyboard,
+        tabSize,
+        showSuggestions,
+        fontSize,
+        language,
       ];
 }
 
