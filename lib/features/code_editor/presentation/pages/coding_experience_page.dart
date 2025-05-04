@@ -63,8 +63,8 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
               bottom:
                   (state.hideKeyboard) ? 0 : (state.isCustomizing ? 280 : 120),
             ),
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.elasticInOut,
+            duration: const Duration(milliseconds: 500),
+            curve: Curves.fastEaseInToSlowEaseOut,
             child: SpeedDial(
               animatedIcon: AnimatedIcons.menu_close,
               overlayOpacity: 0.4,
