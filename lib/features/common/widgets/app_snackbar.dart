@@ -35,7 +35,7 @@ class AppSnackbar {
     switch (type) {
       case SnackbarType.success:
         icon = Icons.check_circle_outline;
-        borderColor = theme.colorScheme.successColorAccent;
+        borderColor = theme.colorScheme.successColor;
         title ??= 'Success';
         break;
       case SnackbarType.error:
@@ -67,7 +67,7 @@ class AppSnackbar {
       duration: duration,
       backgroundColor: backgroundColor,
       borderColor: borderColor,
-      borderWidth: 2,
+      borderWidth: 1,
       borderRadius: BorderRadius.circular(8),
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(8),
