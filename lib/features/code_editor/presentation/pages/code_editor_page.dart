@@ -268,8 +268,15 @@ class CodeEditorPageBody extends HookWidget {
       },
       builder: (context, state) {
         if (state is CodingConfigurationLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                question.title ?? '',
+              ),
+            ),
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
           );
         }
         final config = switch (state) {
