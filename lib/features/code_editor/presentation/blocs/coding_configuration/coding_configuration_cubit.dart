@@ -12,10 +12,6 @@ class CodingConfigurationCubit extends Cubit<CodingConfigurationState> {
   Future<void> loadConfiguration() async {
     emit(CodingConfigurationLoading());
     final configuration = await _service.loadConfiguration();
-    if (configuration != null) {
-      emit(CodingConfigurationLoaded(configuration: configuration));
-    } else {
-      emit(CodingNoUserConfiguration());
-    }
+    emit(CodingConfigurationLoaded(configuration: configuration));
   }
 }
