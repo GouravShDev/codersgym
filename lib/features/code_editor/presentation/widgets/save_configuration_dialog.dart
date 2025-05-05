@@ -3,12 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class SaveConfigurationDialog extends StatelessWidget {
-  const SaveConfigurationDialog({super.key});
+  const SaveConfigurationDialog({
+    super.key,
+    required this.onSave,
+  });
+  final Function() onSave;
 
-  static Future<bool?> show(BuildContext context) async {
+  static Future<bool?> show(
+    BuildContext context, {
+    required Function() onSave,
+  }) async {
     return await showDialog(
       context: context,
-      builder: (context) => const SaveConfigurationDialog(),
+      builder: (context) => SaveConfigurationDialog(
+        onSave: onSave,
+      ),
     );
   }
 
@@ -29,9 +38,7 @@ class SaveConfigurationDialog extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            context.read<CustomizeCodingExperienceBloc>().add(
-                  CustomizeCodingExperienceOnSaveConfiguration(),
-                );
+            onSave();
             Navigator.of(context).pop(true);
           },
           child: const Text('Save'),
