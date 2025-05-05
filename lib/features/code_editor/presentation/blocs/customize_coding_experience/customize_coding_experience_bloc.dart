@@ -19,13 +19,8 @@ class CustomizeCodingExperienceBloc extends Bloc<CustomizeCodingExperienceEvent,
     on<CustomizeCodingExperienceEvent>((event, emit) async {
       switch (event) {
         case CustomizeCodingExperienceLoadConfiguration():
-          final codingConfiguration = await _service.loadConfiguration() ??
-              CodingConfiguration(
-                themeId: AppCodeEditorTheme.defaultThemeId,
-                keysConfigs: CodingKeyConfig.defaultCodingKeyConfiguration,
-                darkEditorBackground:
-                    CodingConfiguration.defaultDarkEditorBackground,
-              );
+          final codingConfiguration = await _service.loadConfiguration();
+
           _loadingConfiguration(
             codingConfiguration: codingConfiguration,
             emit: emit,

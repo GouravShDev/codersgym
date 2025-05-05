@@ -257,7 +257,7 @@ class CodeEditorBloc extends HydratedBloc<CodeEditorEvent, CodeEditorState> {
     Emitter<CodeEditorState> emit,
   ) async {
     final configs = await _codeConfigurationService.loadConfiguration();
-    final language = configs?.language ?? ProgrammingLanguage.cpp;
+    final language = configs.language;
     final defaultCode = event.question.codeSnippets
         ?.firstWhereOrNull(
           (element) => element.langSlug == language.name,
