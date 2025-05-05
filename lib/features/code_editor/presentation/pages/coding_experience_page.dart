@@ -241,7 +241,13 @@ class CodingExperiencePage extends StatelessWidget implements AutoRouteWrapper {
                   return;
                 }
                 final shouldGoBack = await SaveConfigurationDialog.show(
-                        context) ??
+                      context,
+                      onSave: () {
+                        context.read<CustomizeCodingExperienceBloc>().add(
+                              CustomizeCodingExperienceOnSaveConfiguration(),
+                            );
+                      },
+                    ) ??
                     false; // Default to staying on the page if the dialog is dismissed
                 if (!shouldGoBack) {
                   return;
