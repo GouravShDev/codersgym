@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*'  # This ensures the workflow runs on any tag that starts with 'v'
+    branches:
+      - ci_test
 env:
   SHOREBIRD_TOKEN: ${{ secrets.SHOREBIRD_TOKEN }}
 
@@ -17,8 +19,6 @@ jobs:
 
       - name: 🐦 Setup Shorebird
         uses: shorebirdtech/setup-shorebird@v1
-        with:
-          cache: true
       
       - name: Set up Java 17
         uses: actions/setup-java@v3
