@@ -109,6 +109,8 @@ class CodeEditorPageBody extends HookWidget {
               )
             : const EditorParams(),
       );
+      codeController.value.popupController.enabled =
+          config?.showSuggestions ?? true;
       return;
     }
     if (newState.code != codeController.value.fullText) {
@@ -265,6 +267,9 @@ class CodeEditorPageBody extends HookWidget {
             tabSpaces: config.tabSize,
           ),
         );
+
+        codeControllerState.value.popupController.enabled =
+            config?.showSuggestions ?? true;
       },
       builder: (context, state) {
         if (state is CodingConfigurationLoading) {
