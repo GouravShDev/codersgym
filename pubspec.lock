@@ -623,8 +623,8 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "fix/editor_new_flutter_version"
-      resolved-ref: a25703ea62bfe43199172b4ef9aa52bf428bf8fb
+      ref: main
+      resolved-ref: cae482e8b64038392fc224de5cab76b7076e23fa
       url: "https://github.com/GouravShDev/flutter-code-editor.git"
     source: git
     version: "0.3.2"
