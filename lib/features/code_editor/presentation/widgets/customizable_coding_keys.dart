@@ -135,7 +135,7 @@ class _CustomizableCodingKeysState extends State<CustomizableCodingKeys> {
             },
 
             sliverGridDelegate:
-                SliverReorderableGridDelegateWithFixedCrossAxisCount(
+                SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
               mainAxisSpacing: 4.0,
               crossAxisSpacing: 4.0,
