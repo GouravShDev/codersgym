@@ -9,7 +9,7 @@ class CommunityPostEntity {
   String? content;
   int? updationDate;
   int? creationDate;
-  Null? status;
+  String? status;
   Null? isHidden;
   AuthorEntity? author;
   bool? authorIsModerator;
