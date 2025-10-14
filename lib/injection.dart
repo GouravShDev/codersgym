@@ -1,3 +1,5 @@
+import 'dart:io' show Platform, Directory;
+
 import 'package:codersgym/core/network/app_dio_logger.dart';
 import 'package:codersgym/core/network/dio_network_service.dart';
 import 'package:codersgym/core/network/network_service.dart';
@@ -82,8 +84,11 @@ final getIt = GetIt.instance;
 Future<void> initializeDependencies() async {
   // UTILS
   final sharedPref = await SharedPreferences.getInstance();
+  Directory? directory = Platform.isAndroid
+      ? await getExternalStorageDirectory() //FOR ANDROID
+      : await getApplicationSupportDirectory(); //FOR iOS
   final hydradedStorage = await HydratedStorage.build(
-    storageDirectory: await getApplicationDocumentsDirectory(),
+    storageDirectory: (directory)!,
   );
 
   HydratedBloc.storage = hydradedStorage;

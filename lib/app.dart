@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:codersgym/core/services/firebase_push_notification_service.dart';
 import 'package:codersgym/core/services/local_notification_service.dart';
 import 'package:codersgym/core/utils/custom_scroll_physics.dart';
@@ -27,7 +29,9 @@ class AppInitializer extends HookWidget {
         Future<void> initialize() async {
           await LocalNotificationService().initialize();
           await FirebasePushNotificationService().initialize();
-          var path = await getExternalStorageDirectory();
+          var path = Platform.isAndroid
+              ? await getExternalStorageDirectory() //FOR ANDROID
+              : await getApplicationSupportDirectory(); //FOR iOS
           Hive.init(path?.path);
           await initializeDependencies();
           await getIt.get<RecentQuestionManager>().init();
