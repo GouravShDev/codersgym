@@ -47,8 +47,9 @@ class AppCodeEditorField extends StatelessWidget {
           enabled: enabled,
           keyboardType: keyboardType,
           textStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                fontSize: fontSize,
-              ),
+            fontSize: fontSize,
+            fontFamily: 'Consolas, Courier New, monospace',
+          ),
           background: pickBackgroundFromTheme
               ? (themeMap[editorThemeId]?['root']?.backgroundColor)
               : theme.scaffoldBackgroundColor,
